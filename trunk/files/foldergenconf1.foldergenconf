@@ -1,0 +1,22 @@
++ Oberordner
++ Oberordner 2
+	- file1.txt
+	- file2.txt
+	+ Unterordner 1
+		- file3.txt
+		+ Unterordner 2
+		- file4.txt
+		(((
+		/*************************
+		 * Dies ist mein Template #1
+		 ************************/
+		 Dies ist ein Test mit einem (kleinen) Inhalt.
+		 Dies wird standardmäßig in der Datei stehen.
+
+		 .
+		)))
+		- file5.txt
+		+ Unterordner 2
+		+ file6.txt
++ Oberordner 3
+	- file7.txt
