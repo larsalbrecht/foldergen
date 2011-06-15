@@ -1,0 +1,44 @@
+#summary One-sentence summary of this page.
+#labels Featured,Phase-Deploy
+
+= Introduction =
+
+The foldergenconf is the config file for FolderGen. You can create your own foldergenconf by using a simple texteditor like (g)vim, notepad, notepad++, scite or something like that.
+
+
+== foldergenconf content ==
+
+Example 01:
+{{{
++ My Root Folder
+	- a sample file
+	- another file
+	+ A subfolder in My Root Folder
+		+ A subfolder in a subfolder
+		- A file in a subfolder
+	- another file2
+}}}
+
+Each line has a specified easy syntax. Each whitespace (eg. \t or \n) is used to indent the structure. Then it starts a file (-) or folder (+). If a file exists, it will be NOT overwritten.
+
+If you want so specify template content for a file, you can use "(((" and ")))" to limit this in the foldergenconf-file.
+
+{{{
++ My Root Folder
+	+ subfolder 1
+		- file1
+		(((
+		/*************************
+		 * This is a template
+		 ************************/
+		 You can specify this text inside the foldergenconf-file.
+		 This content will be pasted in file1 in subfolder1 (subfolder of My Root Folder)
+		)))
+		- file2
++ Another Root Folder
+	+ Another Subfolder
+		- file3
+		(((
+		Another content for another file.
+		)))
+}}}
