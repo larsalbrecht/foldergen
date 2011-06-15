@@ -1,0 +1,17 @@
+#summary One-sentence summary of this page.
+#labels Featured,Phase-Deploy
+
+= Introduction =
+
+FolderGen is to generate automaticly folders and files using a scriptfile (called: [foldergenconf]). You can specify content for files to autofill them.
+
+== Start FolderGen ==
+If you have the .jar file on you filesystem, you need a .[foldergenconf]-File. This file can be written in a default text editor like vim, notepad or something like that. For more about the foldergenconf, look at the wiki-site.
+
+{{{
+java -jar foldergen.jar C:\<filename>.foldergenconf
+}}}
+or 
+{{{
+java -jar foldergen.jar /home/testuser/<filename>.foldergenconf
+}}}
