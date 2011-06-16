@@ -1,7 +1,7 @@
-#summary One-sentence summary of this page.
+#summary All about the foldergenconf
 #labels Featured,Phase-Deploy
 
-= Introduction =
+= foldergenconf =
 
 The foldergenconf is the config file for FolderGen. You can create your own foldergenconf by using a simple texteditor like (g)vim, notepad, notepad++, scite or something like that.
 
