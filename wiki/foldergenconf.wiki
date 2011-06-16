@@ -45,11 +45,11 @@ If you want so specify template content for a file, you can use "(((" and ")))" 
 
 === Markers (Version 1.2 and above) ===
 You can use markers inside the template content. 
-	 * ${username} - returns the username
-	 * ${homedir} - returns the user home dir
-	 * ${os} - returns the operating system
-	 * ${currentdir} - returns the current dir
-	 * ${filename} - returns the current filename
+	 * ${user.username} - returns the username
+	 * ${user.homedir} - returns the user home dir
+	 * ${system.os} - returns the operating system
+	 * ${file.currentdir} - returns the current dir
+	 * ${file.filename} - returns the current filename
 	 * ${date.year} - returns the current year as decimal
 	 * ${date.month} - returns the current month as decimal
 	 * ${date.day} - returns the current day as decimal
