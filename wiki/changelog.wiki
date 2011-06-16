@@ -1,5 +1,7 @@
-#summary One-sentence summary of this page.
+#summary Changelog
 #labels Phase-Implementation,Featured
+
+= Changelog =
 
 == Version 1.2.0.0 ==
  * Replace [foldergenconf#Markers_(Version_1.2_and_above) markers] in template content
