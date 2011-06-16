@@ -45,11 +45,11 @@ If you want so specify template content for a file, you can use "(((" and ")))" 
 
 === Markers (Version 1.2 and above) ===
 You can use markers inside the template content. 
-	 * ${user.username} - returns the username
+	 * ${user.name} - returns the username
 	 * ${user.homedir} - returns the user home dir
 	 * ${system.os} - returns the operating system
 	 * ${file.currentdir} - returns the current dir
-	 * ${file.filename} - returns the current filename
+	 * ${file.name} - returns the current filename
 	 * ${date.year} - returns the current year as decimal
 	 * ${date.month} - returns the current month as decimal
 	 * ${date.day} - returns the current day as decimal
@@ -60,3 +60,26 @@ You can use markers inside the template content.
 	 * ${date.formatcurrent([Format FORMAT])} - returns the current formatted date/time
 	 * ${func.counter(VAR)} - counter for a VAR
 	 * ... more comming soon ...
+
+Example 01:
+{{{
++ My Root Folder
+	- file
+		(((
+		/*************************
+		 * This is a template ${file.name}
+		 * author: ${user.name} @ 
+		 * ${date.day}.${date.month}.${date.year}
+		 * ${date.hour}:${date.minute}:${date.second}
+		 * leapyear: ${date.isleapyear(${date.year})}
+		 * ${date.formatcurrent(d.M.yy)}
+		 ************************/
+		 You can specify this text inside the foldergenconf-file.
+		 This content will be pasted in file1 in subfolder1 (subfolder of My Root Folder)
+		 ${func.counter(a)} : Zero
+			${func.counter(b)} : Zero Zero
+			${func.counter(b)} : Zero First
+			${func.counter(b)} : Zero Second
+		 ${func.counter(a)} : First
+		 ${func.counter(a)} : Second
+}}}
