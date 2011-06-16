@@ -57,4 +57,5 @@ You can use markers inside the template content.
 	 * ${date.minute} - returns the current minute as decimal
 	 * ${date.second} - returns the current second as decimal
 	 * ${date.isleap(YEAR)} - returns true or false
+	 * ${date.formatcurrent([Format FORMAT])} - returns the current formatted date/time
 	 * ... more comming soon ...
