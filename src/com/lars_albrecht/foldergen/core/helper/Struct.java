@@ -38,23 +38,24 @@ package com.lars_albrecht.foldergen.core.helper;
 
 import java.util.ArrayList;
 
-
 /**
  * @author lalbrecht
  * @version 1.0.0.0
  */
 @SuppressWarnings("serial")
 public class Struct extends ArrayList<StructItem> {
-	
+
 	/**
 	 * Default Constructor.
 	 */
 	public Struct() {
 	}
-	
+
 	/**
 	 * Constructor with param "item".
-	 * @param item StructItem
+	 * 
+	 * @param item
+	 *            StructItem
 	 */
 	public Struct(final StructItem item) {
 		this.add(item);
