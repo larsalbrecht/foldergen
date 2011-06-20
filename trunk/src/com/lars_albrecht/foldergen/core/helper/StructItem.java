@@ -38,38 +38,42 @@ package com.lars_albrecht.foldergen.core.helper;
 
 import java.util.HashMap;
 
-
 /**
  * @author lalbrecht
  * @version 1.0.0.0
  */
 public class StructItem {
-	
+
 	private String name = null;
 	private Struct subStruct = null;
 	private Object additionalData = null;
 	private StructItem parentStructItem = null;
-	
+
 	/**
 	 * Constructor with params "name" and "parentStructItem".
 	 * 
-	 * @param name String
-	 * @param parentStructItem StructItem
+	 * @param name
+	 *            String
+	 * @param parentStructItem
+	 *            StructItem
 	 */
-	public StructItem(final String name, final StructItem parentStructItem){
+	public StructItem(final String name, final StructItem parentStructItem) {
 		this.name = name;
 		this.subStruct = new Struct();
 		this.parentStructItem = parentStructItem;
 	}
-	
+
 	/**
 	 * Constructor with params "name", "additionalData" and "parentStructItem".
 	 * 
-	 * @param name String
-	 * @param additionalData Object
-	 * @param parentStructItem StructItem
+	 * @param name
+	 *            String
+	 * @param additionalData
+	 *            Object
+	 * @param parentStructItem
+	 *            StructItem
 	 */
-	public StructItem(final String name, final Object additionalData, final StructItem parentStructItem){
+	public StructItem(final String name, final Object additionalData, final StructItem parentStructItem) {
 		this.name = name;
 		this.additionalData = additionalData;
 		this.subStruct = new Struct();
@@ -80,13 +84,14 @@ public class StructItem {
 	 * @return the name
 	 */
 	public synchronized final String getName() {
-		return name;
+		return this.name;
 	}
 
 	/**
-	 * @param name the name to set
+	 * @param name
+	 *            the name to set
 	 */
-	public synchronized final void setName(String name) {
+	public synchronized final void setName(final String name) {
 		this.name = name;
 	}
 
@@ -94,13 +99,14 @@ public class StructItem {
 	 * @return the subStruct
 	 */
 	public synchronized final Struct getSubStruct() {
-		return subStruct;
+		return this.subStruct;
 	}
 
 	/**
-	 * @param subStruct the subStruct to set
+	 * @param subStruct
+	 *            the subStruct to set
 	 */
-	public synchronized final void setSubStruct(Struct subStruct) {
+	public synchronized final void setSubStruct(final Struct subStruct) {
 		this.subStruct = subStruct;
 	}
 
@@ -109,13 +115,14 @@ public class StructItem {
 	 */
 	@SuppressWarnings("unchecked")
 	public synchronized final HashMap<String, String> getAdditionalData() {
-		return (HashMap<String, String>) additionalData;
+		return (HashMap<String, String>) this.additionalData;
 	}
 
 	/**
-	 * @param additionalData the additionalData to set
+	 * @param additionalData
+	 *            the additionalData to set
 	 */
-	public synchronized final void setAdditionalData(Object additionalData) {
+	public synchronized final void setAdditionalData(final Object additionalData) {
 		this.additionalData = additionalData;
 	}
 
@@ -123,13 +130,14 @@ public class StructItem {
 	 * @return the parentStructItem
 	 */
 	public synchronized final StructItem getParentStructItem() {
-		return parentStructItem;
+		return this.parentStructItem;
 	}
 
 	/**
-	 * @param parentStructItem the parentStructItem to set
+	 * @param parentStructItem
+	 *            the parentStructItem to set
 	 */
-	public synchronized final void setParentStructItem(StructItem parentStructItem) {
+	public synchronized final void setParentStructItem(final StructItem parentStructItem) {
 		this.parentStructItem = parentStructItem;
 	}
 }
