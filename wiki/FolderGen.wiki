@@ -5,9 +5,11 @@
 
 FolderGen is to generate automaticly folders and files using a scriptfile (called: [foldergenconf]). You can specify content for files to autofill them.
 
-== Start FolderGen ==
+
+== General information to start FolderGen ==
 If you have the .jar file on you filesystem, you need a .[foldergenconf]-File. This file can be written in a default text editor like vim, notepad or something like that. For more about the foldergenconf, look at the wiki-site.
 
+=== Start FolderGen (Version 1.2.0.0 and lower) ===
 {{{
 java -jar foldergen.jar C:\<filename>.foldergenconf
 }}}
@@ -15,3 +17,46 @@ or
 {{{
 java -jar foldergen.jar /home/testuser/<filename>.foldergenconf
 }}}
+
+=== Start FolderGen (Version 1.3.0.0) ===
+{{{
+java -jar foldergen.jar C:\<filename>.foldergenconf
+}}}
+or 
+{{{
+java -jar foldergen.jar /home/testuser/<filename>.foldergenconf
+}}}
+
+
+==== More Examples ====
+Start with gui and file (without debug):
+{{{
+java -jar foldergen.jar C:\<filename>.foldergenconf true
+}}}
+
+Start with gui and file (with debug):
+{{{
+java -jar foldergen.jar C:\<filename>.foldergenconf true true
+}}}
+
+Start without gui and with file (without debug):
+{{{
+java -jar foldergen.jar C:\<filename>.foldergenconf
+}}}
+
+Start without gui and with file (with debug):
+{{{
+java -jar foldergen.jar C:\<filename>.foldergenconf false true
+}}}
+
+Start with gui and without file (without debug):
+{{{
+java -jar foldergen.jar true false
+}}}
+
+Start with gui and without file (with debug):
+{{{
+java -jar foldergen.jar true true
+}}}
+
+Start FolderGen without file and without gui is not allowed.
