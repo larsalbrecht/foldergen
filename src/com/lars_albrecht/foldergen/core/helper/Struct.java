@@ -39,6 +39,8 @@ package com.lars_albrecht.foldergen.core.helper;
 import java.util.ArrayList;
 
 /**
+ * Special ArrayList for StructItems.
+ * 
  * @author lalbrecht
  * @version 1.0.0.0
  */

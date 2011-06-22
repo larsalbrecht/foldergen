@@ -39,6 +39,9 @@ package com.lars_albrecht.foldergen.core.helper;
 import java.util.HashMap;
 
 /**
+ * StructItem is a special item for the Struct. The StructItem contains a name (String), a struct (Struct), additional data (Object) and a structItem (StructItem). The StructItem (parentStructItem) is
+ * null or the parent item.
+ * 
  * @author lalbrecht
  * @version 1.0.0.0
  */
