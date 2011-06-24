@@ -5,7 +5,7 @@
 = Changelog =
 
 == Version 1.4.0.0 ==
- * New startup parameter to prevent errors
+ * New startup parameter (using [http://commons.apache.org/cli/ Apache Common CLI]) to prevent errors
 
 == Version 1.3.0.0 ==
  * Added simply GUI to choose the file using a "File Choose Dialog"
