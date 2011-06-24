@@ -1,5 +1,6 @@
 #summary All about the foldergenconf
 #labels Featured,Phase-Deploy
+<wiki:toc max_depth="3" />
 
 = foldergenconf =
 
