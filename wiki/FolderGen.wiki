@@ -1,8 +1,8 @@
 #summary General informations about FolderGen
 #labels Featured,Phase-Deploy
+<wiki:toc max_depth="3" />
 
 = folderGen =
-<wiki:toc max_depth="3" />
 
 FolderGen is to generate automaticly folders and files using a scriptfile (called: [foldergenconf]). You can specify content for files to autofill them.
 
