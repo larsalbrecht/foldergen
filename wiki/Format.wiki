@@ -1,4 +1,5 @@
 #summary Something about the format syntax
+<wiki:toc max_depth="3" />
 
 = Format =
 
