@@ -36,6 +36,8 @@ public class Generator {
 	private final static String CONTENT_END = ")))";
 
 	private Boolean isDebug = false;
+	@SuppressWarnings("unused")
+	private Boolean isGui = false;
 
 	/**
 	 * Generator constructor.
@@ -45,8 +47,9 @@ public class Generator {
 	 * @param isDebug
 	 *            Boolean
 	 */
-	public Generator(final File rootFile, final Boolean isDebug) {
+	public Generator(final File rootFile, final Boolean isDebug, final Boolean isGui) {
 		this.isDebug = isDebug;
+		this.isGui = isGui;
 
 		// If config file exists and is a file and parent != null
 		if(rootFile.exists() && rootFile.isFile() && (rootFile.getParent() != null)) {
@@ -57,11 +60,11 @@ public class Generator {
 	}
 
 	/**
-	 * Works the file. Parse the given config file and generates the files and folders.
+	 * Works the file. Parse the given config file and generates the files and folders recursivly.
 	 * 
 	 * @param rootFile
 	 *            File
-	 * @return Boolean i
+	 * @return Boolean Boolean
 	 */
 	private Boolean workFile(final File rootFile) {
 		BufferedReader in = null;
@@ -118,6 +121,7 @@ public class Generator {
 			if(this.isDebug) {
 				this.debugPrint(struct, "");
 			}
+
 		} catch(IOException e) {
 			System.out.println(e.getMessage());
 			return false;
@@ -441,3 +445,9 @@ public class Generator {
 	}
 
 }
+/**
+ * // NEW -> System.out.println("Write to filesystem? (y/N)"); BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); String linex = ""; Boolean hasToWrite = null; linex =
+ * br.readLine(); while(hasToWrite == null) { if(hasToWrite == null) { if(linex.equals("") || linex.equalsIgnoreCase("n")) { hasToWrite = false; } else if(linex.equalsIgnoreCase("y")) {
+ * System.out.println("YES"); hasToWrite = true; } if(this.isDebug) { System.out.println("hasToWrite: " + hasToWrite); } } linex = br.readLine(); } if(hasToWrite) { if(this.isDebug) {
+ * System.out.println("Work Struct"); } this.workStruct(struct, basicRootFolder); } else if(this.isDebug) { System.out.println("Not work Struct"); } // <- NEW
+ **/

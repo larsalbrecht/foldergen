@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
+import com.lars_albrecht.foldergen.FolderGen;
 import com.lars_albrecht.foldergen.core.Generator;
 
 /**
@@ -71,7 +72,7 @@ public class View extends JFrame implements ActionListener {
 					System.out.println("fcChooser approved. File " + file.getName() + " choosed");
 				}
 				if(file.isFile() && file.exists()) {
-					new Generator(file, this.isDebug);
+					new Generator(file, this.isDebug, FolderGen.IS_GUI);
 				}
 			} else {
 				if(this.isDebug) {

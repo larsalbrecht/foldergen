@@ -39,19 +39,23 @@ package com.lars_albrecht.foldergen;
 import java.io.File;
 
 import com.lars_albrecht.foldergen.core.Generator;
-import com.lars_albrecht.foldergen.core.helper.Utilities;
+import com.lars_albrecht.foldergen.core.helper.FolderGenCLIConf;
+import com.lars_albrecht.foldergen.core.helper.FolderGenCLIHelper;
 import com.lars_albrecht.foldergen.gui.View;
 
 /**
  * If you have the .jar file on you filesystem, you need a .foldergenconf-File. This file can be written in a default text editor like vim, notepad or something like that. For more about the
- * foldergenconf, look at the wiki-site. java -jar foldergen.jar C:\<filename>.foldergenconf or java -jar foldergen.jar /home/testuser/<filename>.foldergenconf
+ * foldergenconf, look at the wiki-site. java -jar foldergen.jar -c C:\<filename>.foldergenconf or java -jar foldergen.jar -c /home/testuser/<filename>.foldergenconf
  * 
  * @see http://code.google.com/p/foldergen/
  * @author lalbrecht
- * @version 1.3.0.0
+ * @version 1.4.0.0
  * 
  */
 public class FolderGen {
+
+	public static Boolean IS_GUI = true;
+	public static Boolean IS_CONSOLE = false;
 
 	/**
 	 * "main" to start the class.
@@ -60,63 +64,7 @@ public class FolderGen {
 	 *            String[]
 	 */
 	public static void main(final String[] args) {
-		if(args.length >= 1) {
-			File f = null;
-			Boolean isDebug = false;
-			Boolean isGui = false;
-			if(args[0] != "") {
-				if(args[0].endsWith(".foldergenconf") && (f = new File(args[0])).exists() && f.isFile()) {
-					if((args.length > 1) && (args[1] != "") && Utilities.isBoolean(args[1])) {
-						isGui = Boolean.parseBoolean(args[1].trim());
-					}
-					if((args.length > 2) && (args[2] != "") && (Utilities.isBoolean(args[2]))) {
-						isDebug = Boolean.parseBoolean(args[2].trim());
-					}
-				} else if(Utilities.isBoolean(args[0])) {
-					isGui = Boolean.parseBoolean(args[0].trim());
-					if(isGui) {
-						if((args.length > 1) && (args[1] != "") && Utilities.isBoolean(args[1])) {
-							isDebug = Boolean.parseBoolean(args[1].trim());
-						}
-					} else {
-						FolderGen.exitOnStartup();
-					}
-				} else {
-					FolderGen.exitOnStartup();
-				}
-				new FolderGen(f, isGui, isDebug);
-			}
-
-			if((args[0] != "") && args[0].endsWith(".foldergenconf") && (f = new File(args[0])).exists() && f.isFile()) {
-				if((args.length > 1) && (args[1] != null) && !args[1].equals("")) {
-					isGui = Boolean.parseBoolean(args[1].trim());
-				}
-				if((args.length > 2) && (args[2] != null) && !args[2].equals("")) {
-					isDebug = Boolean.parseBoolean(args[2].trim());
-				}
-				new FolderGen(f, isGui, isDebug);
-			}
-		}
-	}
-
-	/**
-	 * Prints text to console and exit the application.
-	 */
-	public static void exitOnStartup() {
-		System.out.println("Given parameters are not valid.");
-		System.out.println("Following parameters are available:");
-		System.out.println("[file isGui isDebug]|[isGui isDebug]");
-		System.out.println("--------------------------------------");
-		System.out.println("Examples:");
-		System.out.println("Start with gui and file:");
-		System.out.println("/myFile.foldergenconf true");
-		System.out.println("Start without gui and with file:");
-		System.out.println("/myFile.foldergenconf");
-		System.out.println("Start without gui and with file and debug:");
-		System.out.println("/myFile.foldergenconf false true");
-		System.out.println("--------------------------------------");
-		System.out.println("For more examples, see wiki @ http://code.google.com/p/foldergen/");
-		System.exit(-1);
+		new FolderGen(args);
 	}
 
 	/**
@@ -127,12 +75,30 @@ public class FolderGen {
 	 * @param isDebug
 	 *            Boolean
 	 */
-	public FolderGen(final File rootFile, final Boolean isGui, final Boolean isDebug) {
+	public FolderGen(final String[] args) {
+		final String applicationName = "FolderGen";
+		File f = null;
+		FolderGenCLIConf appConf = FolderGenCLIHelper.parseArguments(args);
+		if((args.length < 1) || (appConf.getFile() == null) || !appConf.getIsGui()) {
+			FolderGenCLIHelper.printUsage(applicationName, FolderGenCLIHelper.createOptions(), System.out);
+		} else {
+			if(appConf.getFile() != null) {
+				f = appConf.getFile();
+			}
+			if(!appConf.getIsGui() && (!f.exists() || !f.isFile())) {
+				FolderGenCLIHelper.printUsage(applicationName, FolderGenCLIHelper.createOptions(), System.out);
+			} else {
+				this.startUp(f, appConf.getIsGui(), appConf.getIsDebug());
+			}
+		}
+	}
+
+	private void startUp(final File rootFile, final Boolean isGui, final Boolean isDebug) {
 		if(isGui) {
 			new View(rootFile, isDebug);
 		} else {
-			new Generator(rootFile, isDebug);
+			new Generator(rootFile, isDebug, FolderGen.IS_CONSOLE);
 		}
-
 	}
+
 }
