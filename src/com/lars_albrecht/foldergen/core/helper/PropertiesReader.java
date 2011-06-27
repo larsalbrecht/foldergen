@@ -36,68 +36,56 @@
  */
 package com.lars_albrecht.foldergen.core.helper;
 
-import java.io.File;
+import java.io.UnsupportedEncodingException;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 /**
  * @author lalbrecht
- * @version 1.0.5.0
+ * @version 1.0.0.0
  * 
  */
-public final class FolderGenCLIConf {
+public final class PropertiesReader {
 
-	private File file = null;
-	private Boolean isGui = null;
-	private Boolean isDebug = null;
+	private static PropertiesReader instance = null;
 
-	public FolderGenCLIConf() {
-		this.file = null;
-		this.isGui = Boolean.FALSE;
-		this.isDebug = Boolean.FALSE;
+	/**
+	 * Private default constructor.
+	 */
+	private PropertiesReader() {
 	}
 
 	/**
-	 * @return the file
+	 * 
+	 * @return PropertiesReader
 	 */
-	public synchronized final File getFile() {
-		return this.file;
+	public static PropertiesReader getInstance() {
+
+		if(PropertiesReader.instance == null) {
+			PropertiesReader.instance = new PropertiesReader();
+		}
+		return PropertiesReader.instance;
 	}
 
 	/**
-	 * @param file
-	 *            the file to set
+	 * Returns the value of the key. Converts the iso-8859-1 Strings to UTF-8.
+	 * 
+	 * @param key
+	 * @return String
 	 */
-	public synchronized final void setFile(final File file) {
-		this.file = file;
+	public String getProperties(final String key) {
+		String result = null;
+		try {
+			ResourceBundle bundle = ResourceBundle.getBundle("foldergen");
+			result = bundle.getString(key);
+			byte bytes[] = result.getBytes("ISO-8859-1");
+			result = new String(bytes, "UTF-8");
+			return result;
+		} catch(MissingResourceException e) {
+			e.printStackTrace();
+		} catch(UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
-
-	/**
-	 * @return the isGui
-	 */
-	public synchronized final Boolean getIsGui() {
-		return this.isGui;
-	}
-
-	/**
-	 * @param isGui
-	 *            the isGui to set
-	 */
-	public synchronized final void setIsGui(final Boolean isGui) {
-		this.isGui = isGui;
-	}
-
-	/**
-	 * @return the isDebug
-	 */
-	public synchronized final Boolean getIsDebug() {
-		return this.isDebug;
-	}
-
-	/**
-	 * @param isDebug
-	 *            the isDebug to set
-	 */
-	public synchronized final void setIsDebug(final Boolean isDebug) {
-		this.isDebug = isDebug;
-	}
-
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="javadoc">
     <target name="javadoc">
-        <javadoc access="public" author="true" classpath="." destdir="javadoc" doctitle="FolderGen" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="com.lars_albrecht.foldergen.core.helper,com.lars_albrecht.foldergen.core" source="1.6" sourcepath="src" splitindex="true" use="true" version="true"/>
+        <javadoc access="private" author="true" classpath="." destdir="doc/FolderGen" doctitle="FolderGen 1.4.5.0" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="com.lars_albrecht.foldergen.gui,com.lars_albrecht.foldergen,com.lars_albrecht.foldergen.core.helper,com.lars_albrecht.foldergen.core" source="1.6" sourcepath="src" splitindex="true" use="true" version="true"/>
     </target>
 </project>
