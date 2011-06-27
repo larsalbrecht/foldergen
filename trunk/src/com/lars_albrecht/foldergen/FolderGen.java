@@ -38,9 +38,12 @@ package com.lars_albrecht.foldergen;
 
 import java.io.File;
 
+import org.apache.commons.cli.ParseException;
+
 import com.lars_albrecht.foldergen.core.Generator;
 import com.lars_albrecht.foldergen.core.helper.FolderGenCLIConf;
 import com.lars_albrecht.foldergen.core.helper.FolderGenCLIHelper;
+import com.lars_albrecht.foldergen.core.helper.PropertiesReader;
 import com.lars_albrecht.foldergen.gui.View;
 
 /**
@@ -49,7 +52,7 @@ import com.lars_albrecht.foldergen.gui.View;
  * 
  * @see http://code.google.com/p/foldergen/
  * @author lalbrecht
- * @version 1.4.0.0
+ * @version 1.4.5.0
  * 
  */
 public class FolderGen {
@@ -68,36 +71,50 @@ public class FolderGen {
 	}
 
 	/**
-	 * Main "Class" with an argument "rootFile" and with an parameter "isDebug" for debug prints if needed.
+	 * Main "Class" with an argument "args".
 	 * 
-	 * @param rootFile
-	 *            File
-	 * @param isDebug
-	 *            Boolean
+	 * @param args
+	 *            String[]
 	 */
 	public FolderGen(final String[] args) {
-		final String applicationName = "FolderGen";
 		File f = null;
-		FolderGenCLIConf appConf = FolderGenCLIHelper.parseArguments(args);
-		if((args.length < 1) || (appConf.getFile() == null) || !appConf.getIsGui()) {
-			FolderGenCLIHelper.printUsage(applicationName, FolderGenCLIHelper.createOptions(), System.out);
+		FolderGenCLIConf appConf = null;
+		try {
+			appConf = FolderGenCLIHelper.parseArguments(args);
+		} catch(ParseException e) {
+			System.err.println(PropertiesReader.getInstance().getProperties("application.exception.parse") + e.getMessage());
+		}
+		if((args.length < 1) || ((appConf.getFile() == null) && !appConf.getIsGui())) {
+			FolderGenCLIHelper.printUsage(PropertiesReader.getInstance().getProperties("application.name"), FolderGenCLIHelper
+					.createOptions(), System.out);
 		} else {
 			if(appConf.getFile() != null) {
 				f = appConf.getFile();
 			}
 			if(!appConf.getIsGui() && (!f.exists() || !f.isFile())) {
-				FolderGenCLIHelper.printUsage(applicationName, FolderGenCLIHelper.createOptions(), System.out);
+				FolderGenCLIHelper.printUsage(PropertiesReader.getInstance().getProperties("application.name"),
+						FolderGenCLIHelper.createOptions(), System.out);
 			} else {
 				this.startUp(f, appConf.getIsGui(), appConf.getIsDebug());
 			}
 		}
 	}
 
-	private void startUp(final File rootFile, final Boolean isGui, final Boolean isDebug) {
+	/**
+	 * Start FolderGen. "isGui" loads the gui if true, "isDebug" prints debug prints - if true, and configFile contains the start config file if not null.
+	 * 
+	 * @param configFile
+	 *            File
+	 * @param isGui
+	 *            Boolean
+	 * @param isDebug
+	 *            Boolean
+	 */
+	private void startUp(final File configFile, final Boolean isGui, final Boolean isDebug) {
 		if(isGui) {
-			new View(rootFile, isDebug);
+			new View(configFile, isDebug);
 		} else {
-			new Generator(rootFile, isDebug, FolderGen.IS_CONSOLE);
+			new Generator(configFile, isDebug, FolderGen.IS_CONSOLE);
 		}
 	}
 

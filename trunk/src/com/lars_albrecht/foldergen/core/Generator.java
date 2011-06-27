@@ -1,3 +1,39 @@
+/*
+ * Copyright (c) 2011 Lars Chr. Albrecht
+ * All rights reserved.
+ * 
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 
+ * Redistributions of source code must retain the above copyright notice,
+ * this list of conditions and the following disclaimer.
+ * 
+ * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
+ * 
+ * Neither the name of the project's author nor the names of its
+ * contributors may be used to endorse or promote products derived from
+ * this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ */
+
+/**
+ * 
+ */
 package com.lars_albrecht.foldergen.core;
 
 import java.io.BufferedReader;
@@ -13,6 +49,7 @@ import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.lars_albrecht.foldergen.core.helper.PropertiesReader;
 import com.lars_albrecht.foldergen.core.helper.Struct;
 import com.lars_albrecht.foldergen.core.helper.StructItem;
 
@@ -20,7 +57,7 @@ import com.lars_albrecht.foldergen.core.helper.StructItem;
  * The Generator generates the folders and files using the given configfile.
  * 
  * @author lalbrecht
- * @version 1.0.0.0
+ * @version 1.0.5.0
  * 
  */
 public class Generator {
@@ -42,38 +79,38 @@ public class Generator {
 	/**
 	 * Generator constructor.
 	 * 
-	 * @param rootFile
+	 * @param configFile
 	 *            File
 	 * @param isDebug
 	 *            Boolean
 	 */
-	public Generator(final File rootFile, final Boolean isDebug, final Boolean isGui) {
+	public Generator(final File configFile, final Boolean isDebug, final Boolean isGui) {
 		this.isDebug = isDebug;
 		this.isGui = isGui;
 
 		// If config file exists and is a file and parent != null
-		if(rootFile.exists() && rootFile.isFile() && (rootFile.getParent() != null)) {
-			this.workFile(rootFile);
+		if(configFile.exists() && configFile.isFile() && (configFile.getParent() != null)) {
+			this.workFile(configFile);
 		} else {
-			System.out.println("add config file with absolute parameter, eg: C:\\my.folderconf or /my.folderconf");
+			System.out.println(PropertiesReader.getInstance().getProperties("application.output.wrongfile"));
 		}
 	}
 
 	/**
 	 * Works the file. Parse the given config file and generates the files and folders recursivly.
 	 * 
-	 * @param rootFile
+	 * @param configFile
 	 *            File
 	 * @return Boolean Boolean
 	 */
-	private Boolean workFile(final File rootFile) {
+	private Boolean workFile(final File configFile) {
 		BufferedReader in = null;
 		File basicRootFolder = null;
 		try {
 			// Buffered reader reads the file
-			in = new BufferedReader(new FileReader(rootFile));
+			in = new BufferedReader(new FileReader(configFile));
 			// set "basicRootFolder" to the folder of the config-file.
-			basicRootFolder = new File(rootFile.getParent());
+			basicRootFolder = new File(configFile.getParent());
 			String line = null;
 			Integer layer = 0;
 			Integer lastLayer = 0;
@@ -147,7 +184,7 @@ public class Generator {
 			final HashMap<String, String> additionalInfo) {
 		StructItem tempStructItem = null;
 		if(this.isDebug) {
-			System.out.println("Zero(0): " + name);
+			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.zero") + name);
 		}
 		tempStructItem = new StructItem(name.trim(), additionalInfo, null);
 		struct.add(tempStructItem);
@@ -172,7 +209,7 @@ public class Generator {
 			final HashMap<String, String> additionalInfo) {
 		StructItem tempStructItem = null;
 		if(this.isDebug) {
-			System.out.println("Down: " + name);
+			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.down") + name);
 		}
 		tempStructItem = new StructItem(name.trim(), additionalInfo, lastItem);
 		lastItem.getSubStruct().add(tempStructItem);
@@ -201,7 +238,7 @@ public class Generator {
 			final HashMap<String, String> additionalInfo, final Integer lastLayer, final Integer layer) {
 		StructItem tempStructItem = null;
 		if(this.isDebug) {
-			System.out.println("Up: " + name);
+			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.up") + name);
 		}
 		tempStructItem = new StructItem(name.trim(), additionalInfo, null);
 		for(int i = 0; i <= lastLayer - layer; i++) {
@@ -229,7 +266,7 @@ public class Generator {
 			final HashMap<String, String> additionalInfo) {
 		StructItem tempStructItem = null;
 		if(this.isDebug) {
-			System.out.println("equals: " + name);
+			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.equals") + name);
 		}
 		tempStructItem = new StructItem(name.trim(), additionalInfo, lastItem.getParentStructItem());
 		lastItem.getParentStructItem().getSubStruct().add(tempStructItem);
