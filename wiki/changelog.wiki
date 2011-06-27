@@ -4,7 +4,7 @@
 
 = Changelog =
 
-== Version 1.4.5.0 - coming soon ==
+== Version 1.4.5.0 ==
  * Added properties with all output strings
  * Added Translations
    * (English (Native speaker))
