@@ -6,7 +6,11 @@
 
 == Version 1.4.5.0 - coming soon ==
  * Added properties with all output strings
- * Added German translation
+ * Added Translations
+   * (English (Native speaker))
+   * German (Native speaker)
+   * French (Google Translator)
+   * Russia (Google Translator)
  * Added use of System Look and Feel in GUI-Mode, if available
  * Prevent some errors to be shown if debug = 0
  * Fixed some BSD-licence header in source files
