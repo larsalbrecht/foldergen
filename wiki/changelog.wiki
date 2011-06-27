@@ -4,12 +4,22 @@
 
 = Changelog =
 
+== Version 1.4.5.0 - coming soon ==
+ * Added properties with all output strings
+ * Added German translation
+ * Added use of System Look and Feel in GUI-Mode, if available
+ * Prevent some errors to be shown if debug = 0
+ * Fixed some BSD-licence header in source files
+
+== Version 1.4.0.1 ==
+ * Bugfix: GUI could not started in 1.4.0.0
+
 == Version 1.4.0.0 ==
  * New startup parameter (using [http://commons.apache.org/cli/ Apache Common CLI]) to prevent errors
 
 == Version 1.3.0.0 ==
  * Added simply GUI to choose the file using a "File Choose Dialog"
- * Added some startparameter to choose between GUI and non GUI.
+ * Added some start parameter to choose between GUI and non GUI.
 
 == Version 1.2.0.0 ==
  * Replace [foldergenconf#Markers_(Version_1.2_and_above) markers] in template content
