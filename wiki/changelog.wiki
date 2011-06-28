@@ -4,9 +4,15 @@
 
 = Changelog =
 
-== Version 1.4.6.0 - coming soon ==
+== Version 1.4.6.0 ==
  * Added parameter -r | -root to add a root path to specify the root of the created folders and files
  * Added parameter -co | -confirmation to add a question before the files and folders will be written to the filesystem
+ * Added confirmation dialog for the gui and the CLI
+ * Added parameter -l | -locale to set the application language
+   * en (English)
+   * de (German)
+   * fr (French)
+   * ru (Russia)
 
 == Version 1.4.5.0 ==
  * Added properties with all output strings
