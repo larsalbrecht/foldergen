@@ -37,37 +37,72 @@
 package com.lars_albrecht.foldergen.core.helper;
 
 import java.io.File;
+import java.util.Locale;
 
 /**
  * @author lalbrecht
- * @version 1.0.5.0
+ * @version 1.1.0.0
  * 
  */
 public final class FolderGenCLIConf {
 
-	private File file = null;
+	private File rootPath = null;
+	private File configFile = null;
 	private Boolean isGui = null;
 	private Boolean isDebug = null;
+	private Boolean showConfirmation = null;
+	private Locale locale = null;
 
 	public FolderGenCLIConf() {
-		this.file = null;
 		this.isGui = Boolean.FALSE;
 		this.isDebug = Boolean.FALSE;
+		this.showConfirmation = Boolean.FALSE;
+		this.locale = Locale.getDefault();
 	}
 
 	/**
-	 * @return the file
+	 * @return the showConfirmation
 	 */
-	public synchronized final File getFile() {
-		return this.file;
+	public synchronized final Boolean getShowConfirmation() {
+		return this.showConfirmation;
 	}
 
 	/**
-	 * @param file
-	 *            the file to set
+	 * @param showConfirmation
+	 *            the showConfirmation to set
 	 */
-	public synchronized final void setFile(final File file) {
-		this.file = file;
+	public synchronized final void setShowConfirmation(final Boolean showConfirmation) {
+		this.showConfirmation = showConfirmation;
+	}
+
+	/**
+	 * @return the rootPath
+	 */
+	public synchronized final File getRootPath() {
+		return this.rootPath;
+	}
+
+	/**
+	 * @param rootPath
+	 *            the rootPath to set
+	 */
+	public synchronized final void setRootPath(final File rootPath) {
+		this.rootPath = rootPath;
+	}
+
+	/**
+	 * @return the configFile
+	 */
+	public synchronized final File getConfigFile() {
+		return this.configFile;
+	}
+
+	/**
+	 * @param configFile
+	 *            the configFile to set
+	 */
+	public synchronized final void setConfigFile(final File configFile) {
+		this.configFile = configFile;
 	}
 
 	/**
@@ -98,6 +133,21 @@ public final class FolderGenCLIConf {
 	 */
 	public synchronized final void setIsDebug(final Boolean isDebug) {
 		this.isDebug = isDebug;
+	}
+
+	/**
+	 * @return the locale
+	 */
+	public synchronized final Locale getLocale() {
+		return this.locale;
+	}
+
+	/**
+	 * @param locale
+	 *            the locale to set
+	 */
+	public synchronized final void setLocale(final Locale locale) {
+		this.locale = locale;
 	}
 
 }

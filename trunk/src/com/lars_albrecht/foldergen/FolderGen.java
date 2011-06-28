@@ -52,13 +52,16 @@ import com.lars_albrecht.foldergen.gui.View;
  * 
  * @see http://code.google.com/p/foldergen/
  * @author lalbrecht
- * @version 1.4.5.0
+ * @version 1.4.6.1
  * 
  */
 public class FolderGen {
 
 	public static Boolean IS_GUI = true;
 	public static Boolean IS_CONSOLE = false;
+
+	public static Boolean CONFIRMATION_SHOW = true;
+	public static Boolean CONFIRMATION_HIDE = false;
 
 	/**
 	 * "main" to start the class.
@@ -77,44 +80,57 @@ public class FolderGen {
 	 *            String[]
 	 */
 	public FolderGen(final String[] args) {
-		File f = null;
+		File configFile = null;
 		FolderGenCLIConf appConf = null;
 		try {
 			appConf = FolderGenCLIHelper.parseArguments(args);
 		} catch(ParseException e) {
-			System.err.println(PropertiesReader.getInstance().getProperties("application.exception.parse") + e.getMessage());
+			System.err.println(PropertiesReader.getInstance().getProperties("application.exception.parse"));
 		}
-		if((args.length < 1) || ((appConf.getFile() == null) && !appConf.getIsGui())) {
+		// No args or no config file and no gui
+		if((args.length < 1) || ((appConf.getConfigFile() == null) && !appConf.getIsGui())) {
 			FolderGenCLIHelper.printUsage(PropertiesReader.getInstance().getProperties("application.name"), FolderGenCLIHelper
 					.createOptions(), System.out);
 		} else {
-			if(appConf.getFile() != null) {
-				f = appConf.getFile();
+			// with config file
+			if(appConf.getConfigFile() != null) {
+				configFile = appConf.getConfigFile();
 			}
-			if(!appConf.getIsGui() && (!f.exists() || !f.isFile())) {
+			// no gui and no config file or config file is not valid
+			if(!appConf.getIsGui() && (!configFile.exists() || !configFile.isFile())) {
 				FolderGenCLIHelper.printUsage(PropertiesReader.getInstance().getProperties("application.name"),
 						FolderGenCLIHelper.createOptions(), System.out);
 			} else {
-				this.startUp(f, appConf.getIsGui(), appConf.getIsDebug());
+				if(appConf.getLocale() != null) {
+					PropertiesReader.getInstance().setLocale(appConf.getLocale());
+				}
+				this.startUp(appConf.getRootPath(), configFile, appConf.getIsGui(), appConf.getIsDebug(), appConf
+						.getShowConfirmation());
 			}
 		}
 	}
 
 	/**
-	 * Start FolderGen. "isGui" loads the gui if true, "isDebug" prints debug prints - if true, and configFile contains the start config file if not null.
+	 * Start FolderGen. "isGui" loads the gui if true, "isDebug" prints debug prints - if true, and configFile contains the start config file if not null. "rootPath" contains the startpoint to create
+	 * folders and files.
 	 * 
+	 * @param rootPath
+	 *            File
 	 * @param configFile
 	 *            File
 	 * @param isGui
 	 *            Boolean
 	 * @param isDebug
 	 *            Boolean
+	 * @param showConfirmation
+	 *            Boolean
 	 */
-	private void startUp(final File configFile, final Boolean isGui, final Boolean isDebug) {
+	private void startUp(final File rootPath, final File configFile, final Boolean isGui, final Boolean isDebug,
+			final Boolean showConfirmation) {
 		if(isGui) {
-			new View(configFile, isDebug);
+			new View(rootPath, configFile, isDebug, showConfirmation);
 		} else {
-			new Generator(configFile, isDebug, FolderGen.IS_CONSOLE);
+			new Generator(rootPath, configFile, isDebug, showConfirmation);
 		}
 	}
 

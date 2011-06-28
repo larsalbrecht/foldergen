@@ -40,6 +40,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.Locale;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -54,7 +55,7 @@ import org.apache.commons.cli.ParseException;
  * Contains helper for the command line.
  * 
  * @author lalbrecht
- * @version 1.0.5.0
+ * @version 1.5.0.0
  */
 public final class FolderGenCLIHelper {
 
@@ -68,7 +69,11 @@ public final class FolderGenCLIHelper {
 		fgOptions.addOption("c", "config", true,
 				PropertiesReader.getInstance().getProperties("application.cli.parameters.config")).addOption("g", "gui", false,
 				PropertiesReader.getInstance().getProperties("application.cli.parameters.gui")).addOption("d", "debug", false,
-				PropertiesReader.getInstance().getProperties("application.cli.parameters.debug"));
+				PropertiesReader.getInstance().getProperties("application.cli.parameters.debug")).addOption("r", "root", true,
+				PropertiesReader.getInstance().getProperties("application.cli.parameters.root")).addOption("co", "confirmation",
+				false, PropertiesReader.getInstance().getProperties("application.cli.parameters.confirmation")).addOption("l",
+				"locale", true, PropertiesReader.getInstance().getProperties("application.cli.parameters.locale"));
+		;
 		fgOptions.addOptionGroup(new OptionGroup().addOption(new Option("h", "help", false, PropertiesReader.getInstance()
 				.getProperties("application.cli.parameters.help"))));
 		return fgOptions;
@@ -105,20 +110,35 @@ public final class FolderGenCLIHelper {
 	public static FolderGenCLIConf parseArguments(final String[] commandLineArguments) throws ParseException {
 		final FolderGenCLIConf conf = new FolderGenCLIConf();
 		final CommandLineParser cmdLineGnuParser = new GnuParser();
-		final Options gnuOptions = FolderGenCLIHelper.createOptions();
+		final Options options = FolderGenCLIHelper.createOptions();
 		CommandLine commandLine = null;
-		commandLine = cmdLineGnuParser.parse(gnuOptions, commandLineArguments);
+		commandLine = cmdLineGnuParser.parse(options, commandLineArguments);
 		if(commandLine.hasOption("config")) {
-			conf.setFile(new File(commandLine.getOptionValue("config")));
+			conf.setConfigFile(new File(commandLine.getOptionValue("config")));
 		}
 		if(commandLine.hasOption("c")) {
-			conf.setFile(new File(commandLine.getOptionValue("c")));
+			conf.setConfigFile(new File(commandLine.getOptionValue("c")));
+		}
+		if(commandLine.hasOption("root")) {
+			conf.setRootPath(new File(commandLine.getOptionValue("root")));
+		}
+		if(commandLine.hasOption("r")) {
+			conf.setRootPath(new File(commandLine.getOptionValue("r")));
 		}
 		if(commandLine.hasOption("g") || commandLine.hasOption("gui")) {
 			conf.setIsGui(Boolean.TRUE);
 		}
 		if(commandLine.hasOption("d") || commandLine.hasOption("debug")) {
 			conf.setIsDebug(Boolean.TRUE);
+		}
+		if(commandLine.hasOption("co") || commandLine.hasOption("confirmation")) {
+			conf.setShowConfirmation(Boolean.TRUE);
+		}
+		if(commandLine.hasOption("locale")) {
+			conf.setLocale(new Locale(commandLine.getOptionValue("locale")));
+		}
+		if(commandLine.hasOption("l")) {
+			conf.setLocale(new Locale(commandLine.getOptionValue("l")));
 		}
 		if(commandLine.hasOption("h") || commandLine.hasOption("help")) {
 			FolderGenCLIHelper.printHelp(FolderGenCLIHelper.createOptions(), 80, PropertiesReader.getInstance().getProperties(

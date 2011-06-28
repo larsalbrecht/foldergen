@@ -37,6 +37,7 @@
 package com.lars_albrecht.foldergen.core.helper;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -48,6 +49,22 @@ import java.util.ResourceBundle;
 public final class PropertiesReader {
 
 	private static PropertiesReader instance = null;
+	private Locale locale = Locale.getDefault();
+
+	/**
+	 * @return the locale
+	 */
+	public synchronized final Locale getLocale() {
+		return this.locale;
+	}
+
+	/**
+	 * @param locale
+	 *            the locale to set
+	 */
+	public synchronized final void setLocale(final Locale locale) {
+		this.locale = locale;
+	}
 
 	/**
 	 * Private default constructor.
@@ -76,7 +93,7 @@ public final class PropertiesReader {
 	public String getProperties(final String key) {
 		String result = null;
 		try {
-			ResourceBundle bundle = ResourceBundle.getBundle("foldergen");
+			ResourceBundle bundle = ResourceBundle.getBundle("foldergen", this.locale);
 			result = bundle.getString(key);
 			byte bytes[] = result.getBytes("ISO-8859-1");
 			result = new String(bytes, "UTF-8");
