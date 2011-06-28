@@ -4,6 +4,9 @@
 
 = Changelog =
 
+== Version 1.4.6.0 - coming soon ==
+ * Added parameter -r | -root to add a root path to specify the root of the created folders and files
+
 == Version 1.4.5.0 ==
  * Added properties with all output strings
  * Added Translations
