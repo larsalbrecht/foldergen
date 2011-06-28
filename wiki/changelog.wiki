@@ -4,6 +4,9 @@
 
 = Changelog =
 
+== Version 1.4.6.1 ==
+ * Removed debug message
+
 == Version 1.4.6.0 ==
  * Added parameter -r | -root to add a root path to specify the root of the created folders and files
  * Added parameter -co | -confirmation to add a question before the files and folders will be written to the filesystem
