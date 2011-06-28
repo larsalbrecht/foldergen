@@ -41,6 +41,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -57,7 +58,7 @@ import com.lars_albrecht.foldergen.core.helper.StructItem;
  * The Generator generates the folders and files using the given configfile.
  * 
  * @author lalbrecht
- * @version 1.0.5.0
+ * @version 1.5.0.0
  * 
  */
 public class Generator {
@@ -73,20 +74,27 @@ public class Generator {
 	private final static String CONTENT_END = ")))";
 
 	private Boolean isDebug = false;
-	@SuppressWarnings("unused")
-	private Boolean isGui = false;
+	private File rootPath = null;
+	private Boolean showConfirmation = false;
 
 	/**
 	 * Generator constructor.
 	 * 
+	 * @param rootPath
+	 *            File
 	 * @param configFile
 	 *            File
 	 * @param isDebug
 	 *            Boolean
 	 */
-	public Generator(final File configFile, final Boolean isDebug, final Boolean isGui) {
+	public Generator(final File rootPath, final File configFile, final Boolean isDebug, final Boolean showConfirmation) {
 		this.isDebug = isDebug;
-		this.isGui = isGui;
+		this.showConfirmation = showConfirmation;
+		this.rootPath = (rootPath != null ? rootPath : new File(configFile.getParent()));
+		if(this.isDebug) {
+			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.choosedrootpath")
+					+ this.rootPath.getAbsolutePath() + "\n");
+		}
 
 		// If config file exists and is a file and parent != null
 		if(configFile.exists() && configFile.isFile() && (configFile.getParent() != null)) {
@@ -110,7 +118,7 @@ public class Generator {
 			// Buffered reader reads the file
 			in = new BufferedReader(new FileReader(configFile));
 			// set "basicRootFolder" to the folder of the config-file.
-			basicRootFolder = new File(configFile.getParent());
+			basicRootFolder = this.rootPath;
 			String line = null;
 			Integer layer = 0;
 			Integer lastLayer = 0;
@@ -154,9 +162,47 @@ public class Generator {
 					}
 				}
 			}
-			this.workStruct(struct, basicRootFolder);
+
+			if(this.showConfirmation) {
+				this.printStruct(struct, "", Boolean.FALSE);
+				System.out.println(PropertiesReader.getInstance().getProperties("application.debug.choosedrootpath"));
+				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				String inputLine = null;
+				Boolean hasToWrite = null;
+				try {
+					while((hasToWrite == null) && ((inputLine = br.readLine()) != null)) {
+						if(inputLine.equals("") || inputLine.equalsIgnoreCase("n") || inputLine.equalsIgnoreCase("н")) {
+							hasToWrite = false;
+						} else if(inputLine.equalsIgnoreCase("y") || inputLine.equalsIgnoreCase("j")
+								|| inputLine.equalsIgnoreCase("o") || inputLine.equalsIgnoreCase("Д")) {
+							hasToWrite = true;
+						}
+						if(this.isDebug) {
+							System.out.println("\n"
+									+ PropertiesReader.getInstance().getProperties("application.debug.confirmation.writenotice")
+									+ hasToWrite);
+						}
+					}
+				} catch(IOException e) {
+					e.printStackTrace();
+				}
+				if(hasToWrite) {
+					if(this.isDebug) {
+						System.out.println("\n" + PropertiesReader.getInstance().getProperties("application.debug.struct.work"));
+					}
+					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.struct.work.create"));
+					this.workStruct(struct, basicRootFolder);
+				} else if(this.isDebug) {
+					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.struct.nowork.nocreate"));
+					System.out.println("\n" + PropertiesReader.getInstance().getProperties("application.debug.struct.work"));
+				}
+
+			} else {
+				this.workStruct(struct, basicRootFolder);
+			}
+
 			if(this.isDebug) {
-				this.debugPrint(struct, "");
+				this.printStruct(struct, "", Boolean.TRUE);
 			}
 
 		} catch(IOException e) {
@@ -328,10 +374,14 @@ public class Generator {
 	 */
 	private String replaceMarker(final StructItem lastItem, String content) {
 		GregorianCalendar gc = new GregorianCalendar();
-
+		// user markers
 		content = content.replaceAll("(\\$\\{user.name\\})", System.getProperty("user.name"));
 		content = content.replaceAll("(\\$\\{user.homedir\\})", System.getProperty("user.home"));
+
+		// system markers
 		content = content.replaceAll("(\\$\\{system.os\\})", System.getProperty("os.name"));
+
+		// file markers
 		content = content.replaceAll("(\\$\\{file.currentdir\\})", System.getProperty("user.dir"));
 		content = content.replaceAll("(\\$\\{file.name\\})", lastItem.getName());
 
@@ -369,6 +419,7 @@ public class Generator {
 			}
 		}
 
+		// function markers
 		try {
 			pattern = Pattern.compile("(\\$\\{func.counter\\(([a-zA-Z]{1})\\)\\})");
 			matcher = pattern.matcher(content);
@@ -468,23 +519,25 @@ public class Generator {
 	 * Prints a given Struct "struct" in console with "seperator" to seperate.
 	 * 
 	 * @param struct
+	 *            Struct
 	 * @param seperator
+	 *            String
+	 * @param showAll
+	 *            Boolean
 	 */
-	private void debugPrint(final Struct struct, final String seperator) {
+	private void printStruct(final Struct struct, final String seperator, final Boolean showAll) {
 		for(int i = 0; i < struct.size(); i++) {
-			System.out.println(seperator + i + " - " + struct.get(i).getName()
-					+ (struct.get(i).getAdditionalData() != null ? " - " + struct.get(i).getAdditionalData() : ""));
+			System.out.println(seperator
+					+ i
+					+ " - "
+					+ struct.get(i).getName()
+					+ (showAll ? (struct.get(i).getAdditionalData() != null ? " - " + struct.get(i).getAdditionalData() : "")
+							: ""));
 			if(struct.get(i).getSubStruct() != null) {
-				this.debugPrint(struct.get(i).getSubStruct(), seperator + "\t");
+				this.printStruct(struct.get(i).getSubStruct(), seperator + "\t", showAll);
 			}
 		}
 
 	}
 
 }
-/**
- * // NEW -> System.out.println("Write to filesystem? (y/N)"); BufferedReader br = new BufferedReader(new InputStreamReader(System.in)); String linex = ""; Boolean hasToWrite = null; linex =
- * br.readLine(); while(hasToWrite == null) { if(hasToWrite == null) { if(linex.equals("") || linex.equalsIgnoreCase("n")) { hasToWrite = false; } else if(linex.equalsIgnoreCase("y")) {
- * System.out.println("YES"); hasToWrite = true; } if(this.isDebug) { System.out.println("hasToWrite: " + hasToWrite); } } linex = br.readLine(); } if(hasToWrite) { if(this.isDebug) {
- * System.out.println("Work Struct"); } this.workStruct(struct, basicRootFolder); } else if(this.isDebug) { System.out.println("Not work Struct"); } // <- NEW
- **/

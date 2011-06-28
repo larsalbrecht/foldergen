@@ -44,7 +44,7 @@ import com.lars_albrecht.foldergen.core.helper.PropertiesReader;
 
 /**
  * @author lalbrecht
- * @version 1.0.5.0
+ * @version 1.5.0.0
  */
 public class FolderGenFileFilter extends FileFilter {
 

@@ -47,6 +47,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JRootPane;
 import javax.swing.UIManager;
@@ -60,7 +61,7 @@ import com.lars_albrecht.foldergen.core.helper.PropertiesReader;
  * The view is a java JFrame to choose the file with a gui.
  * 
  * @author lalbrecht
- * @version 1.0.5.0
+ * @version 1.5.0.0
  */
 @SuppressWarnings("serial")
 public class View extends JFrame implements ActionListener {
@@ -73,17 +74,30 @@ public class View extends JFrame implements ActionListener {
 	JMenuItem miAddFolder = null;
 	JMenuItem miAddFile = null;
 
-	private Boolean isDebug = false;
+	private Boolean isDebug = Boolean.FALSE;
+	private File rootPath = null;
+	private File configFile = null;
+	private Boolean showConfirmation = Boolean.FALSE;
 
 	/**
+	 * The GUI of FolderGen.
 	 * 
-	 * @param rootFile
+	 * @param rootPath
+	 *            File
+	 * @param configFile
+	 *            File
 	 * @param isDebug
+	 *            Boolean
+	 * @param showConfirmation
+	 *            Boolean
 	 */
-	public View(final File rootFile, final Boolean isDebug) {
+	public View(final File rootPath, final File configFile, final Boolean isDebug, final Boolean showConfirmation) {
 		super(PropertiesReader.getInstance().getProperties("application.name") + " - "
 				+ PropertiesReader.getInstance().getProperties("application.version"));
 		this.isDebug = isDebug;
+		this.rootPath = rootPath;
+		this.configFile = configFile;
+		this.showConfirmation = showConfirmation;
 		this.initComponents();
 	}
 
@@ -175,6 +189,7 @@ public class View extends JFrame implements ActionListener {
 				System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.opener.click"));
 			}
 			this.fcChooser = new JFileChooser();
+			this.fcChooser.setCurrentDirectory(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()));
 			this.fcChooser.setFileFilter(new FolderGenFileFilter());
 			this.fcChooser.setDialogTitle(PropertiesReader.getInstance().getProperties("application.gui.filechooser.title"));
 			Integer returnVal = this.fcChooser.showOpenDialog(this);
@@ -185,7 +200,19 @@ public class View extends JFrame implements ActionListener {
 							+ file.getName());
 				}
 				if(file.isFile() && file.exists()) {
-					new Generator(file, this.isDebug, FolderGen.IS_GUI);
+					if(this.showConfirmation) {
+						if(JOptionPane.showConfirmDialog(this, PropertiesReader.getInstance().getProperties(
+								"application.gui.messagedialog.confirmation.message"), PropertiesReader.getInstance()
+								.getProperties("application.gui.messagedialog.confirmation.title"), JOptionPane.YES_NO_OPTION,
+								JOptionPane.INFORMATION_MESSAGE) == 0) {
+							new Generator(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()), file,
+									this.isDebug, FolderGen.CONFIRMATION_HIDE);
+
+						}
+					} else {
+						new Generator(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()), file,
+								this.isDebug, FolderGen.CONFIRMATION_HIDE);
+					}
 				}
 			} else {
 				if(this.isDebug) {
@@ -195,5 +222,4 @@ public class View extends JFrame implements ActionListener {
 		}
 
 	}
-
 }
