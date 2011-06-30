@@ -60,6 +60,7 @@ You can use markers inside the template content.
 	 * ${date.isleap(YEAR)} - returns true or false
 	 * ${date.formatcurrent([Format FORMAT])} - returns the current formatted date/time
 	 * ${func.counter(VAR)} - counter for a VAR
+	 * ${func.counter(VAR|STARTNUMBER)} - counter for a VAR with startnumber STARTNUMBER
 	 * ... more comming soon ...
 
 Example 01:
@@ -83,4 +84,13 @@ Example 01:
 			${func.counter(b)} : Zero Second
 		 ${func.counter(a)} : First
 		 ${func.counter(a)} : Second
+
+		 ${func.counter(c|10)} : Ten
+			${func.counter(d|1)} : Ten Zero
+			${func.counter(d)} : Ten Second
+			${func.counter(d)} : Ten Third
+		 ${func.counter(c|20)} : Twenty
+		 ${func.counter(c)} : Eleven (first counter takes the win)
+
+
 }}}
