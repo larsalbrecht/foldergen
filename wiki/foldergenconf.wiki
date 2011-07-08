@@ -61,11 +61,16 @@ You can use markers inside the template content.
 	 * ${date.formatcurrent([Format FORMAT])} - returns the current formatted date/time
 	 * ${func.counter(VAR)} - counter for a VAR
 	 * ${func.counter(VAR|STARTNUMBER)} - counter for a VAR with startnumber STARTNUMBER
+	 * ${func.getfilecontent(filepath)} - return the content of the given file
 	 * ... more comming soon ...
 
 Example 01:
 {{{
 + My Root Folder
+	- file-additional
+		(((
+		Additional Text
+		)))
 	- file
 		(((
 		/*************************
@@ -91,6 +96,7 @@ Example 01:
 			${func.counter(d)} : Ten Third
 		 ${func.counter(c|20)} : Twenty
 		 ${func.counter(c)} : Eleven (first counter takes the win)
+		 ${func.getfilecontent(C:\My Root Folder\file-additional)}
 
 
 }}}
