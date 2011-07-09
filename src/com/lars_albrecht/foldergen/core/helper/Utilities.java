@@ -36,6 +36,12 @@
  */
 package com.lars_albrecht.foldergen.core.helper;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
 /**
  * Some helper functions.
  * 
@@ -66,5 +72,26 @@ public class Utilities {
 	 */
 	public static Boolean isBoolean(final String strBool) {
 		return strBool.equalsIgnoreCase("false") || strBool.equalsIgnoreCase("true");
+	}
+
+	/**
+	 * Returns the content of a file as string.
+	 * 
+	 * @param srcFile
+	 *            File
+	 * @return String
+	 * @throws IOException
+	 */
+	public static String getFileContent(final File srcFile) throws IOException {
+		if((srcFile != null) && srcFile.exists() && srcFile.isFile()) {
+			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(srcFile)));
+			StringBuffer contentOfFile = new StringBuffer();
+			String line;
+			while((line = br.readLine()) != null) {
+				contentOfFile.append(line);
+			}
+			return contentOfFile.toString();
+		}
+		return null;
 	}
 }
