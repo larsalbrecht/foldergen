@@ -53,12 +53,13 @@ import java.util.regex.Pattern;
 import com.lars_albrecht.foldergen.core.helper.PropertiesReader;
 import com.lars_albrecht.foldergen.core.helper.Struct;
 import com.lars_albrecht.foldergen.core.helper.StructItem;
+import com.lars_albrecht.foldergen.core.helper.Utilities;
 
 /**
  * The Generator generates the folders and files using the given configfile.
  * 
  * @author lalbrecht
- * @version 1.5.0.0
+ * @version 1.5.2.0
  * 
  */
 public class Generator {
@@ -68,6 +69,7 @@ public class Generator {
 	 */
 	private final static String FOLDER = "+";
 	private final static String FILE = "-";
+	private final static String FILECOPY = "~";
 	private final static String FOLDER_STR = "folder";
 	private final static String FILE_STR = "file";
 	private final static String CONTENT_START = "(((";
@@ -364,6 +366,8 @@ public class Generator {
 	 * <li>${date.isleap(YEAR)} - returns true or false</li>
 	 * <li>${date.formatcurrent([Format FORMAT])} - returns the current formatted date/time</li>
 	 * <li>${func.counter(VAR)} - counter for a VAR</li>
+	 * <li>${func.counter(VAR|STARTNUMBER)} - counter for a VAR with startnumber STARTNUMBER</li>
+	 * <li>${func.getfilecontent(filepath)} - return the content of the given file</li>
 	 * </ul>
 	 * 
 	 * @param lastItem
@@ -401,18 +405,13 @@ public class Generator {
 			while(matcher.find()) {
 				content = matcher.replaceAll(Boolean.toString(gc.isLeapYear(Integer.parseInt(matcher.group(1)))));
 			}
-		} catch(IllegalArgumentException e) {
-			if(this.isDebug) {
-				e.printStackTrace();
-			}
-		}
 
-		try {
 			pattern = Pattern.compile("\\$\\{date.formatcurrent\\((.+?)\\)\\}");
 			matcher = pattern.matcher(content);
 			while(matcher.find()) {
 				content = matcher.replaceAll(new SimpleDateFormat(matcher.group(1)).format(new Date()));
 			}
+
 		} catch(IllegalArgumentException e) {
 			if(this.isDebug) {
 				e.printStackTrace();
@@ -421,13 +420,30 @@ public class Generator {
 
 		// function markers
 		try {
-			pattern = Pattern.compile("(\\$\\{func.counter\\(([a-zA-Z]{1})\\)\\})");
+			pattern = Pattern.compile("(\\$\\{func\\.counter\\(([a-zA-Z]+)?(\\|[0-9]+)?\\)\\})");
 			matcher = pattern.matcher(content);
 			while(matcher.find()) {
 				int i = 0;
-				while(content.indexOf("${func.counter(" + matcher.group(2) + ")}") != -1) {
-					content = content.replaceFirst("\\$\\{func.counter\\((" + matcher.group(2) + ")\\)\\}", Integer.toString(i));
+
+				if(matcher.group(3) != null) {
+					i = Integer.parseInt(matcher.group(3).substring(1));
+					content = content.replaceFirst("(\\$\\{func.counter\\((" + matcher.group(2) + ")\\|" + i + "\\)\\})", Integer
+							.toString(i));
 					i++;
+				}
+				while(content.indexOf("${func.counter(" + matcher.group(2) + ")}") != -1) {
+					content = content
+							.replaceFirst("(\\$\\{func.counter\\((" + matcher.group(2) + ")\\)\\})", Integer.toString(i));
+					i++;
+				}
+			}
+
+			pattern = Pattern.compile("(\\$\\{func\\.getfilecontent\\((.+)?\\)\\})");
+			matcher = pattern.matcher(content);
+			while(matcher.find()) {
+				while(content.indexOf("${func.getfilecontent(" + matcher.group(2) + ")}") != -1) {
+					content = content.replaceFirst("(\\$\\{func\\.getfilecontent\\((\\Q" + matcher.group(2) + "\\E)?\\)\\})",
+							Utilities.getFileContent(new File(matcher.group(2))));
 				}
 			}
 
@@ -435,8 +451,11 @@ public class Generator {
 			if(this.isDebug) {
 				e.printStackTrace();
 			}
+		} catch(IOException e) {
+			if(this.isDebug) {
+				e.printStackTrace();
+			}
 		}
-
 		return content;
 	}
 

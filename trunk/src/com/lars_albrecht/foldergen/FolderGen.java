@@ -52,7 +52,7 @@ import com.lars_albrecht.foldergen.gui.View;
  * 
  * @see http://code.google.com/p/foldergen/
  * @author lalbrecht
- * @version 1.4.6.1
+ * @version 1.4.8.0
  * 
  */
 public class FolderGen {
