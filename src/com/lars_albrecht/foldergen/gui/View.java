@@ -61,12 +61,14 @@ import com.lars_albrecht.foldergen.core.helper.PropertiesReader;
  * The view is a java JFrame to choose the file with a gui.
  * 
  * @author lalbrecht
- * @version 1.5.0.0
+ * @version 1.5.1.0
  */
 @SuppressWarnings("serial")
 public class View extends JFrame implements ActionListener {
 
 	private JButton btnChooseFile = null;
+	private JButton btnChooseRootFolder = null;
+	private JButton btnStart = null;
 	private JFileChooser fcChooser = null;
 	private JRootPane rpPane = null;
 
@@ -106,6 +108,8 @@ public class View extends JFrame implements ActionListener {
 	 */
 	private void addComponents() {
 		this.rpPane.add(this.btnChooseFile, BorderLayout.NORTH);
+		this.rpPane.add(this.btnStart, BorderLayout.CENTER);
+		this.rpPane.add(this.btnChooseRootFolder, BorderLayout.SOUTH);
 
 		this.add(this.rpPane);
 	}
@@ -153,7 +157,7 @@ public class View extends JFrame implements ActionListener {
 		this.setLayout(new BorderLayout());
 
 		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setBounds((screenSize.width - 75) / 2, (screenSize.height - 50) / 2, 75, 50);
+		this.setBounds((screenSize.width - 150) / 2, (screenSize.height - 100) / 2, 150, 100);
 
 		this.createComponents();
 		this.configureComponents();
@@ -168,6 +172,8 @@ public class View extends JFrame implements ActionListener {
 		this.rpPane.setLayout(new BorderLayout());
 		this.btnChooseFile.setBounds(10, 10, 100, 25);
 		this.btnChooseFile.addActionListener(this);
+		this.btnChooseRootFolder.addActionListener(this);
+		this.btnStart.addActionListener(this);
 	}
 
 	/**
@@ -176,6 +182,9 @@ public class View extends JFrame implements ActionListener {
 	private void createComponents() {
 		this.rpPane = new JRootPane();
 		this.btnChooseFile = new JButton(PropertiesReader.getInstance().getProperties("application.gui.filechooser.opener"));
+		this.btnChooseRootFolder = new JButton(PropertiesReader.getInstance().getProperties(
+				"application.gui.rootfolderchooser.opener"));
+		this.btnStart = new JButton(PropertiesReader.getInstance().getProperties("application.gui.button.start"));
 	}
 
 	/**
@@ -200,24 +209,53 @@ public class View extends JFrame implements ActionListener {
 							+ file.getName());
 				}
 				if(file.isFile() && file.exists()) {
-					if(this.showConfirmation) {
-						if(JOptionPane.showConfirmDialog(this, PropertiesReader.getInstance().getProperties(
-								"application.gui.messagedialog.confirmation.message"), PropertiesReader.getInstance()
-								.getProperties("application.gui.messagedialog.confirmation.title"), JOptionPane.YES_NO_OPTION,
-								JOptionPane.INFORMATION_MESSAGE) == 0) {
-							new Generator(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()), file,
-									this.isDebug, FolderGen.CONFIRMATION_HIDE);
-
-						}
-					} else {
-						new Generator(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()), file,
-								this.isDebug, FolderGen.CONFIRMATION_HIDE);
-					}
+					this.configFile = file;
 				}
 			} else {
 				if(this.isDebug) {
 					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.canceled"));
 				}
+			}
+		} else if(e.getSource() == this.btnChooseRootFolder) {
+			if(this.isDebug) {
+				System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.opener.click"));
+			}
+			this.fcChooser = new JFileChooser();
+			this.fcChooser.setCurrentDirectory(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()));
+			this.fcChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+			this.fcChooser
+					.setDialogTitle(PropertiesReader.getInstance().getProperties("application.gui.rootfolderchooser.title"));
+			this.fcChooser.setAcceptAllFileFilterUsed(false);
+			Integer returnVal = this.fcChooser.showOpenDialog(this);
+
+			if(returnVal == JFileChooser.APPROVE_OPTION) {
+				File file = this.fcChooser.getSelectedFile() != null ? this.fcChooser.getSelectedFile() : this.fcChooser
+						.getCurrentDirectory();
+				if(this.isDebug) {
+					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.approved")
+							+ file.getName());
+				}
+				if(file.isDirectory() && file.exists()) {
+					this.rootPath = file;
+				}
+			} else {
+				if(this.isDebug) {
+					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.canceled"));
+				}
+			}
+		} else if(e.getSource() == this.btnStart) {
+			if(this.showConfirmation) {
+				if(JOptionPane.showConfirmDialog(this, PropertiesReader.getInstance().getProperties(
+						"application.gui.messagedialog.confirmation.message"), PropertiesReader.getInstance().getProperties(
+						"application.gui.messagedialog.confirmation.title"), JOptionPane.YES_NO_OPTION,
+						JOptionPane.INFORMATION_MESSAGE) == 0) {
+					new Generator(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()), this.configFile,
+							this.isDebug, FolderGen.CONFIRMATION_HIDE);
+
+				}
+			} else {
+				new Generator(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()), this.configFile,
+						this.isDebug, FolderGen.CONFIRMATION_HIDE);
 			}
 		}
 

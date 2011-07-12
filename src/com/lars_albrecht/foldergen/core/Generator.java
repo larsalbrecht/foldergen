@@ -59,7 +59,7 @@ import com.lars_albrecht.foldergen.core.helper.Utilities;
  * The Generator generates the folders and files using the given configfile.
  * 
  * @author lalbrecht
- * @version 1.5.2.0
+ * @version 1.5.3.0
  * 
  */
 public class Generator {
@@ -69,9 +69,10 @@ public class Generator {
 	 */
 	private final static String FOLDER = "+";
 	private final static String FILE = "-";
-	private final static String FILECOPY = "~";
+	private final static String COPY = "~";
 	private final static String FOLDER_STR = "folder";
 	private final static String FILE_STR = "file";
+	private final static String COPY_STR = "copy";
 	private final static String CONTENT_START = "(((";
 	private final static String CONTENT_END = ")))";
 
@@ -130,76 +131,56 @@ public class Generator {
 			StructItem lastItem = null;
 			// every line in file
 			while((line = in.readLine()) != null) {
-				String typeStr = null;
 				String[] basicInfo = line.trim().split("\\s", 2);
-				if(line.indexOf("+") != -1) {
-					typeStr = line.substring(0, line.indexOf("+"));
-				} else if(line.indexOf("-") != -1) {
-					typeStr = line.substring(0, line.indexOf("-"));
+
+				String typeStr = null;
+				Matcher m = Pattern.compile("^([\\s]*)([\\+\\-\\~]{1}[\\s]{1})").matcher(line);
+				if(m.find() && (m.groupCount() > 0)) {
+					typeStr = m.group(1);
 				}
+
 				if((typeStr != null) || (line.indexOf("(((") != -1)) {
 					if((basicInfo != null) && (basicInfo.length == 2) && (basicInfo[0] != null) && (basicInfo[1] != null)) {
 						layer = typeStr.split("\\s", -1).length - 1;
 						HashMap<String, String> additionalInfo = new HashMap<String, String>();
+						String itemTitle = null;
 						// if folder or file ...
 						if(basicInfo[0].trim().equals(Generator.FOLDER) || basicInfo[0].trim().equals(Generator.FILE)) {
+							if(this.isDebug) {
+								System.out.println("is file/folder");
+							}
 							additionalInfo.put("type", basicInfo[0].trim().equals(Generator.FOLDER) ? Generator.FOLDER_STR
 									: Generator.FILE_STR);
-							String name = basicInfo[1].trim();
-							if(layer.equals(0)) { // zero / root layer
-								struct = this.workLayerZero(name, struct, lastItem, additionalInfo);
-								lastItem = struct.get(struct.size() - 1);
-							} else if(layer > lastLayer) { // layer down
-								lastItem = this.workLayerDown(name, struct, lastItem, additionalInfo);
-							} else if(layer < lastLayer) { // layer up
-								lastItem = this.workLayerUp(name, struct, lastItem, additionalInfo, lastLayer, layer);
-							} else if(layer.equals(lastLayer)) { // same
-								// layer
-								lastItem = this.workLayerSame(name, struct, lastItem, additionalInfo);
+							itemTitle = basicInfo[1].trim();
+
+							// if copy
+						} else if(basicInfo[0].trim().equals(Generator.COPY)) {
+							if(this.isDebug) {
+								System.out.println("is copy");
 							}
-							lastLayer = layer;
+							additionalInfo.put("type", Generator.COPY_STR);
+							additionalInfo
+									.put("src", basicInfo[1].trim().substring(basicInfo[1].trim().indexOf("->") + 2).trim());
+							itemTitle = basicInfo[1].trim().substring(0, basicInfo[1].trim().indexOf("->")).trim();
+
 						}
+						if(basicInfo[0].trim().equals(Generator.FOLDER) || basicInfo[0].trim().equals(Generator.FILE)
+								|| basicInfo[0].trim().equals(Generator.COPY)) {
+							Object[] workedLine = this.workLine(layer, lastLayer, itemTitle, struct, lastItem, additionalInfo);
+							struct = (Struct) workedLine[0];
+							lastItem = (StructItem) workedLine[1];
+
+						}
+						lastLayer = layer;
 					} else if(basicInfo[0].trim().equals(Generator.CONTENT_START)) {
+						if(this.isDebug) {
+							System.out.println("is Content");
+						}
 						this.workContent(in, lastItem);
 					}
 				}
 			}
-
-			if(this.showConfirmation) {
-				this.printStruct(struct, "", Boolean.FALSE);
-				System.out.println(PropertiesReader.getInstance().getProperties("application.debug.choosedrootpath"));
-				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-				String inputLine = null;
-				Boolean hasToWrite = null;
-				try {
-					while((hasToWrite == null) && ((inputLine = br.readLine()) != null)) {
-						if(inputLine.equals("") || inputLine.equalsIgnoreCase("n") || inputLine.equalsIgnoreCase("н")) {
-							hasToWrite = false;
-						} else if(inputLine.equalsIgnoreCase("y") || inputLine.equalsIgnoreCase("j")
-								|| inputLine.equalsIgnoreCase("o") || inputLine.equalsIgnoreCase("Д")) {
-							hasToWrite = true;
-						}
-						if(this.isDebug) {
-							System.out.println("\n"
-									+ PropertiesReader.getInstance().getProperties("application.debug.confirmation.writenotice")
-									+ hasToWrite);
-						}
-					}
-				} catch(IOException e) {
-					e.printStackTrace();
-				}
-				if(hasToWrite) {
-					if(this.isDebug) {
-						System.out.println("\n" + PropertiesReader.getInstance().getProperties("application.debug.struct.work"));
-					}
-					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.struct.work.create"));
-					this.workStruct(struct, basicRootFolder);
-				} else if(this.isDebug) {
-					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.struct.nowork.nocreate"));
-					System.out.println("\n" + PropertiesReader.getInstance().getProperties("application.debug.struct.work"));
-				}
-
-			} else {
+			if((this.showConfirmation && this.confirmationWorker(struct, basicRootFolder)) || !this.showConfirmation) {
 				this.workStruct(struct, basicRootFolder);
 			}
 
@@ -212,6 +193,84 @@ public class Generator {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * 
+	 * 
+	 * @param struct
+	 *            Struct
+	 * @param basicRootFolder
+	 *            File
+	 * @return Boolean
+	 */
+	private Boolean confirmationWorker(final Struct struct, final File basicRootFolder) {
+		this.printStruct(struct, "", Boolean.FALSE);
+		System.out.println(PropertiesReader.getInstance().getProperties("application.output.confirmation.question"));
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		String inputLine = null;
+		Boolean hasToWrite = null;
+		try {
+			while((hasToWrite == null) && ((inputLine = br.readLine()) != null)) {
+				if(inputLine.equals("") || inputLine.equalsIgnoreCase("n") || inputLine.equalsIgnoreCase("н")) {
+					hasToWrite = false;
+				} else if(inputLine.equalsIgnoreCase("y") || inputLine.equalsIgnoreCase("j") || inputLine.equalsIgnoreCase("o")
+						|| inputLine.equalsIgnoreCase("Д")) {
+					hasToWrite = true;
+				}
+				if(this.isDebug) {
+					System.out.println("\n"
+							+ PropertiesReader.getInstance().getProperties("application.debug.confirmation.writenotice")
+							+ hasToWrite);
+				}
+			}
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+		if(hasToWrite) {
+			if(this.isDebug) {
+				System.out.println("\n" + PropertiesReader.getInstance().getProperties("application.debug.struct.work"));
+			}
+			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.struct.work.create"));
+			this.workStruct(struct, basicRootFolder);
+		} else if(this.isDebug) {
+			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.struct.nowork.nocreate"));
+			System.out.println("\n" + PropertiesReader.getInstance().getProperties("application.debug.struct.nowork"));
+		}
+		return true;
+	}
+
+	/**
+	 * Works a line. Add structItem to struct with care of the indent. Returns struct and lastItem in the result Object-Array.
+	 * 
+	 * @param layer
+	 *            Integer
+	 * @param lastLayer
+	 *            Integer
+	 * @param itemTitle
+	 *            String
+	 * @param struct
+	 *            Struct
+	 * @param lastItem
+	 *            StructItem
+	 * @param additionalInfo
+	 *            HashMap<String, String>
+	 * @return Object{struct, lastItem}
+	 */
+	private Object[] workLine(final Integer layer, final Integer lastLayer, final String itemTitle, final Struct struct,
+			final StructItem lastItem, final HashMap<String, String> additionalInfo) {
+		Object[] mulitpleResult = { struct, lastItem };
+		if(layer.equals(0)) { // zero / root layer
+			mulitpleResult[0] = this.workLayerZero(itemTitle, struct, lastItem, additionalInfo);
+			mulitpleResult[1] = struct.get(struct.size() - 1);
+		} else if(layer > lastLayer) { // layer down
+			mulitpleResult[1] = this.workLayerDown(itemTitle, struct, lastItem, additionalInfo);
+		} else if(layer < lastLayer) { // layer up
+			mulitpleResult[1] = this.workLayerUp(itemTitle, struct, lastItem, additionalInfo, lastLayer, layer);
+		} else if(layer.equals(lastLayer)) { // same layer
+			mulitpleResult[1] = this.workLayerSame(itemTitle, struct, lastItem, additionalInfo);
+		}
+		return mulitpleResult;
 	}
 
 	/**
@@ -424,7 +483,6 @@ public class Generator {
 			matcher = pattern.matcher(content);
 			while(matcher.find()) {
 				int i = 0;
-
 				if(matcher.group(3) != null) {
 					i = Integer.parseInt(matcher.group(3).substring(1));
 					content = content.replaceFirst("(\\$\\{func.counter\\((" + matcher.group(2) + ")\\|" + i + "\\)\\})", Integer
@@ -437,7 +495,6 @@ public class Generator {
 					i++;
 				}
 			}
-
 			pattern = Pattern.compile("(\\$\\{func\\.getfilecontent\\((.+)?\\)\\})");
 			matcher = pattern.matcher(content);
 			while(matcher.find()) {
@@ -446,7 +503,6 @@ public class Generator {
 							Utilities.getFileContent(new File(matcher.group(2))));
 				}
 			}
-
 		} catch(IllegalArgumentException e) {
 			if(this.isDebug) {
 				e.printStackTrace();
@@ -479,6 +535,9 @@ public class Generator {
 				} else if(tempAdditionalData.get("type").toLowerCase().equals(Generator.FOLDER_STR)) {
 					// create folder, if needed
 					this.workFolder(rootFolder, struct.get(i).getName());
+				} else if(tempAdditionalData.get("type").toLowerCase().equals(Generator.COPY_STR)) {
+					// create copy, if needed
+					this.workCopy(rootFolder, tempAdditionalData, struct.get(i).getName());
 				}
 			}
 			if(struct.get(i).getSubStruct() != null) {
@@ -486,6 +545,30 @@ public class Generator {
 				this.workStruct(struct.get(i).getSubStruct(), new File(rootFolder + File.separator + struct.get(i).getName()));
 			}
 		}
+	}
+
+	/**
+	 * If needed, creates a copy of a file and.
+	 * 
+	 * @param rootFolder
+	 *            File
+	 * @param tempAdditionalData
+	 *            HashMap<String,String>
+	 * @param name
+	 *            String
+	 */
+	private void workCopy(final File rootFolder, final HashMap<String, String> tempAdditionalData, final String name) {
+		File source = new File(tempAdditionalData.get("src"));
+		try {
+			if(source.exists() && source.isFile()) {
+				Utilities.copyFile(source, new File(rootFolder.getAbsolutePath() + File.separator + name));
+			} else if(source.exists() && source.isDirectory()) {
+				Utilities.copyDir(source, new File(rootFolder.getAbsolutePath() + File.separator + name));
+			}
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	/**
