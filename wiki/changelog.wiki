@@ -6,7 +6,7 @@
 
 == Version 1.4.8.0 - coming soon ==
  * Added [foldergenconf#Markers_(Version_1.2_and_above) marker] ${func.getfilecontent(filepath)} to replace the marker with the content of the given file
- * Added marker "~" to define a copy of a file. _... more infos later ..._
+ * Added marker "~" to define a copy of a file / folder in the [foldergenconf]
 
 == Version 1.4.7.0 ==
  * Changed [foldergenconf#Markers_(Version_1.2_and_above) marker] ${func.counter(X)} to get a startnumber. e.g.:${func.counter(x|10)} to start with 10
