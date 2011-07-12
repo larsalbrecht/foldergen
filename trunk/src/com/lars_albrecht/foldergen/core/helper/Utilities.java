@@ -39,8 +39,12 @@ package com.lars_albrecht.foldergen.core.helper;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 /**
  * Some helper functions.
@@ -93,5 +97,31 @@ public class Utilities {
 			return contentOfFile.toString();
 		}
 		return null;
+	}
+
+	public static void copyFile(final File source, final File target) throws FileNotFoundException, IOException {
+		FileChannel in = new FileInputStream(source).getChannel(), out = new FileOutputStream(target).getChannel();
+		ByteBuffer buffer = ByteBuffer.allocate(1024);
+		while(in.read(buffer) != -1) {
+			buffer.flip(); // Prepare for writing
+			out.write(buffer);
+			buffer.clear(); // Prepare for reading
+		}
+		out.close();
+		in.close();
+	}
+
+	public static void copyDir(final File source, final File target) throws FileNotFoundException, IOException {
+		File[] files = source.listFiles();
+		target.mkdirs();
+		for(File file : files) {
+			if(file.isDirectory()) {
+				Utilities.copyDir(file,
+						new File(target.getAbsolutePath() + System.getProperty("file.separator") + file.getName()));
+			} else {
+				Utilities.copyFile(file, new File(target.getAbsolutePath() + System.getProperty("file.separator")
+						+ file.getName()));
+			}
+		}
 	}
 }
