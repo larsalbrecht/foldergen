@@ -18,11 +18,19 @@ Example 01:
 		+ A subfolder in a subfolder
 		- A file in a subfolder
 	- another file2
+	~ a file copy -> /home/myfile
+	~ a folder copy -> /home/myfolder/
+		- a file in folder copy
 }}}
 
-Each line has a specified easy syntax. Each whitespace (eg. \t or \n) is used to indent the structure. Then it starts a file (-) or folder (+). If a file exists, it will be NOT overwritten.
+Each line has a specified easy syntax. Each whitespace (eg. \t or \n) is used to indent the structure. Be carefully: use only one whitespace to indent the structure.
+Then it starts a file (-), a copy^1^ (~) or a folder (+). If a file exists, it will be *NOT* overwritten.
+
+You can specify a new (copied) file / folder in a copied folder on the regular way.
 
 If you want so specify template content for a file, you can use "(((" and ")))" to limit this in the foldergenconf-file.
+
+If you specify a file1 in file0, the file1 will *NOT* be written.
 
 {{{
 + My Root Folder
@@ -100,3 +108,6 @@ Example 01:
 
 
 }}}
+
+----
+^1^ : version 1.4.8.0 and above
