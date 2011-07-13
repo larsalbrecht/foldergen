@@ -4,7 +4,7 @@
 
 = Changelog =
 
-== Version 1.4.9.0 - coming soon ==
+== Version 1.4.9.0 ==
  * Added simple [Plugins plugin] - Environment to add an own content marker replacer
  * Added parameter -p to load the plugin module
 _note: this is alpha_
