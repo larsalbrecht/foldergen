@@ -1,0 +1,53 @@
+#summary All about plugins
+<wiki:toc max_depth="3" />
+
+= Plugins (Version 1.4.9.0 | Pluginframework Version 1.0.0.0) =
+_Be carefully with this. This is *NOT* final and the code to produce a plugin can be changed in near future_
+
+== How to use ==
+You need only to put the jar of the plugin to the folder where FolderGen is.
+
+== How to code ==
+It is really simple to create a plugin in this version. You need to add "foldergenpluginframeworkjar-<version>.jar" to you buildpath. Then you can create a class that extends "CoreMarkerReplacer" (com.lars_albrecht.foldergen.plugin.classes.CoreMarkerReplacer).
+
+Now, you need only to overwrite two methods:
+replaceContent()
+getName()
+
+In "getName" you return the name of the plugin, e.g.: MyDemoPlugin
+
+In "replaceContent" you have the var "content" in "this.getContent()". In here you will have the content from FolderGen. Here you can do something like:
+{{{
+return this.getContent().replaceAll("(\\$\\{plugin.demo\\})", this.getName() + " DEMO");
+}}}
+
+=== Example Demo Class ===
+{{{
+/**
+ * 
+ */
+package com.lars_albrecht.foldergen.plugin;
+
+import com.lars_albrecht.foldergen.plugin.classes.CoreMarkerReplacer;
+
+/**
+ * Replaces ${plugin.demo} with "MyPluginDemo DEMO".
+ * 
+ * @author lalbrecht
+ * @version 1.0.0.0
+ */
+public class MyPluginDemo extends CoreMarkerReplacer {
+
+	@Override
+	public String replaceContent() {
+		return this.getContent().replaceAll("(\\$\\{plugin.demo\\})", this.getName() + " DEMO");
+	}
+
+	@Override
+	public String getName() {
+		return "MyPluginDemo";
+	}
+
+}
+
+}}}
