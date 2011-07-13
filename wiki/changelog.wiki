@@ -5,8 +5,9 @@
 = Changelog =
 
 == Version 1.4.9.0 - coming soon ==
- * Added simple [Plugins plugin] - Environment to add own content marker replacer
+ * Added simple [Plugins plugin] - Environment to add an own content marker replacer
  * Added parameter -p to load the plugin module
+_note: this is alpha_
 
 == Version 1.4.8.0 ==
  * Added [foldergenconf#Markers_(Version_1.2_and_above) marker] ${func.getfilecontent(filepath)} to replace the marker with the content of the given file
