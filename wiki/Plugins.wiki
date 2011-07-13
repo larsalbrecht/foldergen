@@ -8,7 +8,7 @@ _Be carefully with this. This is *NOT* final and the code to produce a plugin ca
 You need only to put the jar of the plugin to the folder where FolderGen is.
 
 == How to code ==
-It is really simple to create a plugin in this version. You need to add "foldergenpluginframeworkjar-<version>.jar" to you buildpath. Then you can create a class that extends "CoreMarkerReplacer" (com.lars_albrecht.foldergen.plugin.classes.CoreMarkerReplacer).
+It is really simple to create a plugin in this version. You need to add "foldergenpluginframeworkjar-< version >.jar" to you buildpath. Then you can create a class that extends "CoreMarkerReplacer" (com.lars_albrecht.foldergen.plugin.classes.CoreMarkerReplacer).
 
 Now, you need only to overwrite two methods:
 replaceContent()
