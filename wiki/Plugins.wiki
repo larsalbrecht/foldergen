@@ -1,4 +1,5 @@
 #summary All about plugins
+#labels Featured,Phase-Implementation
 <wiki:toc max_depth="3" />
 
 = Plugins (Version 1.4.9.0 | Pluginframework Version 1.0.0.0) =
