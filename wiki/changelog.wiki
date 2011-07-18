@@ -7,8 +7,8 @@
 == Version 1.5.0.0 - coming soon ==
  * Restructure plugin module
  * Plugins can now modify the config
- * Added function to marker "~". Define a Web-URL to retrieve content from the web
- * Added use of proxy (detect automatically)
+ * Added function to marker "~". Define a Web-URL to retrieve content from the web (work in progress: 100%)
+ * Added use of proxy (detect automatically) (work in progress: 100%)
  * Add plugin functionality (on/off) to the GUI  (work in progress: 100%)
  * Add confirmation (on/off) to the GUI (work in progress: 100%)
  * Reorganize GUI (work in progress: 100%)
