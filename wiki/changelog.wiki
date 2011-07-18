@@ -7,6 +7,7 @@
 == Version 1.5.0.0 - coming soon ==
  * Restructure plugin module
  * Plugins can now modify the config
+ * Added function to marker "~". Define a Web-URL to retrieve content from the web.
  * ~~Default markers are now a core plugin~~ (maybe later)
  * Add plugin functionality (on/off) to the GUI  (work in progress: 100%)
  * Add confirmation (on/off) to the GUI (work in progress: 100%)
