@@ -10,7 +10,7 @@
  * Restructure source packages _(work in progress: *100%*)_
  * Added function to marker "~". Define a Web-URL to retrieve content from the web _(work in progress: *100%*)_
  * Added use of proxy (detect automatically) _(work in progress: *100%*)_
-   * Added parameter -px / -proxy to activate proxy search
+   * Added parameter -px / -proxy to activate proxy search _(work in progress: *100%*)_
  * Add plugin functionality (on/off) to the GUI _(work in progress: *100%*)_
  * Add confirmation (on/off) to the GUI _(work in progress: *100%*)_
  * Reorganize GUI _(work in progress: *100%*)_
