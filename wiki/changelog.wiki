@@ -8,8 +8,8 @@
  * Restructure plugin module
  * Default markers are now a core plugin
  * Plugins can now modify the config
- * Add plugin functionality (on/off) to the GUI
- * Add confirmation (on/off) to the GUI
+ * Add plugin functionality (on/off) to the GUI  (work in progress: 100%)
+ * Add confirmation (on/off) to the GUI (work in progress: 100%)
  * ... coming soon ...
 
 == Version 1.4.9.0 ==
