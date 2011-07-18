@@ -7,12 +7,14 @@
 == Version 1.5.0.0 - coming soon ==
  * Restructure plugin module
  * Plugins can now modify the config
- * Added function to marker "~". Define a Web-URL to retrieve content from the web (work in progress: 100%)
- * Added use of proxy (detect automatically) (work in progress: 100%)
- * Add plugin functionality (on/off) to the GUI  (work in progress: 100%)
- * Add confirmation (on/off) to the GUI (work in progress: 100%)
- * Reorganize GUI (work in progress: 100%)
- * ... coming soon ...
+ * Restructure source packages _(work in progress: *100%*)_
+ * Added function to marker "~". Define a Web-URL to retrieve content from the web _(work in progress: *100%*)_
+ * Added use of proxy (detect automatically) _(work in progress: *100%*)_
+   * Added parameter -px / -proxy to activate proxy search
+ * Add plugin functionality (on/off) to the GUI _(work in progress: *100%*)_
+ * Add confirmation (on/off) to the GUI _(work in progress: *100%*)_
+ * Reorganize GUI _(work in progress: *100%*)_
+ * _... coming soon ..._
 
 == Version 1.4.9.0 ==
  * Added simple [Plugins plugin] - Environment to add an own content marker replacer
