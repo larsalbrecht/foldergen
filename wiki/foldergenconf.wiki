@@ -21,6 +21,7 @@ Example 01:
 	~ a file copy -> /home/myfile
 	~ a folder copy -> /home/myfolder/
 		- a file in folder copy
+	~ a file from web -> http://www.example.com/examplefile
 }}}
 
 Each line has a specified easy syntax. Each whitespace (eg. \t or \n) is used to indent the structure. Be carefully: use only one whitespace to indent the structure.
@@ -110,4 +111,4 @@ Example 01:
 }}}
 
 ----
-^1^ : version 1.4.8.0 and above
+^1^ : version 1.4.8.0 and above. From version 1.5.0.0 you can specify a URL to get the content in the new file (URL must start with http:// or https://).
