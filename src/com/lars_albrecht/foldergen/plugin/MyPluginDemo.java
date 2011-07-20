@@ -34,75 +34,26 @@
 /**
  * 
  */
-package com.lars_albrecht.foldergen.core.helper;
+package com.lars_albrecht.foldergen.plugin;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.ResourceBundle;
+import com.lars_albrecht.foldergen.plugin.classes.CoreMarkerReplacer;
 
 /**
+ * Replaces ${plugin.demo} with "MyPluginDemo DEMO".
+ * 
  * @author lalbrecht
  * @version 1.0.0.0
- * 
  */
-public final class PropertiesReader {
+public class MyPluginDemo extends CoreMarkerReplacer {
 
-	private static PropertiesReader instance = null;
-	private Locale locale = Locale.getDefault();
-
-	/**
-	 * @return the locale
-	 */
-	public synchronized final Locale getLocale() {
-		return this.locale;
+	@Override
+	public String replaceContent() {
+		return this.getContent().replaceAll("(\\$\\{plugin.demo\\})", this.getName() + " DEMO");
 	}
 
-	/**
-	 * @param locale
-	 *            the locale to set
-	 */
-	public synchronized final void setLocale(final Locale locale) {
-		this.locale = locale;
+	@Override
+	public String getName() {
+		return "MyPluginDemo";
 	}
 
-	/**
-	 * Private default constructor.
-	 */
-	private PropertiesReader() {
-	}
-
-	/**
-	 * 
-	 * @return PropertiesReader
-	 */
-	public static PropertiesReader getInstance() {
-
-		if(PropertiesReader.instance == null) {
-			PropertiesReader.instance = new PropertiesReader();
-		}
-		return PropertiesReader.instance;
-	}
-
-	/**
-	 * Returns the value of the key. Converts the iso-8859-1 Strings to UTF-8.
-	 * 
-	 * @param key
-	 * @return String
-	 */
-	public String getProperties(final String key) {
-		String result = null;
-		try {
-			ResourceBundle bundle = ResourceBundle.getBundle("foldergen", this.locale);
-			result = bundle.getString(key);
-			byte bytes[] = result.getBytes("ISO-8859-1");
-			result = new String(bytes, "UTF-8");
-			return result;
-		} catch(MissingResourceException e) {
-			e.printStackTrace();
-		} catch(UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
 }
