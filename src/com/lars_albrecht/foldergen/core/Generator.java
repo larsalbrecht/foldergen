@@ -38,13 +38,9 @@ package com.lars_albrecht.foldergen.core;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.ConnectException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -56,6 +52,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.lars_albrecht.foldergen.core.generator.worker.CopyWorker;
+import com.lars_albrecht.foldergen.core.generator.worker.DefaultContentWorker;
 import com.lars_albrecht.foldergen.core.generator.worker.FileWorker;
 import com.lars_albrecht.foldergen.core.generator.worker.FolderWorker;
 import com.lars_albrecht.foldergen.core.generator.worker.interfaces.IWorker;
@@ -78,15 +75,8 @@ public class Generator {
 	/**
 	 * static variables for comparisons
 	 */
-	private final static String FOLDER = "+";
-	private final static String FILE = "-";
-	private final static String COPY = "~";
-	private final static String FOLDER_STR = "folder";
-	private final static String FILE_STR = "file";
-	private final static String COPY_STR = "copy";
-	private final static String CONTENT_START = "(((";
-	private final static String CONTENT_END = ")))";
-	private static ArrayList<IWorker> fgcMapper = new ArrayList<IWorker>();
+	private final static ArrayList<IWorker> fgcMapper = new ArrayList<IWorker>();
+	private final static ArrayList<String> fileTypes = new ArrayList<String>();
 
 	private Boolean isDebug = false;
 	private File rootPath = null;
@@ -108,26 +98,24 @@ public class Generator {
 	 * @param usePlugins
 	 *            Boolean
 	 */
-	public Generator(final File rootPath, final File configFile, final Boolean isDebug, final Boolean showConfirmation,
-			final Boolean usePlugins) {
+	public Generator(final File rootPath, final File configFile, final Boolean isDebug, final Boolean showConfirmation, final Boolean usePlugins) {
 		this.isDebug = isDebug;
 		this.showConfirmation = showConfirmation;
 		this.usePlugins = usePlugins;
 
 		this.initGenerator();
 
-		if(usePlugins) {
+		if (usePlugins) {
 			this.loadPlugins();
 		}
 
 		this.rootPath = (rootPath != null ? rootPath : new File(configFile.getParent()));
-		if(this.isDebug) {
-			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.choosedrootpath")
-					+ this.rootPath.getAbsolutePath() + "\n");
+		if (this.isDebug) {
+			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.choosedrootpath") + this.rootPath.getAbsolutePath() + "\n");
 		}
 
 		// If config file exists and is a file and parent != null
-		if(configFile.exists() && configFile.isFile() && (configFile.getParent() != null)) {
+		if (configFile.exists() && configFile.isFile() && (configFile.getParent() != null)) {
 			this.workFile(configFile);
 		} else {
 			System.out.println(PropertiesReader.getInstance().getProperties("application.output.wrongfile"));
@@ -138,10 +126,18 @@ public class Generator {
 		Generator.fgcMapper.add(new FolderWorker());
 		Generator.fgcMapper.add(new FileWorker());
 		Generator.fgcMapper.add(new CopyWorker());
+		Generator.fgcMapper.add(new DefaultContentWorker());
+
+		for (IWorker w : Generator.fgcMapper) {
+			if (w.getFileMarker() != null) {
+				fileTypes.add(w.getFileMarker());
+			}
+		}
 	}
 
 	/**
-	 * Works the file. Parse the given config file and generates the files and folders recursivly.
+	 * Works the file. Parse the given config file and generates the files and
+	 * folders recursivly.
 	 * 
 	 * @param configFile
 	 *            File
@@ -163,121 +159,87 @@ public class Generator {
 			// Create structitem for the last created.
 			StructItem lastItem = null;
 			// every line in file
-			while((line = in.readLine()) != null) {
-				String[] basicInfo = line.trim().split("\\s", 2);
+			while ((line = in.readLine()) != null) {
+				// Split line
+				String[] basicInfoArr = line.trim().split("\\s", 2);
+
 				String typeStr = null;
 				Matcher m = Pattern.compile("([\\s]{0,})([\\+\\-\\~]{1})([\\s]{1})").matcher(line);
-				if(m.find() && (m.groupCount() > 0)) {
+				if (m.find() && (m.groupCount() > 0)) {
 					typeStr = m.group(1);
 				}
-				Boolean bTrue = true;
-				if((typeStr != null) || (line.indexOf("(((") != -1)) {
-					if((basicInfo != null) && (basicInfo.length == 2) && (basicInfo[0] != null) && (basicInfo[1] != null)) {
-						layer = typeStr.split("\\s", -1).length - 1;
-						if(layer.equals("")) {
-							layer = 0;
-						}
-						HashMap<String, String> additionalInfo = new HashMap<String, String>();
-						String itemTitle = null;
 
-						if(bTrue) {
-							for(IWorker w : Generator.fgcMapper) {
-								if(!w.isContent() && basicInfo[0].trim().equalsIgnoreCase(w.getFileMarker())) {
-									if(this.isDebug) {
-										System.out.println("is " + w.getMarker() + " (" + w.getFileMarker() + ")");
-									}
-									HashMap<String, String> tempAdditionalInfo;
-									additionalInfo.put("type", w.getMarker());
-									itemTitle = w.getItemTitle(basicInfo);
-									if((tempAdditionalInfo = w.getAdditionlInfo(basicInfo)) != null) {
-										additionalInfo.putAll(tempAdditionalInfo);
-									}
-
-									Object[] workedLine = this.workLine(layer, lastLayer, itemTitle, struct, lastItem,
-											additionalInfo);
-									struct = (Struct) workedLine[0];
-									lastItem = (StructItem) workedLine[1];
-									lastLayer = layer;
-									break;
-								}
+				if ((typeStr != null) && (basicInfoArr != null) && (basicInfoArr.length == 2) && (basicInfoArr[0] != null) && (basicInfoArr[1] != null)) {
+					// No content
+					for (IWorker w : Generator.fgcMapper) {
+						if (!w.isContent() && basicInfoArr[0].trim().equalsIgnoreCase(w.getFileMarker())) {
+							if (this.isDebug) {
+								System.out.println("is " + w.getMarker() + " (" + w.getFileMarker() + ")");
 							}
-						} else {
-							if(basicInfo[0].trim().equals(Generator.FOLDER) || basicInfo[0].trim().equals(Generator.FILE)) {
-								if(this.isDebug) {
-									System.out.println("is file/folder");
-								}
-								additionalInfo.put("type", basicInfo[0].trim().equals(Generator.FOLDER) ? Generator.FOLDER_STR
-										: Generator.FILE_STR);
-								itemTitle = basicInfo[1].trim();
+							layer = typeStr.split("\\s", -1).length - 1;
+							if (layer.equals("")) {
+								layer = 0;
+							}
+							HashMap<String, String> additionalInfo = new HashMap<String, String>();
+							String itemTitle = null;
 
-								// if copy
-							} else if(basicInfo[0].trim().equals(Generator.COPY)) {
-								if(this.isDebug) {
-									System.out.println("is copy");
-								}
-								additionalInfo.put("type", Generator.COPY_STR);
-								additionalInfo.put("src", basicInfo[1].trim().substring(basicInfo[1].trim().indexOf("->") + 2)
-										.trim());
-								itemTitle = basicInfo[1].trim().substring(0, basicInfo[1].trim().indexOf("->")).trim();
-
+							additionalInfo.put("type", w.getMarker());
+							if (w.isFolder()) {
+								additionalInfo.put("folder", Boolean.toString(Boolean.TRUE));
 							}
 
-							if(basicInfo[0].trim().equals(Generator.FOLDER) || basicInfo[0].trim().equals(Generator.FILE)
-									|| basicInfo[0].trim().equals(Generator.COPY)) {
-								Object[] workedLine = this
-										.workLine(layer, lastLayer, itemTitle, struct, lastItem, additionalInfo);
-								struct = (Struct) workedLine[0];
-								lastItem = (StructItem) workedLine[1];
+							itemTitle = w.getItemTitle(basicInfoArr);
 
+							if (w.getAdditionlInfo(basicInfoArr) != null) {
+								additionalInfo.putAll(w.getAdditionlInfo(basicInfoArr));
 							}
+
+							Object[] workedLine = this.workLine(layer, lastLayer, itemTitle, struct, lastItem, additionalInfo);
+							struct = (Struct) workedLine[0];
+							lastItem = (StructItem) workedLine[1];
 							lastLayer = layer;
+							break;
 						}
-					} else {
-						if(bTrue) {
-							for(IWorker w : Generator.fgcMapper) {
-								if(w.isContent() && basicInfo[0].trim().equalsIgnoreCase(w.getContentStartMarker())) {
-									String s = null;
-									String content = "";
-									// read content
-									while(((s = in.readLine()) != null) && !(s.trim().equals(w.getContentEndMarker()))) {
-										content += s.trim();
-										content += "\r\n";
-									}
-									HashMap<String, Object> workerMap = new HashMap<String, Object>();
-									workerMap.put("content", content);
-									workerMap.put("lastItem", lastItem);
-
-									content = (String) w.doWork(workerMap).get("content");
-									if(w.replaceMarker()) {
-										content = this.replaceMarker(lastItem, content);
-									}
-
-									// add content to (last)item
-									lastItem.getAdditionalData().put("content", content);
-									break;
-								}
+					}
+				} else {
+					// content
+					for (IWorker w : Generator.fgcMapper) {
+						if (w.isContent() && basicInfoArr[0].trim().equalsIgnoreCase(w.getContentStartMarker())) {
+							String s = null;
+							String content = "";
+							// read content
+							while (((s = in.readLine()) != null) && !(s.trim().equals(w.getContentEndMarker()))) {
+								content += s.trim();
+								content += "\r\n";
 							}
-						} else {
-							if(basicInfo[0].trim().equals(Generator.CONTENT_START)) {
-								if(this.isDebug) {
-									System.out.println("is Content");
-								}
-								this.workContent(in, lastItem);
+							HashMap<String, Object> workerMap = new HashMap<String, Object>();
+							workerMap.put("content", content);
+							workerMap.put("lastItem", lastItem);
+
+							content = (String) w.doWork(workerMap).get("content");
+							if (w.replaceMarker()) {
+								content = this.replaceMarker(lastItem, content);
 							}
+
+							// add content to (last)item
+							lastItem.getAdditionalData().put("content", content);
+							break;
 						}
 					}
 				}
 			}
-			if((this.showConfirmation && this.confirmationWorker(struct, basicRootFolder)) || !this.showConfirmation) {
+			if ((this.showConfirmation && this.confirmationWorker(struct, basicRootFolder)) || !this.showConfirmation) {
 				this.workStruct(struct, basicRootFolder);
 			}
 
-			if(this.isDebug) {
+			if (this.isDebug) {
 				this.printStruct(struct, "", Boolean.TRUE);
 			}
 
-		} catch(IOException e) {
-			System.out.println(e.getMessage());
+		} catch (IOException e) {
+			if (isDebug) {
+				System.out.println(e.getMessage());
+			}
 			return false;
 		}
 		return true;
@@ -299,29 +261,26 @@ public class Generator {
 		String inputLine = null;
 		Boolean hasToWrite = null;
 		try {
-			while((hasToWrite == null) && ((inputLine = br.readLine()) != null)) {
-				if(inputLine.equals("") || inputLine.equalsIgnoreCase("n") || inputLine.equalsIgnoreCase("н")) {
+			while ((hasToWrite == null) && ((inputLine = br.readLine()) != null)) {
+				if (inputLine.equals("") || inputLine.equalsIgnoreCase("n") || inputLine.equalsIgnoreCase("н")) {
 					hasToWrite = false;
-				} else if(inputLine.equalsIgnoreCase("y") || inputLine.equalsIgnoreCase("j") || inputLine.equalsIgnoreCase("o")
-						|| inputLine.equalsIgnoreCase("Д")) {
+				} else if (inputLine.equalsIgnoreCase("y") || inputLine.equalsIgnoreCase("j") || inputLine.equalsIgnoreCase("o") || inputLine.equalsIgnoreCase("Д")) {
 					hasToWrite = true;
 				}
-				if(this.isDebug) {
-					System.out.println("\n"
-							+ PropertiesReader.getInstance().getProperties("application.debug.confirmation.writenotice")
-							+ hasToWrite);
+				if (this.isDebug) {
+					System.out.println("\n" + PropertiesReader.getInstance().getProperties("application.debug.confirmation.writenotice") + hasToWrite);
 				}
 			}
-		} catch(IOException e) {
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		if(hasToWrite) {
-			if(this.isDebug) {
+		if (hasToWrite) {
+			if (this.isDebug) {
 				System.out.println("\n" + PropertiesReader.getInstance().getProperties("application.debug.struct.work"));
 			}
 			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.struct.work.create"));
 			this.workStruct(struct, basicRootFolder);
-		} else if(this.isDebug) {
+		} else if (this.isDebug) {
 			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.struct.nowork.nocreate"));
 			System.out.println("\n" + PropertiesReader.getInstance().getProperties("application.debug.struct.nowork"));
 		}
@@ -329,7 +288,8 @@ public class Generator {
 	}
 
 	/**
-	 * Works a line. Add structItem to struct with care of the indent. Returns struct and lastItem in the result Object-Array.
+	 * Works a line. Add structItem to struct with care of the indent. Returns
+	 * struct and lastItem in the result Object-Array.
 	 * 
 	 * @param layer
 	 *            Integer
@@ -345,17 +305,16 @@ public class Generator {
 	 *            HashMap<String, String>
 	 * @return Object{struct, lastItem}
 	 */
-	private Object[] workLine(final Integer layer, final Integer lastLayer, final String itemTitle, final Struct struct,
-			final StructItem lastItem, final HashMap<String, String> additionalInfo) {
+	private Object[] workLine(final Integer layer, final Integer lastLayer, final String itemTitle, final Struct struct, final StructItem lastItem, final HashMap<String, String> additionalInfo) {
 		Object[] mulitpleResult = { struct, lastItem };
-		if(layer.equals(0)) { // zero / root layer
+		if (layer.equals(0)) { // zero / root layer
 			mulitpleResult[0] = this.workLayerZero(itemTitle, struct, lastItem, additionalInfo);
 			mulitpleResult[1] = struct.get(struct.size() - 1);
-		} else if(layer > lastLayer) { // layer down
+		} else if (layer > lastLayer) { // layer down
 			mulitpleResult[1] = this.workLayerDown(itemTitle, struct, lastItem, additionalInfo);
-		} else if(layer < lastLayer) { // layer up
+		} else if (layer < lastLayer) { // layer up
 			mulitpleResult[1] = this.workLayerUp(itemTitle, struct, lastItem, additionalInfo, lastLayer, layer);
-		} else if(layer.equals(lastLayer)) { // same layer
+		} else if (layer.equals(lastLayer)) { // same layer
 			mulitpleResult[1] = this.workLayerSame(itemTitle, struct, lastItem, additionalInfo);
 		}
 		return mulitpleResult;
@@ -375,10 +334,9 @@ public class Generator {
 	 * 
 	 * @return Struct Struct
 	 */
-	private Struct workLayerZero(final String name, final Struct struct, final StructItem lastItem,
-			final HashMap<String, String> additionalInfo) {
+	private Struct workLayerZero(final String name, final Struct struct, final StructItem lastItem, final HashMap<String, String> additionalInfo) {
 		StructItem tempStructItem = null;
-		if(this.isDebug) {
+		if (this.isDebug) {
 			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.zero") + name);
 		}
 		tempStructItem = new StructItem(name.trim(), additionalInfo, null);
@@ -400,10 +358,9 @@ public class Generator {
 	 * 
 	 * @return StructItem StructItem
 	 */
-	private StructItem workLayerDown(final String name, final Struct struct, final StructItem lastItem,
-			final HashMap<String, String> additionalInfo) {
+	private StructItem workLayerDown(final String name, final Struct struct, final StructItem lastItem, final HashMap<String, String> additionalInfo) {
 		StructItem tempStructItem = null;
-		if(this.isDebug) {
+		if (this.isDebug) {
 			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.down") + name);
 		}
 		tempStructItem = new StructItem(name.trim(), additionalInfo, lastItem);
@@ -429,14 +386,13 @@ public class Generator {
 	 * 
 	 * @return StructItem StructItem
 	 */
-	private StructItem workLayerUp(final String name, final Struct struct, StructItem lastItem,
-			final HashMap<String, String> additionalInfo, final Integer lastLayer, final Integer layer) {
+	private StructItem workLayerUp(final String name, final Struct struct, StructItem lastItem, final HashMap<String, String> additionalInfo, final Integer lastLayer, final Integer layer) {
 		StructItem tempStructItem = null;
-		if(this.isDebug) {
+		if (this.isDebug) {
 			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.up") + name);
 		}
 		tempStructItem = new StructItem(name.trim(), additionalInfo, null);
-		for(int i = 0; i <= lastLayer - layer; i++) {
+		for (int i = 0; i <= lastLayer - layer; i++) {
 			lastItem = lastItem.getParentStructItem();
 		}
 		tempStructItem.setParentStructItem(lastItem);
@@ -458,39 +414,14 @@ public class Generator {
 	 * 
 	 * @return StructItem StructItem
 	 */
-	private StructItem workLayerSame(final String name, final Struct struct, final StructItem lastItem,
-			final HashMap<String, String> additionalInfo) {
+	private StructItem workLayerSame(final String name, final Struct struct, final StructItem lastItem, final HashMap<String, String> additionalInfo) {
 		StructItem tempStructItem = null;
-		if(this.isDebug) {
+		if (this.isDebug) {
 			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.equals") + name);
 		}
 		tempStructItem = new StructItem(name.trim(), additionalInfo, lastItem.getParentStructItem());
 		lastItem.getParentStructItem().getSubStruct().add(tempStructItem);
 		return tempStructItem;
-	}
-
-	/**
-	 * Get the content for a specific file.
-	 * 
-	 * @param in
-	 *            BufferedReader
-	 * @param lastItem
-	 *            StructItem
-	 * @throws IOException
-	 */
-	private void workContent(final BufferedReader in, final StructItem lastItem) throws IOException {
-		String s = null;
-		String content = "";
-		// read content
-		while(((s = in.readLine()) != null) && !(s.trim().equals(Generator.CONTENT_END))) {
-			content += s.trim();
-			content += "\r\n";
-		}
-
-		content = this.replaceMarker(lastItem, content);
-
-		// add content to (last)item
-		lastItem.getAdditionalData().put("content", content);
 	}
 
 	/**
@@ -508,10 +439,13 @@ public class Generator {
 	 * <li>${date.minute} - returns the current minute as decimal</li>
 	 * <li>${date.second} - returns the current second as decimal</li>
 	 * <li>${date.isleap(YEAR)} - returns true or false</li>
-	 * <li>${date.formatcurrent([Format FORMAT])} - returns the current formatted date/time</li>
+	 * <li>${date.formatcurrent([Format FORMAT])} - returns the current
+	 * formatted date/time</li>
 	 * <li>${func.counter(VAR)} - counter for a VAR</li>
-	 * <li>${func.counter(VAR|STARTNUMBER)} - counter for a VAR with startnumber STARTNUMBER</li>
-	 * <li>${func.getfilecontent(filepath)} - return the content of the given file</li>
+	 * <li>${func.counter(VAR|STARTNUMBER)} - counter for a VAR with startnumber
+	 * STARTNUMBER</li>
+	 * <li>${func.getfilecontent(filepath)} - return the content of the given
+	 * file</li>
 	 * </ul>
 	 * 
 	 * @param lastItem
@@ -546,18 +480,18 @@ public class Generator {
 		try {
 			pattern = Pattern.compile("\\$\\{date.isleap\\(([0-9]{4})\\)\\}");
 			matcher = pattern.matcher(content);
-			while(matcher.find()) {
+			while (matcher.find()) {
 				content = matcher.replaceAll(Boolean.toString(gc.isLeapYear(Integer.parseInt(matcher.group(1)))));
 			}
 
 			pattern = Pattern.compile("\\$\\{date.formatcurrent\\((.+?)\\)\\}");
 			matcher = pattern.matcher(content);
-			while(matcher.find()) {
+			while (matcher.find()) {
 				content = matcher.replaceAll(new SimpleDateFormat(matcher.group(1)).format(new Date()));
 			}
 
-		} catch(IllegalArgumentException e) {
-			if(this.isDebug) {
+		} catch (IllegalArgumentException e) {
+			if (this.isDebug) {
 				e.printStackTrace();
 			}
 		}
@@ -566,38 +500,35 @@ public class Generator {
 		try {
 			pattern = Pattern.compile("(\\$\\{func\\.counter\\(([a-zA-Z]+)?(\\|[0-9]+)?\\)\\})");
 			matcher = pattern.matcher(content);
-			while(matcher.find()) {
+			while (matcher.find()) {
 				int i = 0;
-				if(matcher.group(3) != null) {
+				if (matcher.group(3) != null) {
 					i = Integer.parseInt(matcher.group(3).substring(1));
-					content = content.replaceFirst("(\\$\\{func.counter\\((" + matcher.group(2) + ")\\|" + i + "\\)\\})", Integer
-							.toString(i));
+					content = content.replaceFirst("(\\$\\{func.counter\\((" + matcher.group(2) + ")\\|" + i + "\\)\\})", Integer.toString(i));
 					i++;
 				}
-				while(content.indexOf("${func.counter(" + matcher.group(2) + ")}") != -1) {
-					content = content
-							.replaceFirst("(\\$\\{func.counter\\((" + matcher.group(2) + ")\\)\\})", Integer.toString(i));
+				while (content.indexOf("${func.counter(" + matcher.group(2) + ")}") != -1) {
+					content = content.replaceFirst("(\\$\\{func.counter\\((" + matcher.group(2) + ")\\)\\})", Integer.toString(i));
 					i++;
 				}
 			}
 			pattern = Pattern.compile("(\\$\\{func\\.getfilecontent\\((.+)?\\)\\})");
 			matcher = pattern.matcher(content);
-			while(matcher.find()) {
-				while(content.indexOf("${func.getfilecontent(" + matcher.group(2) + ")}") != -1) {
-					content = content.replaceFirst("(\\$\\{func\\.getfilecontent\\((\\Q" + matcher.group(2) + "\\E)?\\)\\})",
-							Utilities.getFileContent(new File(matcher.group(2))));
+			while (matcher.find()) {
+				while (content.indexOf("${func.getfilecontent(" + matcher.group(2) + ")}") != -1) {
+					content = content.replaceFirst("(\\$\\{func\\.getfilecontent\\((\\Q" + matcher.group(2) + "\\E)?\\)\\})", Utilities.getFileContent(new File(matcher.group(2))));
 				}
 			}
-		} catch(IllegalArgumentException e) {
-			if(this.isDebug) {
+		} catch (IllegalArgumentException e) {
+			if (this.isDebug) {
 				e.printStackTrace();
 			}
-		} catch(IOException e) {
-			if(this.isDebug) {
+		} catch (IOException e) {
+			if (this.isDebug) {
 				e.printStackTrace();
 			}
 		}
-		if(this.usePlugins && (this.pluginCollection != null)) {
+		if (this.usePlugins && (this.pluginCollection != null)) {
 			content = this.replacePluginMarkers(content);
 		}
 
@@ -613,7 +544,7 @@ public class Generator {
 	 */
 	private String replacePluginMarkers(final String content) {
 		String resultStr = content;
-		for(CoreMarkerReplacer plugin : this.pluginCollection) {
+		for (CoreMarkerReplacer plugin : this.pluginCollection) {
 			plugin.setContent(resultStr);
 			resultStr = plugin.replaceContent();
 		}
@@ -629,15 +560,16 @@ public class Generator {
 			PluginFinder pluginFinder = new PluginFinder();
 			pluginFinder.search(System.getProperty("user.dir"));
 			this.pluginCollection = pluginFinder.getPluginCollection();
-		} catch(Exception e) {
-			if(this.isDebug) {
+		} catch (Exception e) {
+			if (this.isDebug) {
 				e.printStackTrace();
 			}
 		}
 	}
 
 	/**
-	 * Works the struct recursive and create folders and files (with content), if available.
+	 * Works the struct recursive and create folders and files (with content),
+	 * if available.
 	 * 
 	 * @param struct
 	 *            Struct
@@ -645,131 +577,25 @@ public class Generator {
 	 *            File
 	 */
 	private void workStruct(final Struct struct, final File rootFolder) {
-		for(int i = 0; i < struct.size(); i++) {
+		for (int i = 0; i < struct.size(); i++) {
 			// get additional data from structItem
 			HashMap<String, String> tempAdditionalData = struct.get(i).getAdditionalData();
-			if(tempAdditionalData.containsKey("type") && (tempAdditionalData.get("type") != null)) {
-				// if valid ...
-				if(tempAdditionalData.get("type").toLowerCase().equals(Generator.FILE_STR)) {
-					// create file, if needed
-					this.workFile(rootFolder, tempAdditionalData, struct.get(i).getName());
-				} else if(tempAdditionalData.get("type").toLowerCase().equals(Generator.FOLDER_STR)) {
-					// create folder, if needed
-					this.workFolder(rootFolder, struct.get(i).getName());
-				} else if(tempAdditionalData.get("type").toLowerCase().equals(Generator.COPY_STR)) {
-					// create copy, if needed
-					this.workGetCopy(rootFolder, tempAdditionalData, struct.get(i).getName());
+			if (tempAdditionalData.containsKey("type") && (tempAdditionalData.get("type") != null)) {
+				for (IWorker w : Generator.fgcMapper) {
+					HashMap<String, Object> workerMap = new HashMap<String, Object>();
+					workerMap.put("additionalData", tempAdditionalData);
+					workerMap.put("rootFolder", rootFolder);
+					workerMap.put("name", struct.get(i).getName());
+					if (w.getMarker().equalsIgnoreCase(tempAdditionalData.get("type"))) {
+						w.doWork(workerMap);
+						break;
+					}
 				}
 			}
-			if(struct.get(i).getSubStruct() != null) {
+			if (struct.get(i).getSubStruct() != null) {
 				// read substructure
 				this.workStruct(struct.get(i).getSubStruct(), new File(rootFolder + File.separator + struct.get(i).getName()));
 			}
-		}
-	}
-
-	/**
-	 * If needed, creates a copy of a file or a file from a HTTP-url.
-	 * 
-	 * @param rootFolder
-	 *            File
-	 * @param tempAdditionalData
-	 *            HashMap<String,String>
-	 * @param name
-	 *            String
-	 */
-	private void workGetCopy(final File rootFolder, final HashMap<String, String> tempAdditionalData, final String name) {
-		if(tempAdditionalData.get("src") != null) {
-			if(tempAdditionalData.get("src").startsWith("http://") || tempAdditionalData.get("src").startsWith("https://")) {
-				try {
-					// url
-					File f = new File(rootFolder.getAbsolutePath() + File.separator + name);
-					if(!f.exists()) {
-						URL source = new URL(tempAdditionalData.get("src"));
-
-						String content = Utilities.getFileContentFromWeb(source);
-						f.createNewFile();
-						FileOutputStream fos = new FileOutputStream(f);
-						for(int j = 0; j < content.length(); j++) {
-							fos.write((byte) content.charAt(j));
-						}
-						fos.close();
-					}
-				} catch(MalformedURLException e) {
-					if(this.isDebug) {
-						e.printStackTrace();
-					}
-				} catch(ConnectException e) {
-					if(this.isDebug) {
-						e.printStackTrace();
-					}
-				} catch(IOException e) {
-					if(this.isDebug) {
-						e.printStackTrace();
-					}
-				}
-			} else {
-				try {
-					// file
-					File source = new File(tempAdditionalData.get("src"));
-					if(source.exists() && source.isFile()) {
-						Utilities.copyFile(source, new File(rootFolder.getAbsolutePath() + File.separator + name));
-					} else if(source.exists() && source.isDirectory()) {
-						Utilities.copyDir(source, new File(rootFolder.getAbsolutePath() + File.separator + name));
-					}
-				} catch(IOException e) {
-					if(this.isDebug) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-
-	}
-
-	/**
-	 * If needed, creates a file and - if needed - insert content.
-	 * 
-	 * @param rootFolder
-	 *            File
-	 * @param tempAdditionalData
-	 *            HashMap<String,String>
-	 * @param name
-	 *            String
-	 */
-	private void workFile(final File rootFolder, final HashMap<String, String> tempAdditionalData, final String name) {
-		try {
-			File f = new File(rootFolder.getAbsolutePath() + File.separator + name);
-			// file not exists and format respectively filepath correct
-			if(!f.exists() && new File(f.getParent()).isDirectory()) {
-				f.createNewFile();
-				if(tempAdditionalData.containsKey("content") && (tempAdditionalData.get("content") != null)
-						&& !tempAdditionalData.get("content").equals("")) {
-					FileOutputStream fos = new FileOutputStream(f);
-					for(int j = 0; j < tempAdditionalData.get("content").length(); j++) {
-						fos.write((byte) tempAdditionalData.get("content").charAt(j));
-					}
-					fos.close();
-				}
-			}
-		} catch(IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * If needed, creates a folder.
-	 * 
-	 * @param rootFolder
-	 *            File
-	 * @param name
-	 *            String
-	 */
-	private void workFolder(final File rootFolder, final String name) {
-		File f = new File(rootFolder.getAbsolutePath() + File.separator + name);
-		// folder not exists and format respectively filepath correct
-		if(!f.exists() && new File(f.getParent()).isDirectory()) {
-			f.mkdir();
 		}
 	}
 
@@ -784,14 +610,9 @@ public class Generator {
 	 *            Boolean
 	 */
 	private void printStruct(final Struct struct, final String seperator, final Boolean showAll) {
-		for(int i = 0; i < struct.size(); i++) {
-			System.out.println(seperator
-					+ i
-					+ " - "
-					+ struct.get(i).getName()
-					+ (showAll ? (struct.get(i).getAdditionalData() != null ? " - " + struct.get(i).getAdditionalData() : "")
-							: ""));
-			if(struct.get(i).getSubStruct() != null) {
+		for (int i = 0; i < struct.size(); i++) {
+			System.out.println(seperator + i + " - " + struct.get(i).getName() + (showAll ? (struct.get(i).getAdditionalData() != null ? " - " + struct.get(i).getAdditionalData() : "") : ""));
+			if (struct.get(i).getSubStruct() != null) {
 				this.printStruct(struct.get(i).getSubStruct(), seperator + "\t", showAll);
 			}
 		}

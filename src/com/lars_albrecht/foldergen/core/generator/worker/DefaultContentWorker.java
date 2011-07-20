@@ -53,4 +53,9 @@ public class DefaultContentWorker implements IWorker {
 		return Boolean.TRUE;
 	}
 
+	@Override
+	public Boolean isFolder() {
+		return Boolean.FALSE;
+	}
+
 }

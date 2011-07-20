@@ -29,4 +29,6 @@ public interface IWorker {
 
 	Boolean replaceMarker();
 
+	Boolean isFolder();
+
 }
