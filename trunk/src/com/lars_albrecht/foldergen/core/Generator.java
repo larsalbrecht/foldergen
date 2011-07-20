@@ -46,7 +46,7 @@ import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -55,6 +55,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.lars_albrecht.foldergen.core.generator.worker.CopyWorker;
+import com.lars_albrecht.foldergen.core.generator.worker.FileWorker;
+import com.lars_albrecht.foldergen.core.generator.worker.FolderWorker;
+import com.lars_albrecht.foldergen.core.generator.worker.interfaces.IWorker;
 import com.lars_albrecht.foldergen.core.helper.Struct;
 import com.lars_albrecht.foldergen.core.helper.StructItem;
 import com.lars_albrecht.foldergen.core.helper.properies.PropertiesReader;
@@ -82,11 +86,13 @@ public class Generator {
 	private final static String COPY_STR = "copy";
 	private final static String CONTENT_START = "(((";
 	private final static String CONTENT_END = ")))";
+	private static ArrayList<IWorker> fgcMapper = new ArrayList<IWorker>();
 
 	private Boolean isDebug = false;
 	private File rootPath = null;
 	private Boolean showConfirmation = false;
 	private Boolean usePlugins = false;
+	private List<CoreMarkerReplacer> pluginCollection = null;
 
 	/**
 	 * Generator constructor.
@@ -108,6 +114,12 @@ public class Generator {
 		this.showConfirmation = showConfirmation;
 		this.usePlugins = usePlugins;
 
+		this.initGenerator();
+
+		if(usePlugins) {
+			this.loadPlugins();
+		}
+
 		this.rootPath = (rootPath != null ? rootPath : new File(configFile.getParent()));
 		if(this.isDebug) {
 			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.choosedrootpath")
@@ -120,6 +132,12 @@ public class Generator {
 		} else {
 			System.out.println(PropertiesReader.getInstance().getProperties("application.output.wrongfile"));
 		}
+	}
+
+	private void initGenerator() {
+		Generator.fgcMapper.add(new FolderWorker());
+		Generator.fgcMapper.add(new FileWorker());
+		Generator.fgcMapper.add(new CopyWorker());
 	}
 
 	/**
@@ -146,15 +164,13 @@ public class Generator {
 			StructItem lastItem = null;
 			// every line in file
 			while((line = in.readLine()) != null) {
-				System.out.println("------------");
 				String[] basicInfo = line.trim().split("\\s", 2);
-				System.out.println(Arrays.toString(basicInfo));
-				System.out.println("line: " + line);
 				String typeStr = null;
 				Matcher m = Pattern.compile("([\\s]{0,})([\\+\\-\\~]{1})([\\s]{1})").matcher(line);
 				if(m.find() && (m.groupCount() > 0)) {
 					typeStr = m.group(1);
 				}
+				Boolean bTrue = true;
 				if((typeStr != null) || (line.indexOf("(((") != -1)) {
 					if((basicInfo != null) && (basicInfo.length == 2) && (basicInfo[0] != null) && (basicInfo[1] != null)) {
 						layer = typeStr.split("\\s", -1).length - 1;
@@ -163,43 +179,92 @@ public class Generator {
 						}
 						HashMap<String, String> additionalInfo = new HashMap<String, String>();
 						String itemTitle = null;
-						// if folder or file ...
-						if(basicInfo[0].trim().equals(Generator.FOLDER) || basicInfo[0].trim().equals(Generator.FILE)) {
-							if(this.isDebug) {
-								System.out.println("is file/folder");
-							}
-							additionalInfo.put("type", basicInfo[0].trim().equals(Generator.FOLDER) ? Generator.FOLDER_STR
-									: Generator.FILE_STR);
-							itemTitle = basicInfo[1].trim();
 
-							// if copy
-						} else if(basicInfo[0].trim().equals(Generator.COPY)) {
-							if(this.isDebug) {
-								System.out.println("is copy");
-							}
-							additionalInfo.put("type", Generator.COPY_STR);
-							additionalInfo
-									.put("src", basicInfo[1].trim().substring(basicInfo[1].trim().indexOf("->") + 2).trim());
-							itemTitle = basicInfo[1].trim().substring(0, basicInfo[1].trim().indexOf("->")).trim();
+						if(bTrue) {
+							for(IWorker w : Generator.fgcMapper) {
+								if(!w.isContent() && basicInfo[0].trim().equalsIgnoreCase(w.getFileMarker())) {
+									if(this.isDebug) {
+										System.out.println("is " + w.getMarker() + " (" + w.getFileMarker() + ")");
+									}
+									HashMap<String, String> tempAdditionalInfo;
+									additionalInfo.put("type", w.getMarker());
+									itemTitle = w.getItemTitle(basicInfo);
+									if((tempAdditionalInfo = w.getAdditionlInfo(basicInfo)) != null) {
+										additionalInfo.putAll(tempAdditionalInfo);
+									}
 
-						}
-						if(basicInfo[0].trim().equals(Generator.FOLDER) || basicInfo[0].trim().equals(Generator.FILE)
-								|| basicInfo[0].trim().equals(Generator.COPY)) {
-							Object[] workedLine = this.workLine(layer, lastLayer, itemTitle, struct, lastItem, additionalInfo);
-							struct = (Struct) workedLine[0];
-							lastItem = (StructItem) workedLine[1];
-							if((lastItem != null) && lastItem.getName().equals("test.css")) {
-								this.printStruct(struct, " ", true);
+									Object[] workedLine = this.workLine(layer, lastLayer, itemTitle, struct, lastItem,
+											additionalInfo);
+									struct = (Struct) workedLine[0];
+									lastItem = (StructItem) workedLine[1];
+									lastLayer = layer;
+									break;
+								}
 							}
-							System.out.println("LI: " + lastItem.getName());
+						} else {
+							if(basicInfo[0].trim().equals(Generator.FOLDER) || basicInfo[0].trim().equals(Generator.FILE)) {
+								if(this.isDebug) {
+									System.out.println("is file/folder");
+								}
+								additionalInfo.put("type", basicInfo[0].trim().equals(Generator.FOLDER) ? Generator.FOLDER_STR
+										: Generator.FILE_STR);
+								itemTitle = basicInfo[1].trim();
 
+								// if copy
+							} else if(basicInfo[0].trim().equals(Generator.COPY)) {
+								if(this.isDebug) {
+									System.out.println("is copy");
+								}
+								additionalInfo.put("type", Generator.COPY_STR);
+								additionalInfo.put("src", basicInfo[1].trim().substring(basicInfo[1].trim().indexOf("->") + 2)
+										.trim());
+								itemTitle = basicInfo[1].trim().substring(0, basicInfo[1].trim().indexOf("->")).trim();
+
+							}
+
+							if(basicInfo[0].trim().equals(Generator.FOLDER) || basicInfo[0].trim().equals(Generator.FILE)
+									|| basicInfo[0].trim().equals(Generator.COPY)) {
+								Object[] workedLine = this
+										.workLine(layer, lastLayer, itemTitle, struct, lastItem, additionalInfo);
+								struct = (Struct) workedLine[0];
+								lastItem = (StructItem) workedLine[1];
+
+							}
+							lastLayer = layer;
 						}
-						lastLayer = layer;
-					} else if(basicInfo[0].trim().equals(Generator.CONTENT_START)) {
-						if(this.isDebug) {
-							System.out.println("is Content");
+					} else {
+						if(bTrue) {
+							for(IWorker w : Generator.fgcMapper) {
+								if(w.isContent() && basicInfo[0].trim().equalsIgnoreCase(w.getContentStartMarker())) {
+									String s = null;
+									String content = "";
+									// read content
+									while(((s = in.readLine()) != null) && !(s.trim().equals(w.getContentEndMarker()))) {
+										content += s.trim();
+										content += "\r\n";
+									}
+									HashMap<String, Object> workerMap = new HashMap<String, Object>();
+									workerMap.put("content", content);
+									workerMap.put("lastItem", lastItem);
+
+									content = (String) w.doWork(workerMap).get("content");
+									if(w.replaceMarker()) {
+										content = this.replaceMarker(lastItem, content);
+									}
+
+									// add content to (last)item
+									lastItem.getAdditionalData().put("content", content);
+									break;
+								}
+							}
+						} else {
+							if(basicInfo[0].trim().equals(Generator.CONTENT_START)) {
+								if(this.isDebug) {
+									System.out.println("is Content");
+								}
+								this.workContent(in, lastItem);
+							}
 						}
-						this.workContent(in, lastItem);
 					}
 				}
 			}
@@ -283,9 +348,6 @@ public class Generator {
 	private Object[] workLine(final Integer layer, final Integer lastLayer, final String itemTitle, final Struct struct,
 			final StructItem lastItem, final HashMap<String, String> additionalInfo) {
 		Object[] mulitpleResult = { struct, lastItem };
-		System.out.println("layer: " + layer);
-		System.out.println("lastLayer: " + lastLayer);
-		System.out.println("Last item: " + (lastItem != null ? lastItem.getName() : "none"));
 		if(layer.equals(0)) { // zero / root layer
 			mulitpleResult[0] = this.workLayerZero(itemTitle, struct, lastItem, additionalInfo);
 			mulitpleResult[1] = struct.get(struct.size() - 1);
@@ -295,9 +357,6 @@ public class Generator {
 			mulitpleResult[1] = this.workLayerUp(itemTitle, struct, lastItem, additionalInfo, lastLayer, layer);
 		} else if(layer.equals(lastLayer)) { // same layer
 			mulitpleResult[1] = this.workLayerSame(itemTitle, struct, lastItem, additionalInfo);
-		}
-		if(((StructItem) mulitpleResult[1]).getName().equals("general.css")) {
-			System.out.println("SpecialLastItem: " + ((StructItem) mulitpleResult[1]).getParentStructItem().getName());
 		}
 		return mulitpleResult;
 	}
@@ -405,7 +464,6 @@ public class Generator {
 		if(this.isDebug) {
 			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.equals") + name);
 		}
-		System.out.println("MyLastItem is: " + (lastItem != null ? lastItem.getParentStructItem().getName() : "none"));
 		tempStructItem = new StructItem(name.trim(), additionalInfo, lastItem.getParentStructItem());
 		lastItem.getParentStructItem().getSubStruct().add(tempStructItem);
 		return tempStructItem;
@@ -539,8 +597,8 @@ public class Generator {
 				e.printStackTrace();
 			}
 		}
-		if(this.usePlugins) {
-			content = this.getPluginResult(content);
+		if(this.usePlugins && (this.pluginCollection != null)) {
+			content = this.replacePluginMarkers(content);
 		}
 
 		return content;
@@ -553,23 +611,29 @@ public class Generator {
 	 *            String
 	 * @return String
 	 */
-	private String getPluginResult(final String content) {
+	private String replacePluginMarkers(final String content) {
 		String resultStr = content;
+		for(CoreMarkerReplacer plugin : this.pluginCollection) {
+			plugin.setContent(resultStr);
+			resultStr = plugin.replaceContent();
+		}
+		return resultStr;
+	}
+
+	/**
+	 * Load plugins.
+	 * 
+	 */
+	private void loadPlugins() {
 		try {
 			PluginFinder pluginFinder = new PluginFinder();
 			pluginFinder.search(System.getProperty("user.dir"));
-			List<CoreMarkerReplacer> pluginCollection = pluginFinder.getPluginCollection();
-			for(CoreMarkerReplacer plugin : pluginCollection) {
-				plugin.setContent(resultStr);
-				resultStr = plugin.replaceContent();
-			}
+			this.pluginCollection = pluginFinder.getPluginCollection();
 		} catch(Exception e) {
 			if(this.isDebug) {
 				e.printStackTrace();
 			}
 		}
-
-		return resultStr;
 	}
 
 	/**

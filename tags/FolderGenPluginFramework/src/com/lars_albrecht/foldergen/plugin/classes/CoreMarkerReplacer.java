@@ -43,6 +43,7 @@ package com.lars_albrecht.foldergen.plugin.classes;
  * @version 1.0.0.0
  */
 public abstract class CoreMarkerReplacer {
+
 	/**
 	 * The content to replace.
 	 */
@@ -69,7 +70,7 @@ public abstract class CoreMarkerReplacer {
 	 * 
 	 * @return String
 	 */
-	public String getName() {
+	public synchronized String getName() {
 		return this.name;
 	}
 
@@ -78,7 +79,7 @@ public abstract class CoreMarkerReplacer {
 	 * 
 	 * @return String
 	 */
-	public String replaceContent() {
+	public synchronized String replaceContent() {
 		return null;
 	}
 }
