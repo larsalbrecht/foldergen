@@ -41,30 +41,31 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
 import javax.swing.JRootPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.lars_albrecht.foldergen.FolderGen;
 import com.lars_albrecht.foldergen.core.Generator;
-import com.lars_albrecht.foldergen.core.helper.PropertiesReader;
+import com.lars_albrecht.foldergen.core.helper.properies.PropertiesReader;
 
 /**
  * The view is a java JFrame to choose the file with a gui.
  * 
  * @author lalbrecht
- * @version 1.5.1.0
+ * @version 1.5.2.0
  */
 @SuppressWarnings("serial")
-public class View extends JFrame implements ActionListener {
+public class View extends JFrame implements ActionListener, ItemListener {
 
 	private JButton btnChooseFile = null;
 	private JButton btnChooseRootFolder = null;
@@ -72,14 +73,14 @@ public class View extends JFrame implements ActionListener {
 	private JFileChooser fcChooser = null;
 	private JRootPane rpPane = null;
 
-	JPopupMenu pmTreeMenu = null;
-	JMenuItem miAddFolder = null;
-	JMenuItem miAddFile = null;
+	private JCheckBox cbConfirmation = null;
+	private JCheckBox cbPlugins = null;
 
 	private Boolean isDebug = Boolean.FALSE;
 	private File rootPath = null;
 	private File configFile = null;
 	private Boolean showConfirmation = Boolean.FALSE;
+	private Boolean usePlugins = Boolean.FALSE;
 
 	/**
 	 * The GUI of FolderGen.
@@ -92,14 +93,18 @@ public class View extends JFrame implements ActionListener {
 	 *            Boolean
 	 * @param showConfirmation
 	 *            Boolean
+	 * @param usePlugins
+	 *            Boolean
 	 */
-	public View(final File rootPath, final File configFile, final Boolean isDebug, final Boolean showConfirmation) {
+	public View(final File rootPath, final File configFile, final Boolean isDebug, final Boolean showConfirmation,
+			final Boolean usePlugins) {
 		super(PropertiesReader.getInstance().getProperties("application.name") + " - "
 				+ PropertiesReader.getInstance().getProperties("application.version"));
 		this.isDebug = isDebug;
 		this.rootPath = rootPath;
 		this.configFile = configFile;
 		this.showConfirmation = showConfirmation;
+		this.usePlugins = usePlugins;
 		this.initComponents();
 	}
 
@@ -107,10 +112,11 @@ public class View extends JFrame implements ActionListener {
 	 * Adds the components to panes.
 	 */
 	private void addComponents() {
-		this.rpPane.add(this.btnChooseFile, BorderLayout.NORTH);
-		this.rpPane.add(this.btnStart, BorderLayout.CENTER);
-		this.rpPane.add(this.btnChooseRootFolder, BorderLayout.SOUTH);
-
+		this.rpPane.add(this.btnChooseFile);
+		this.rpPane.add(this.btnStart);
+		this.rpPane.add(this.btnChooseRootFolder);
+		this.rpPane.add(this.cbConfirmation);
+		this.rpPane.add(this.cbPlugins);
 		this.add(this.rpPane);
 	}
 
@@ -152,12 +158,11 @@ public class View extends JFrame implements ActionListener {
 	 */
 	private void initComponents() {
 		this.setSystemLookAndFeel();
-
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(new BorderLayout());
-
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setBounds((screenSize.width - 150) / 2, (screenSize.height - 100) / 2, 150, 100);
+		this.setBounds((screenSize.width - 343) / 2, (screenSize.height - 130) / 2, 343, 130);
+		this.setResizable(Boolean.FALSE);
 
 		this.createComponents();
 		this.configureComponents();
@@ -169,11 +174,23 @@ public class View extends JFrame implements ActionListener {
 	 * Configures the components.
 	 */
 	private void configureComponents() {
-		this.rpPane.setLayout(new BorderLayout());
-		this.btnChooseFile.setBounds(10, 10, 100, 25);
+		this.rpPane.setLayout(null);
+		this.btnChooseFile.setBounds(10, 10, 115, 25);
 		this.btnChooseFile.addActionListener(this);
+
+		this.btnChooseRootFolder.setBounds(135, 10, 190, 25);
 		this.btnChooseRootFolder.addActionListener(this);
+
+		this.btnStart.setBounds(10, 65, 315, 25);
 		this.btnStart.addActionListener(this);
+
+		this.cbConfirmation.setBounds(10, 40, 115, 20);
+		this.cbConfirmation.addItemListener(this);
+		this.cbConfirmation.setSelected(this.showConfirmation);
+
+		this.cbPlugins.setBounds(135, 40, 100, 20);
+		this.cbPlugins.addItemListener(this);
+		this.cbPlugins.setSelected(this.usePlugins);
 	}
 
 	/**
@@ -185,9 +202,14 @@ public class View extends JFrame implements ActionListener {
 		this.btnChooseRootFolder = new JButton(PropertiesReader.getInstance().getProperties(
 				"application.gui.rootfolderchooser.opener"));
 		this.btnStart = new JButton(PropertiesReader.getInstance().getProperties("application.gui.button.start"));
+
+		this.cbConfirmation = new JCheckBox(PropertiesReader.getInstance().getProperties("application.gui.checkbox.confirmation"));
+		this.cbPlugins = new JCheckBox(PropertiesReader.getInstance().getProperties("application.gui.checkbox.plugins"));
 	}
 
 	/**
+	 * Action events.
+	 * 
 	 * @param e
 	 *            ActionEvent
 	 */
@@ -250,14 +272,29 @@ public class View extends JFrame implements ActionListener {
 						"application.gui.messagedialog.confirmation.title"), JOptionPane.YES_NO_OPTION,
 						JOptionPane.INFORMATION_MESSAGE) == 0) {
 					new Generator(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()), this.configFile,
-							this.isDebug, FolderGen.CONFIRMATION_HIDE);
+							this.isDebug, FolderGen.CONFIRMATION_HIDE, this.usePlugins);
 
 				}
 			} else {
 				new Generator(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()), this.configFile,
-						this.isDebug, FolderGen.CONFIRMATION_HIDE);
+						this.isDebug, FolderGen.CONFIRMATION_HIDE, this.usePlugins);
 			}
 		}
 
+	}
+
+	/**
+	 * Item events.
+	 * 
+	 * @param ie
+	 *            ItemEvent
+	 */
+	@Override
+	public void itemStateChanged(final ItemEvent ie) {
+		if(ie.getSource() == this.cbConfirmation) {
+			this.showConfirmation = this.cbConfirmation.getSelectedObjects() != null ? Boolean.TRUE : Boolean.FALSE;
+		} else if(ie.getSource() == this.cbPlugins) {
+			this.usePlugins = this.cbPlugins.getSelectedObjects() != null ? Boolean.TRUE : Boolean.FALSE;
+		}
 	}
 }

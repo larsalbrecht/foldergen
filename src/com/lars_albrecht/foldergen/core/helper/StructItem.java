@@ -81,6 +81,9 @@ public class StructItem {
 		this.additionalData = additionalData;
 		this.subStruct = new Struct();
 		this.parentStructItem = parentStructItem;
+		if(!name.equals("MyWebApp")) {
+			System.out.println("My Parent is: " + parentStructItem);
+		}
 	}
 
 	/**

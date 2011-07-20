@@ -41,9 +41,9 @@ import java.io.File;
 import org.apache.commons.cli.ParseException;
 
 import com.lars_albrecht.foldergen.core.Generator;
-import com.lars_albrecht.foldergen.core.helper.FolderGenCLIConf;
-import com.lars_albrecht.foldergen.core.helper.FolderGenCLIHelper;
-import com.lars_albrecht.foldergen.core.helper.PropertiesReader;
+import com.lars_albrecht.foldergen.core.helper.cli.FolderGenCLIConf;
+import com.lars_albrecht.foldergen.core.helper.cli.FolderGenCLIHelper;
+import com.lars_albrecht.foldergen.core.helper.properies.PropertiesReader;
 import com.lars_albrecht.foldergen.gui.View;
 
 /**
@@ -52,7 +52,7 @@ import com.lars_albrecht.foldergen.gui.View;
  * 
  * @see http://code.google.com/p/foldergen/
  * @author lalbrecht
- * @version 1.4.8.0
+ * @version 1.4.9.0
  * 
  */
 public class FolderGen {
@@ -105,7 +105,7 @@ public class FolderGen {
 					PropertiesReader.getInstance().setLocale(appConf.getLocale());
 				}
 				this.startUp(appConf.getRootPath(), configFile, appConf.getIsGui(), appConf.getIsDebug(), appConf
-						.getShowConfirmation());
+						.getShowConfirmation(), appConf.getUsePlugins());
 			}
 		}
 	}
@@ -124,13 +124,24 @@ public class FolderGen {
 	 *            Boolean
 	 * @param showConfirmation
 	 *            Boolean
+	 * @param usePlugins
+	 *            Boolean
 	 */
 	private void startUp(final File rootPath, final File configFile, final Boolean isGui, final Boolean isDebug,
-			final Boolean showConfirmation) {
+			final Boolean showConfirmation, final Boolean usePlugins) {
+
+		try { // Try to get default proxy
+			System.setProperty("java.net.useSystemProxies", "true");
+		} catch(Exception e) {
+			if(isDebug) {
+				e.printStackTrace();
+			}
+		}
+
 		if(isGui) {
-			new View(rootPath, configFile, isDebug, showConfirmation);
+			new View(rootPath, configFile, isDebug, showConfirmation, usePlugins);
 		} else {
-			new Generator(rootPath, configFile, isDebug, showConfirmation);
+			new Generator(rootPath, configFile, isDebug, showConfirmation, usePlugins);
 		}
 	}
 
