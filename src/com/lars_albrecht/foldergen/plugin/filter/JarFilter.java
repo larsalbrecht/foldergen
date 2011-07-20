@@ -46,6 +46,14 @@ import java.io.FilenameFilter;
  * @version 1.0.0.0
  */
 public class JarFilter implements FilenameFilter {
+
+	/**
+	 * @param dir
+	 *            File
+	 * @param String
+	 *            name
+	 * @return boolean
+	 */
 	public boolean accept(final File dir, final String name) {
 		return (name.endsWith(".jar"));
 	}
