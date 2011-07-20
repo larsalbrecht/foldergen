@@ -96,10 +96,8 @@ public class View extends JFrame implements ActionListener, ItemListener {
 	 * @param usePlugins
 	 *            Boolean
 	 */
-	public View(final File rootPath, final File configFile, final Boolean isDebug, final Boolean showConfirmation,
-			final Boolean usePlugins) {
-		super(PropertiesReader.getInstance().getProperties("application.name") + " - "
-				+ PropertiesReader.getInstance().getProperties("application.version"));
+	public View(final File rootPath, final File configFile, final Boolean isDebug, final Boolean showConfirmation, final Boolean usePlugins) {
+		super(PropertiesReader.getInstance().getProperties("application.name") + " - " + PropertiesReader.getInstance().getProperties("application.version"));
 		this.isDebug = isDebug;
 		this.rootPath = rootPath;
 		this.configFile = configFile;
@@ -125,29 +123,28 @@ public class View extends JFrame implements ActionListener, ItemListener {
 	 */
 	private void setSystemLookAndFeel() {
 		try {
-			if(this.isDebug) {
-				System.out.println(PropertiesReader.getInstance().getProperties("application.debug.looknfeel")
-						+ UIManager.getSystemLookAndFeelClassName());
+			if (this.isDebug) {
+				System.out.println(PropertiesReader.getInstance().getProperties("application.debug.looknfeel") + UIManager.getSystemLookAndFeelClassName());
 			}
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch(UnsupportedLookAndFeelException e) {
-			if(this.isDebug) {
+		} catch (UnsupportedLookAndFeelException e) {
+			if (this.isDebug) {
 				e.printStackTrace();
 			}
-		} catch(ClassNotFoundException e) {
-			if(this.isDebug) {
+		} catch (ClassNotFoundException e) {
+			if (this.isDebug) {
 				e.printStackTrace();
 			}
-		} catch(InstantiationException e) {
-			if(this.isDebug) {
+		} catch (InstantiationException e) {
+			if (this.isDebug) {
 				e.printStackTrace();
 			}
-		} catch(IllegalAccessException e) {
-			if(this.isDebug) {
+		} catch (IllegalAccessException e) {
+			if (this.isDebug) {
 				e.printStackTrace();
 			}
-		} catch(Exception e) {
-			if(this.isDebug) {
+		} catch (Exception e) {
+			if (this.isDebug) {
 				e.printStackTrace();
 			}
 		}
@@ -199,8 +196,7 @@ public class View extends JFrame implements ActionListener, ItemListener {
 	private void createComponents() {
 		this.rpPane = new JRootPane();
 		this.btnChooseFile = new JButton(PropertiesReader.getInstance().getProperties("application.gui.filechooser.opener"));
-		this.btnChooseRootFolder = new JButton(PropertiesReader.getInstance().getProperties(
-				"application.gui.rootfolderchooser.opener"));
+		this.btnChooseRootFolder = new JButton(PropertiesReader.getInstance().getProperties("application.gui.rootfolderchooser.opener"));
 		this.btnStart = new JButton(PropertiesReader.getInstance().getProperties("application.gui.button.start"));
 
 		this.cbConfirmation = new JCheckBox(PropertiesReader.getInstance().getProperties("application.gui.checkbox.confirmation"));
@@ -215,69 +211,61 @@ public class View extends JFrame implements ActionListener, ItemListener {
 	 */
 	@Override
 	public void actionPerformed(final ActionEvent e) {
-		if(e.getSource().equals(this.btnChooseFile)) {
-			if(this.isDebug) {
+		if (e.getSource().equals(this.btnChooseFile)) {
+			if (this.isDebug) {
 				System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.opener.click"));
 			}
 			this.fcChooser = new JFileChooser();
-			this.fcChooser.setCurrentDirectory(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()));
+			this.fcChooser.setCurrentDirectory((this.rootPath != null ? this.rootPath : (this.configFile != null ? new File(this.configFile.getParent()) : new File(System.getProperty("user.dir")))));
 			this.fcChooser.setFileFilter(new FolderGenFileFilter());
 			this.fcChooser.setDialogTitle(PropertiesReader.getInstance().getProperties("application.gui.filechooser.title"));
 			Integer returnVal = this.fcChooser.showOpenDialog(this);
-			if(returnVal == JFileChooser.APPROVE_OPTION) {
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				File file = this.fcChooser.getSelectedFile();
-				if(this.isDebug) {
-					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.approved")
-							+ file.getName());
+				if (this.isDebug) {
+					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.approved") + file.getName());
 				}
-				if(file.isFile() && file.exists()) {
+				if (file.isFile() && file.exists()) {
 					this.configFile = file;
 				}
 			} else {
-				if(this.isDebug) {
+				if (this.isDebug) {
 					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.canceled"));
 				}
 			}
-		} else if(e.getSource() == this.btnChooseRootFolder) {
-			if(this.isDebug) {
+		} else if (e.getSource() == this.btnChooseRootFolder) {
+			if (this.isDebug) {
 				System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.opener.click"));
 			}
 			this.fcChooser = new JFileChooser();
-			this.fcChooser.setCurrentDirectory(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()));
+			this.fcChooser.setCurrentDirectory((this.rootPath != null ? this.rootPath : (this.configFile != null ? new File(this.configFile.getParent()) : new File(System.getProperty("user.dir")))));
 			this.fcChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			this.fcChooser
-					.setDialogTitle(PropertiesReader.getInstance().getProperties("application.gui.rootfolderchooser.title"));
+			this.fcChooser.setDialogTitle(PropertiesReader.getInstance().getProperties("application.gui.rootfolderchooser.title"));
 			this.fcChooser.setAcceptAllFileFilterUsed(false);
 			Integer returnVal = this.fcChooser.showOpenDialog(this);
 
-			if(returnVal == JFileChooser.APPROVE_OPTION) {
-				File file = this.fcChooser.getSelectedFile() != null ? this.fcChooser.getSelectedFile() : this.fcChooser
-						.getCurrentDirectory();
-				if(this.isDebug) {
-					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.approved")
-							+ file.getName());
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				File file = this.fcChooser.getSelectedFile() != null ? this.fcChooser.getSelectedFile() : this.fcChooser.getCurrentDirectory();
+				if (this.isDebug) {
+					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.approved") + file.getName());
 				}
-				if(file.isDirectory() && file.exists()) {
+				if (file.isDirectory() && file.exists()) {
 					this.rootPath = file;
 				}
 			} else {
-				if(this.isDebug) {
+				if (this.isDebug) {
 					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.canceled"));
 				}
 			}
-		} else if(e.getSource() == this.btnStart) {
-			if(this.showConfirmation) {
-				if(JOptionPane.showConfirmDialog(this, PropertiesReader.getInstance().getProperties(
-						"application.gui.messagedialog.confirmation.message"), PropertiesReader.getInstance().getProperties(
-						"application.gui.messagedialog.confirmation.title"), JOptionPane.YES_NO_OPTION,
-						JOptionPane.INFORMATION_MESSAGE) == 0) {
-					new Generator(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()), this.configFile,
-							this.isDebug, FolderGen.CONFIRMATION_HIDE, this.usePlugins);
+		} else if (e.getSource() == this.btnStart) {
+			if (this.showConfirmation) {
+				if (JOptionPane.showConfirmDialog(this, PropertiesReader.getInstance().getProperties("application.gui.messagedialog.confirmation.message"), PropertiesReader.getInstance()
+						.getProperties("application.gui.messagedialog.confirmation.title"), JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE) == 0) {
+					new Generator(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()), this.configFile, this.isDebug, FolderGen.CONFIRMATION_HIDE, this.usePlugins);
 
 				}
 			} else {
-				new Generator(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()), this.configFile,
-						this.isDebug, FolderGen.CONFIRMATION_HIDE, this.usePlugins);
+				new Generator(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()), this.configFile, this.isDebug, FolderGen.CONFIRMATION_HIDE, this.usePlugins);
 			}
 		}
 
@@ -291,9 +279,9 @@ public class View extends JFrame implements ActionListener, ItemListener {
 	 */
 	@Override
 	public void itemStateChanged(final ItemEvent ie) {
-		if(ie.getSource() == this.cbConfirmation) {
+		if (ie.getSource() == this.cbConfirmation) {
 			this.showConfirmation = this.cbConfirmation.getSelectedObjects() != null ? Boolean.TRUE : Boolean.FALSE;
-		} else if(ie.getSource() == this.cbPlugins) {
+		} else if (ie.getSource() == this.cbPlugins) {
 			this.usePlugins = this.cbPlugins.getSelectedObjects() != null ? Boolean.TRUE : Boolean.FALSE;
 		}
 	}

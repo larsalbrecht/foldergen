@@ -47,10 +47,13 @@ import com.lars_albrecht.foldergen.core.helper.properies.PropertiesReader;
 import com.lars_albrecht.foldergen.gui.View;
 
 /**
- * If you have the .jar file on you filesystem, you need a .foldergenconf-File. This file can be written in a default text editor like vim, notepad or something like that. For more about the
- * foldergenconf, look at the wiki-site. java -jar foldergen.jar -c C:\<filename>.foldergenconf or java -jar foldergen.jar -c /home/testuser/<filename>.foldergenconf
+ * If you have the .jar file on you filesystem, you need a .foldergenconf-File.
+ * This file can be written in a default text editor like vim, notepad or
+ * something like that. For more about the foldergenconf, look at the wiki-site.
+ * java -jar foldergen.jar -c C:\<filename>.foldergenconf or java -jar
+ * foldergen.jar -c /home/testuser/<filename>.foldergenconf
  * 
- * @see http://code.google.com/p/foldergen/
+ * @see "http://code.google.com/p/foldergen/"
  * @author lalbrecht
  * @version 1.4.9.0
  * 
@@ -84,35 +87,33 @@ public class FolderGen {
 		FolderGenCLIConf appConf = null;
 		try {
 			appConf = FolderGenCLIHelper.parseArguments(args);
-		} catch(ParseException e) {
+		} catch (ParseException e) {
 			System.err.println(PropertiesReader.getInstance().getProperties("application.exception.parse"));
 		}
 		// No args or no config file and no gui
-		if((args.length < 1) || ((appConf.getConfigFile() == null) && !appConf.getIsGui())) {
-			FolderGenCLIHelper.printUsage(PropertiesReader.getInstance().getProperties("application.name"), FolderGenCLIHelper
-					.createOptions(), System.out);
+		if ((args.length < 1) || ((appConf.getConfigFile() == null) && !appConf.getIsGui())) {
+			FolderGenCLIHelper.printUsage(PropertiesReader.getInstance().getProperties("application.name"), FolderGenCLIHelper.createOptions(), System.out);
 		} else {
 			// with config file
-			if(appConf.getConfigFile() != null) {
+			if (appConf.getConfigFile() != null) {
 				configFile = appConf.getConfigFile();
 			}
 			// no gui and no config file or config file is not valid
-			if(!appConf.getIsGui() && (!configFile.exists() || !configFile.isFile())) {
-				FolderGenCLIHelper.printUsage(PropertiesReader.getInstance().getProperties("application.name"),
-						FolderGenCLIHelper.createOptions(), System.out);
+			if (!appConf.getIsGui() && (!configFile.exists() || !configFile.isFile())) {
+				FolderGenCLIHelper.printUsage(PropertiesReader.getInstance().getProperties("application.name"), FolderGenCLIHelper.createOptions(), System.out);
 			} else {
-				if(appConf.getLocale() != null) {
+				if (appConf.getLocale() != null) {
 					PropertiesReader.getInstance().setLocale(appConf.getLocale());
 				}
-				this.startUp(appConf.getRootPath(), configFile, appConf.getIsGui(), appConf.getIsDebug(), appConf
-						.getShowConfirmation(), appConf.getUsePlugins());
+				this.startUp(appConf.getRootPath(), configFile, appConf.getIsGui(), appConf.getIsDebug(), appConf.getShowConfirmation(), appConf.getUsePlugins());
 			}
 		}
 	}
 
 	/**
-	 * Start FolderGen. "isGui" loads the gui if true, "isDebug" prints debug prints - if true, and configFile contains the start config file if not null. "rootPath" contains the startpoint to create
-	 * folders and files.
+	 * Start FolderGen. "isGui" loads the gui if true, "isDebug" prints debug
+	 * prints - if true, and configFile contains the start config file if not
+	 * null. "rootPath" contains the startpoint to create folders and files.
 	 * 
 	 * @param rootPath
 	 *            File
@@ -127,18 +128,17 @@ public class FolderGen {
 	 * @param usePlugins
 	 *            Boolean
 	 */
-	private void startUp(final File rootPath, final File configFile, final Boolean isGui, final Boolean isDebug,
-			final Boolean showConfirmation, final Boolean usePlugins) {
+	private void startUp(final File rootPath, final File configFile, final Boolean isGui, final Boolean isDebug, final Boolean showConfirmation, final Boolean usePlugins) {
 
 		try { // Try to get default proxy
 			System.setProperty("java.net.useSystemProxies", "true");
-		} catch(Exception e) {
-			if(isDebug) {
+		} catch (Exception e) {
+			if (isDebug) {
 				e.printStackTrace();
 			}
 		}
 
-		if(isGui) {
+		if (isGui) {
 			new View(rootPath, configFile, isDebug, showConfirmation, usePlugins);
 		} else {
 			new Generator(rootPath, configFile, isDebug, showConfirmation, usePlugins);

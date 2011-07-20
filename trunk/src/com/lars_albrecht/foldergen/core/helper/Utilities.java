@@ -59,8 +59,8 @@ public class Utilities {
 	 * 
 	 * @param string
 	 *            String
-	 * @param String
-	 *            findStr
+	 * @param findStr
+	 *            String
 	 * @return Integer
 	 */
 	public static Integer countChars(final String string, final String findStr) {
@@ -87,11 +87,11 @@ public class Utilities {
 	 * @throws IOException
 	 */
 	public static String getFileContent(final File srcFile) throws IOException {
-		if((srcFile != null) && srcFile.exists() && srcFile.isFile()) {
+		if ((srcFile != null) && srcFile.exists() && srcFile.isFile()) {
 			BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(srcFile)));
 			StringBuffer contentOfFile = new StringBuffer();
 			String line;
-			while((line = br.readLine()) != null) {
+			while ((line = br.readLine()) != null) {
 				contentOfFile.append(line);
 			}
 			return contentOfFile.toString();
@@ -102,7 +102,7 @@ public class Utilities {
 	public static void copyFile(final File source, final File target) throws FileNotFoundException, IOException {
 		FileChannel in = new FileInputStream(source).getChannel(), out = new FileOutputStream(target).getChannel();
 		ByteBuffer buffer = ByteBuffer.allocate(1024);
-		while(in.read(buffer) != -1) {
+		while (in.read(buffer) != -1) {
 			buffer.flip(); // Prepare for writing
 			out.write(buffer);
 			buffer.clear(); // Prepare for reading
@@ -114,14 +114,13 @@ public class Utilities {
 	public static void copyDir(final File source, final File target) throws FileNotFoundException, IOException {
 		File[] files = source.listFiles();
 		target.mkdirs();
-		for(File file : files) {
-			if(file.isDirectory()) {
-				Utilities.copyDir(file,
-						new File(target.getAbsolutePath() + System.getProperty("file.separator") + file.getName()));
+		for (File file : files) {
+			if (file.isDirectory()) {
+				Utilities.copyDir(file, new File(target.getAbsolutePath() + System.getProperty("file.separator") + file.getName()));
 			} else {
-				Utilities.copyFile(file, new File(target.getAbsolutePath() + System.getProperty("file.separator")
-						+ file.getName()));
+				Utilities.copyFile(file, new File(target.getAbsolutePath() + System.getProperty("file.separator") + file.getName()));
 			}
 		}
 	}
+
 }
