@@ -1,4 +1,3 @@
-package com.lars_albrecht.foldergen.core.helper;
 /*
  * Copyright (c) 2011 Lars Chr. Albrecht
  * All rights reserved.
@@ -35,32 +34,19 @@ package com.lars_albrecht.foldergen.core.helper;
 /**
  * 
  */
+package com.lars_albrecht.foldergen.plugin.filter;
 
-
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FilenameFilter;
 
 /**
- * Special ArrayList for StructItems.
+ * Filter for *.jar-Files.
  * 
  * @author lalbrecht
  * @version 1.0.0.0
  */
-@SuppressWarnings("serial")
-public class Struct extends ArrayList<StructItem> {
-
-	/**
-	 * Default Constructor.
-	 */
-	public Struct() {
-	}
-
-	/**
-	 * Constructor with param "item".
-	 * 
-	 * @param item
-	 *            StructItem
-	 */
-	public Struct(final StructItem item) {
-		this.add(item);
+public class JarFilter implements FilenameFilter {
+	public boolean accept(final File dir, final String name) {
+		return (name.endsWith(".jar"));
 	}
 }

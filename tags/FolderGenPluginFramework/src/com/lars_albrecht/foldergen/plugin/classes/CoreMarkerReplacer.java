@@ -1,4 +1,3 @@
-package com.lars_albrecht.foldergen.core.helper;
 /*
  * Copyright (c) 2011 Lars Chr. Albrecht
  * All rights reserved.
@@ -35,32 +34,51 @@ package com.lars_albrecht.foldergen.core.helper;
 /**
  * 
  */
-
-
-import java.util.ArrayList;
+package com.lars_albrecht.foldergen.plugin.classes;
 
 /**
- * Special ArrayList for StructItems.
+ * Contains the plugin to replace.
  * 
  * @author lalbrecht
  * @version 1.0.0.0
  */
-@SuppressWarnings("serial")
-public class Struct extends ArrayList<StructItem> {
+public abstract class CoreMarkerReplacer {
+	/**
+	 * The content to replace.
+	 */
+	protected String content;
+	protected String name;
 
 	/**
-	 * Default Constructor.
+	 * @return the content
 	 */
-	public Struct() {
+	public synchronized final String getContent() {
+		return this.content;
 	}
 
 	/**
-	 * Constructor with param "item".
-	 * 
-	 * @param item
-	 *            StructItem
+	 * @param content
+	 *            the content to set
 	 */
-	public Struct(final StructItem item) {
-		this.add(item);
+	public synchronized final void setContent(final String content) {
+		this.content = content;
+	}
+
+	/**
+	 * Returns the name.
+	 * 
+	 * @return String
+	 */
+	public String getName() {
+		return this.name;
+	}
+
+	/**
+	 * Replaces the content.
+	 * 
+	 * @return String
+	 */
+	public String replaceContent() {
+		return null;
 	}
 }

@@ -40,7 +40,7 @@ import java.io.File;
 
 import javax.swing.filechooser.FileFilter;
 
-import com.lars_albrecht.foldergen.core.helper.PropertiesReader;
+import com.lars_albrecht.foldergen.core.helper.properies.PropertiesReader;
 
 /**
  * @author lalbrecht

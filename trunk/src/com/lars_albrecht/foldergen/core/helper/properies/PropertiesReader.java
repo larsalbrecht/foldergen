@@ -1,4 +1,3 @@
-package com.lars_albrecht.foldergen.core.helper;
 /*
  * Copyright (c) 2011 Lars Chr. Albrecht
  * All rights reserved.
@@ -35,32 +34,75 @@ package com.lars_albrecht.foldergen.core.helper;
 /**
  * 
  */
+package com.lars_albrecht.foldergen.core.helper.properies;
 
-
-import java.util.ArrayList;
+import java.io.UnsupportedEncodingException;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
 /**
- * Special ArrayList for StructItems.
- * 
  * @author lalbrecht
  * @version 1.0.0.0
+ * 
  */
-@SuppressWarnings("serial")
-public class Struct extends ArrayList<StructItem> {
+public final class PropertiesReader {
+
+	private static PropertiesReader instance = null;
+	private Locale locale = Locale.getDefault();
 
 	/**
-	 * Default Constructor.
+	 * @return the locale
 	 */
-	public Struct() {
+	public synchronized final Locale getLocale() {
+		return this.locale;
 	}
 
 	/**
-	 * Constructor with param "item".
-	 * 
-	 * @param item
-	 *            StructItem
+	 * @param locale
+	 *            the locale to set
 	 */
-	public Struct(final StructItem item) {
-		this.add(item);
+	public synchronized final void setLocale(final Locale locale) {
+		this.locale = locale;
+	}
+
+	/**
+	 * Private default constructor.
+	 */
+	private PropertiesReader() {
+	}
+
+	/**
+	 * 
+	 * @return PropertiesReader
+	 */
+	public static PropertiesReader getInstance() {
+
+		if(PropertiesReader.instance == null) {
+			PropertiesReader.instance = new PropertiesReader();
+		}
+		return PropertiesReader.instance;
+	}
+
+	/**
+	 * Returns the value of the key. Converts the iso-8859-1 Strings to UTF-8.
+	 * 
+	 * @param key
+	 * @return String
+	 */
+	public String getProperties(final String key) {
+		String result = null;
+		try {
+			ResourceBundle bundle = ResourceBundle.getBundle("foldergen", this.locale);
+			result = bundle.getString(key);
+			byte bytes[] = result.getBytes("ISO-8859-1");
+			result = new String(bytes, "UTF-8");
+			return result;
+		} catch(MissingResourceException e) {
+			e.printStackTrace();
+		} catch(UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 }
