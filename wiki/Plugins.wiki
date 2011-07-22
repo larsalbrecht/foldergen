@@ -13,8 +13,8 @@ You need only to put the jar of the plugin to the folder where FolderGen is.
 It is really simple to create a plugin in this version. You need to add "foldergenpluginframeworkjar-< version >.jar" to you buildpath. Then you can create a class that extends "CoreMarkerReplacer" (com.lars_albrecht.foldergen.plugin.classes.CoreMarkerReplacer).
 
 Now, you need only to overwrite two methods:
-replaceContent()
-getName()
+{{{replaceContent()}}}
+{{{getName()}}}
 
 In "getName" you return the name of the plugin, e.g.: MyDemoPlugin
 
@@ -128,7 +128,7 @@ In this example, the plugin returns the pluginname + " DEMO". So it returns "MyR
 
 ==== MyReplacerDemo ====
 This is the constructor. Here you fill the infoMap HashMap with the pluginname:
-this.infoMap.put(IFolderGenPlugin.INFO_TITLE, "MyReplacerDemo");
+{{{this.infoMap.put(IFolderGenPlugin.INFO_TITLE, "MyReplacerDemo");}}}
 
 ==== doWork ====
 return null in this kind of plugin.
@@ -137,7 +137,7 @@ return null in this kind of plugin.
 return null in this kind of plugin.
 
 ==== getPluginType ====
-return IFolderGenPlugin.PLUGINTYPE_CONTENTEXTENSION_REPLACER in this kind of plugin.
+{{{return IFolderGenPlugin.PLUGINTYPE_CONTENTEXTENSION_REPLACER}}} in this kind of plugin.
 
 ==== getItemTitle ====
 return null in this kind of plugin.
@@ -232,10 +232,10 @@ In this kind of plugin you can/must return null.
 
 ==== MyWorkerPluginDemo ====
 This is the constructor. Here you fill the infoMap HashMap with the pluginname:
-		this.infoMap.put(IFolderGenPlugin.INFO_TITLE, "MyWorkerPluginDemo");
+{{{		this.infoMap.put(IFolderGenPlugin.INFO_TITLE, "MyWorkerPluginDemo");
 		this.infoMap.put(IFolderGenPlugin.INFO_FILEMARKER, "#");
 		this.infoMap.put(IFolderGenPlugin.INFO_INFOMARKER, "demo");
-		this.infoMap.put(IFolderGenPlugin.INFO_CONTENTREPLACE, Boolean.TRUE);
+		this.infoMap.put(IFolderGenPlugin.INFO_CONTENTREPLACE, Boolean.TRUE);}}}
 
  * INFO_TITLE
   * This is the Pluginname
@@ -250,9 +250,9 @@ This is the constructor. Here you fill the infoMap HashMap with the pluginname:
 This is a internal function. It creats the file and write it down to filesystem. If "content" is set, it writes the content in the file.
 
 ==== doWork ====
-Here you do the "job". You will get a workerMap (HashMap<String, Object>). You can find some information here you can use.
+Here you do the "job". You will get a workerMap ({{{HashMap<String, Object>}}}). You can find some information here you can use.
  * additionalData
-  * This is a HashMap<String, String>
+  * This is a {{{HashMap<String, String>}}}
    * type (see INFO_INFOMARKER)
    * content (the content that can be written)
  * rootFolder
@@ -265,7 +265,7 @@ You became a basicInfo String Array. Here you find some basic informations (see 
 If you set "content" in result, this will be written later.
 
 ==== getPluginType ====
-return the kind of the plugin (see return IFolderGenPlugin.PLUGINTYPE_CONTENTEXTENSION[...]).
+return the kind of the plugin (see {{{return IFolderGenPlugin.PLUGINTYPE_CONTENTEXTENSION[...]}}}).
 
 ==== getItemTitle ====
-Returns the title for the file. Normally you use basicInfo[1].trim().
+Returns the title for the file. Normally you use {{{basicInfo[1].trim()}}}.
