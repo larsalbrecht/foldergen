@@ -50,8 +50,8 @@ public class JarFilter implements FilenameFilter {
 	/**
 	 * @param dir
 	 *            File
-	 * @param String
-	 *            name
+	 * @param name
+	 *            String
 	 * @return boolean
 	 */
 	public boolean accept(final File dir, final String name) {

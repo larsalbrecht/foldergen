@@ -60,8 +60,9 @@ public class Utilities {
 	 * 
 	 * @param string
 	 *            String
-	 * @param String
-	 *            findStr
+	 * @param findStr
+	 *            String
+	 * 
 	 * @return Integer
 	 */
 	public static Integer countChars(final String string, final String findStr) {
@@ -101,10 +102,9 @@ public class Utilities {
 	}
 
 	/**
-	 * Returns the content of a webresource as string.
 	 * 
-	 * @param srcFile
-	 *            File
+	 * @param srcUrl
+	 *            URL
 	 * @return String
 	 * @throws IOException
 	 */
@@ -116,9 +116,6 @@ public class Utilities {
 			while((line = br.readLine()) != null) {
 				contentOfFile += line;
 			}
-			/*
-			 * StringBuffer contentOfFile = new StringBuffer(); String line; while((line = br.readLine()) != null) { contentOfFile.append(line); }
-			 */
 			return contentOfFile.toString();
 		}
 		return null;

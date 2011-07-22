@@ -14,29 +14,29 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
-import com.lars_albrecht.foldergen.plugin.classes.CoreMarkerReplacer;
+import com.lars_albrecht.foldergen.plugin.classes.FolderGenPlugin;
 import com.lars_albrecht.foldergen.plugin.filter.JarFilter;
 
 /**
  * Modified version of twit88. Search and loads the plugins.
  * 
  * @author lalbrecht
- * @see http://twit88.com/blog/2007/10/08/develop-a-java-plugin-framework-search-for-plugin-dynamically/
+ * @see "http://twit88.com/blog/2007/10/08/develop-a-java-plugin-framework-search-for-plugin-dynamically/"
  * @version 1.0.0.0
  * 
  */
 @SuppressWarnings("unchecked")
 public class PluginFinder {
 	// Parameters
-	private static final Class<CoreMarkerReplacer>[] parameters = new Class[] { URL.class };
+	private static final Class<FolderGenPlugin>[] parameters = new Class[] { URL.class };
 
-	private List<CoreMarkerReplacer> pluginCollection;
+	private List<FolderGenPlugin> pluginCollection;
 
 	/**
 	 * Constructor.
 	 */
 	public PluginFinder() {
-		this.pluginCollection = new ArrayList<CoreMarkerReplacer>(5);
+		this.pluginCollection = new ArrayList<FolderGenPlugin>(5);
 	}
 
 	/**
@@ -57,9 +57,9 @@ public class PluginFinder {
 			for(String className : classNames) {
 				// Remove the ".class" at the back
 				String name = className.substring(0, (className.length() - 6));
-				Class<CoreMarkerReplacer> clazz = this.getClass(f, name);
-				Class<CoreMarkerReplacer> superClass = (Class<CoreMarkerReplacer>) clazz.getSuperclass();
-				if(superClass.equals(CoreMarkerReplacer.class)) {
+				Class<FolderGenPlugin> clazz = this.getClass(f, name);
+				Class<FolderGenPlugin> superClass = (Class<FolderGenPlugin>) clazz.getSuperclass();
+				if(superClass.equals(FolderGenPlugin.class)) {
 					this.pluginCollection.add(clazz.newInstance());
 				}
 			}
@@ -101,16 +101,16 @@ public class PluginFinder {
 	 * @return Class<CoreMarkerReplacer>
 	 * @throws Exception
 	 */
-	public Class<CoreMarkerReplacer> getClass(final File file, final String name) throws Exception {
+	public Class<FolderGenPlugin> getClass(final File file, final String name) throws Exception {
 		this.addURL(file.toURI().toURL());
 
 		URLClassLoader clazzLoader;
-		Class<CoreMarkerReplacer> clazz;
+		Class<FolderGenPlugin> clazz;
 		String filePath = file.getAbsolutePath();
 		filePath = "jar:file://" + filePath + "!/";
 		URL url = new File(filePath).toURI().toURL();
 		clazzLoader = new URLClassLoader(new URL[] { url });
-		clazz = (Class<CoreMarkerReplacer>) clazzLoader.loadClass(name);
+		clazz = (Class<FolderGenPlugin>) clazzLoader.loadClass(name);
 		return clazz;
 
 	}
@@ -146,7 +146,7 @@ public class PluginFinder {
 	 * 
 	 * @return List<CoreMarkerReplacer>
 	 */
-	public List<CoreMarkerReplacer> getPluginCollection() {
+	public List<FolderGenPlugin> getPluginCollection() {
 		return this.pluginCollection;
 	}
 
@@ -156,7 +156,7 @@ public class PluginFinder {
 	 * @param pluginCollection
 	 *            List<CoreMarkerReplacer>
 	 */
-	public void setPluginCollection(final List<CoreMarkerReplacer> pluginCollection) {
+	public void setPluginCollection(final List<FolderGenPlugin> pluginCollection) {
 		this.pluginCollection = pluginCollection;
 	}
 }

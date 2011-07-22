@@ -34,26 +34,42 @@
 /**
  * 
  */
-package com.lars_albrecht.foldergen.plugin;
+package com.lars_albrecht.foldergen.plugin.classes;
 
-import com.lars_albrecht.foldergen.plugin.classes.CoreMarkerReplacer;
+import java.util.HashMap;
+
+import com.lars_albrecht.foldergen.plugin.interfaces.IFolderGenPlugin;
 
 /**
- * Replaces ${plugin.demo} with "MyPluginDemo DEMO".
+ * FolderGenPlugin is the base class for all plugins (workers and replacers).
  * 
  * @author lalbrecht
  * @version 1.0.0.0
  */
-public class MyPluginDemo extends CoreMarkerReplacer {
+public abstract class FolderGenPlugin implements IFolderGenPlugin {
 
-	@Override
-	public String replaceContent() {
-		return this.getContent().replaceAll("(\\$\\{plugin.demo\\})", this.getName() + " DEMO");
+	/**
+	 * Fill this array to return plugin informations. The integer is a static var of the IFolderGenPlugin-Interface.
+	 */
+	protected HashMap<Integer, Object> infoMap = new HashMap<Integer, Object>();
+
+	/**
+	 * Returns the infoMap.
+	 * 
+	 * @return HashMap<Integer, Object>
+	 */
+	public HashMap<Integer, Object> getInfoMap() {
+		return this.infoMap;
 	}
 
-	@Override
-	public String getName() {
-		return "MyPluginDemo";
+	/**
+	 * Returns a value from infoMap as object. The key is is a static var of the IFolderGenPlugin-Interface.
+	 * 
+	 * @param key
+	 *            Integer
+	 * @return Object
+	 */
+	public Object getInfoMapValue(final Integer key) {
+		return this.infoMap.get(key);
 	}
-
 }
