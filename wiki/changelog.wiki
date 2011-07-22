@@ -1,7 +1,7 @@
 #summary Changelog
 #labels Phase-Implementation,Featured
 <wiki:toc max_depth="2" />
-<g:plusone size="small"></g:plusone>
+<g:plusone size="standard"></g:plusone>
 = Changelog =
 <wiki:comment>
  _(work in progress: *100%*)_
