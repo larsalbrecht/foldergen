@@ -228,16 +228,44 @@ public class MyWorkerPluginDemo extends FolderGenPlugin {
 }}}
 
 ==== replaceContent ====
+In this kind of plugin you can/must return null.
 
-==== MyReplacerDemo ====
+==== MyWorkerPluginDemo ====
+This is the constructor. Here you fill the infoMap HashMap with the pluginname:
+		this.infoMap.put(IFolderGenPlugin.INFO_TITLE, "MyWorkerPluginDemo");
+		this.infoMap.put(IFolderGenPlugin.INFO_FILEMARKER, "#");
+		this.infoMap.put(IFolderGenPlugin.INFO_INFOMARKER, "demo");
+		this.infoMap.put(IFolderGenPlugin.INFO_CONTENTREPLACE, Boolean.TRUE);
+
+ * INFO_TITLE
+  * This is the Pluginname
+ * INFO_FILEMARKER
+  * This is the marker in the foldergenconf. 
+ * INFO_INFOMARKER
+  * This is a extended markername.
+ * INFO_CONTENTREPLACE
+  * If set to "TRUE", the default replacements run over the content
+
+==== workFile ====
+This is a internal function. It creats the file and write it down to filesystem. If "content" is set, it writes the content in the file.
 
 ==== doWork ====
+Here you do the "job". You will get a workerMap (HashMap<String, Object>). You can find some information here you can use.
+ * additionalData
+  * This is a HashMap<String, String>
+   * type (see INFO_INFOMARKER)
+   * content (the content that can be written)
+ * rootFolder
+  * This is the top of the file. It is type File.
+ * name
+  * This is the name of the item.
 
 ==== getAdditionlInfo ====
+You became a basicInfo String Array. Here you find some basic informations (see example above).
+If you set "content" in result, this will be written later.
 
 ==== getPluginType ====
+return the kind of the plugin (see return IFolderGenPlugin.PLUGINTYPE_CONTENTEXTENSION[...]).
 
 ==== getItemTitle ====
-(... coming soon ...)
-
-== (... coming soon ...) ==
+Returns the title for the file. Normally you use basicInfo[1].trim().
