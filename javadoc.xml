@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="javadoc">
+    <target name="javadoc">
+        <javadoc access="private" author="true" classpath="." destdir="doc" doctitle="FolderGen PluginFramework 1.5.0.0" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="com.lars_albrecht.foldergen.plugin.classes,com.lars_albrecht.foldergen.plugin.interfaces,com.lars_albrecht.foldergen.plugin.filter,com.lars_albrecht.foldergen.plugin.finder" source="1.6" sourcepath="src" splitindex="true" use="true" version="true"/>
+    </target>
+</project>

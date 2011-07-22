@@ -34,27 +34,42 @@
 /**
  * 
  */
-package com.lars_albrecht.foldergen.plugin.filter;
+package com.lars_albrecht.foldergen.plugin.classes;
 
-import java.io.File;
-import java.io.FilenameFilter;
+import java.util.HashMap;
+
+import com.lars_albrecht.foldergen.plugin.interfaces.IFolderGenPlugin;
 
 /**
- * Filter for *.jar-Files.
+ * FolderGenPlugin is the base class for all plugins (workers and replacers).
  * 
  * @author lalbrecht
  * @version 1.0.0.0
  */
-public class JarFilter implements FilenameFilter {
+public abstract class FolderGenPlugin implements IFolderGenPlugin {
 
 	/**
-	 * @param dir
-	 *            File
-	 * @param name
-	 *            String
-	 * @return boolean
+	 * Fill this array to return plugin informations. The integer is a static var of the IFolderGenPlugin-Interface.
 	 */
-	public boolean accept(final File dir, final String name) {
-		return (name.endsWith(".jar"));
+	protected HashMap<Integer, Object> infoMap = new HashMap<Integer, Object>();
+
+	/**
+	 * Returns the infoMap.
+	 * 
+	 * @return HashMap<Integer, Object>
+	 */
+	public HashMap<Integer, Object> getInfoMap() {
+		return this.infoMap;
+	}
+
+	/**
+	 * Returns a value from infoMap as object. The key is is a static var of the IFolderGenPlugin-Interface.
+	 * 
+	 * @param key
+	 *            Integer
+	 * @return Object
+	 */
+	public Object getInfoMapValue(final Integer key) {
+		return this.infoMap.get(key);
 	}
 }
