@@ -1,13 +1,12 @@
 #summary Changelog
 #labels Phase-Implementation,Featured
 <wiki:toc max_depth="2" />
-
+<g:plusone size="small"></g:plusone>
 = Changelog =
 <wiki:comment>
  _(work in progress: *100%*)_
 </wiki:comment>
 == Version 1.5.0.0 ==
-<g:plusone size="standard"></g:plusone>
  * Restructure plugin module
  * Plugins can now modify the config
  * Fixed bug while creating two folders with files on the same direcotry in another directory
