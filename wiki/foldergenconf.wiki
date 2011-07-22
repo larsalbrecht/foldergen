@@ -1,7 +1,7 @@
 #summary All about the foldergenconf
 #labels Featured,Phase-Deploy
 <wiki:toc max_depth="3" />
-
+<g:plusone size="standard"></g:plusone>
 = foldergenconf =
 
 The foldergenconf is the config file for FolderGen. You can create your own foldergenconf by using a simple texteditor like (g)vim, notepad, notepad++, scite or something like that. The file can not be UTF8 with byte order mark (BOM). If you create this kind of file, the first layer will not be created. Will be fixed in future. If you need to use UTF8, then use plain UTF8 files without BOM.
