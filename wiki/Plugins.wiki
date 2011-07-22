@@ -53,3 +53,33 @@ public class MyPluginDemo extends CoreMarkerReplacer {
 }
 
 }}}
+
+
+= Plugins (Version 1.5.0.0 | Pluginframework Version 1.5.0.0) =
+In version 1.5.0.0 there is a new pluginframework to create plugins for FolderGen. You can now not only add a marker replacer, the plugin framework in version 1.5.0.0 can do more.
+
+== Plugintypes ==
+
+A Plugin to ...
+ * ... replace own markers in content.
+ * ... create special types of files.
+ * ... create special types of folders.
+ * ... create special types of files with content.
+
+
+== How to use ==
+You need only to put the jar of the plugin to the folder where FolderGen is.
+
+== How to code ==
+It is really simple to create a plugin in this version. You need to add "foldergenpluginframeworkjar-< version >.jar" to you buildpath.
+Now you can start to create your own plugin.
+
+You need to extend your class from PluginClass "FolderGenPlugin".
+
+=== Build a marker replacer plugin ===
+(... coming soon ...)
+
+=== Build a foldergenconf plugin ===
+(... coming soon ...)
+
+== (... coming soon ...) ==
