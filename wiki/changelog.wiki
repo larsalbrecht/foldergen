@@ -3,8 +3,10 @@
 <wiki:toc max_depth="2" />
 
 = Changelog =
-
-== Version 1.5.0.0 - coming soon ==
+<wiki:comment>
+ _(work in progress: *100%*)_
+</wiki:comment>
+== Version 1.5.0.0 ==
  * Restructure plugin module
  * Plugins can now modify the config
  * Fixed bug while creating two folders with files on the same direcotry in another directory
