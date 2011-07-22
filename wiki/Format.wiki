@@ -2,9 +2,8 @@
 #labels Phase-Deploy
 <wiki:toc max_depth="3" />
 
+<g:plusone size="standard"></g:plusone>
 = Format =
-
-
 == ${date.formatcurrent(FORMAT)} ==
 
 The "FORMAT" string is like Java SimpleDateFormat (see: http://download.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html):
