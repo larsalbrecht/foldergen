@@ -2,6 +2,7 @@
 #labels Featured,Phase-Implementation
 <wiki:toc max_depth="3" />
 
+<g:plusone size="standard"></g:plusone>
 = Plugins (Version 1.4.9.0 | Pluginframework Version 1.0.0.0) =
 _Be carefully with this. This is *NOT* final and the code to produce a plugin can be changed in near future_
 
