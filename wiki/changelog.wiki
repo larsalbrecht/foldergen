@@ -7,15 +7,15 @@
 == Version 1.5.0.0 - coming soon ==
  * Restructure plugin module
  * Plugins can now modify the config
- * Fixed bug while creating two folders with files on the same direcotry in another directory _(work in progress: *100%*)_
- * Restructure source packages _(work in progress: *100%*)_
- * Added function to marker "~". Define a Web-URL to retrieve content from the web _(work in progress: *100%*)_
- * Added use of proxy (detect automatically) _(work in progress: *100%*)_
-   * Added parameter -px / -proxy to activate proxy search _(work in progress: *100%*)_
- * Add plugin functionality (on/off) to the GUI _(work in progress: *100%*)_
- * Add confirmation (on/off) to the GUI _(work in progress: *100%*)_
- * Reorganize GUI _(work in progress: *100%*)_
- * _... coming soon ..._
+ * Fixed bug while creating two folders with files on the same direcotry in another directory
+ * Restructure source packages
+ * Added function to marker "~". Define a Web-URL to retrieve content from the web
+ * Added use of proxy (detect automatically)
+   * Added parameter -px / -proxy to activate proxy search
+ * Add plugin functionality (on/off) to the GUI
+ * Add confirmation (on/off) to the GUI
+ * Reorganize GUI
+ * Reorganize code
 
 == Version 1.4.9.0 ==
  * Added simple [Plugins plugin] - Environment to add an own content marker replacer
