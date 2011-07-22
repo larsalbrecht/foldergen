@@ -113,4 +113,9 @@ Start with gui and without file (with debug):
 java -jar foldergen.jar -g -debug
 }}}
 
+Start with plugins (available in version 1.4.9.0 and above) and with gui (with debug):
+{{{
+java -jar foldergen.jar -g -p
+}}}
+
 Start FolderGen without file and without gui is not allowed.
