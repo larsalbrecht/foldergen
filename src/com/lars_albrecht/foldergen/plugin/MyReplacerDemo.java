@@ -36,7 +36,10 @@
  */
 package com.lars_albrecht.foldergen.plugin;
 
-import com.lars_albrecht.foldergen.plugin.classes.CoreMarkerReplacer;
+import java.util.HashMap;
+
+import com.lars_albrecht.foldergen.plugin.classes.FolderGenPlugin;
+import com.lars_albrecht.foldergen.plugin.interfaces.IFolderGenPlugin;
 
 /**
  * Replaces ${plugin.demo} with "MyPluginDemo DEMO".
@@ -44,16 +47,35 @@ import com.lars_albrecht.foldergen.plugin.classes.CoreMarkerReplacer;
  * @author lalbrecht
  * @version 1.0.0.0
  */
-public class MyPluginDemo extends CoreMarkerReplacer {
+public class MyReplacerDemo extends FolderGenPlugin {
 
 	@Override
-	public String replaceContent() {
-		return this.getContent().replaceAll("(\\$\\{plugin.demo\\})", this.getName() + " DEMO");
+	public String replaceContent(final String content) {
+		return content.replaceAll("(\\$\\{plugin.demo\\})", this.infoMap.get(IFolderGenPlugin.INFO_TITLE) + " DEMO");
+	}
+
+	public MyReplacerDemo() {
+		this.infoMap.put(IFolderGenPlugin.INFO_TITLE, "MyReplacerDemo");
 	}
 
 	@Override
-	public String getName() {
-		return "MyPluginDemo";
+	public HashMap<String, Object> doWork(final HashMap<String, Object> workerMap) {
+		return null;
+	}
+
+	@Override
+	public HashMap<String, String> getAdditionlInfo(final String[] basicInfo) {
+		return null;
+	}
+
+	@Override
+	public Integer getPluginType() {
+		return IFolderGenPlugin.PLUGINTYPE_CONTENTEXTENSION_REPLACER;
+	}
+
+	@Override
+	public String getItemTitle(final String[] basicInfo) {
+		return null;
 	}
 
 }
