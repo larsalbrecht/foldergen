@@ -130,3 +130,13 @@ java -jar foldergen.jar -g -p
 }}}
 
 Start FolderGen without file and without gui is not allowed.
+
+=== In Eclipse as "external tools" ===
+In Eclipse you can specify external tools. It is easy to configure.
+
+ # Open the "External Tools Configurations" menu
+ # Location: ${env_var:JAVA_HOME}/bin/java.exe
+ # Working Directory: <any>
+ # Arguments: -jar <path/to/>foldergenjar.jar
+
+You can specify any additional foldergen parameter behind "{{{-jar <path/to/>foldergenjar.jar}}}".
