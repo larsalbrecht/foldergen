@@ -6,7 +6,7 @@
 = folderGen =
 FolderGen is to generate automatically folders and files using a config file (called: foldergenconf). You can specify content for files to fill them automatically.
 
-== What is FolderGen? ==
+== What is folderGen? ==
 FolderGen is a Java Application (Command Line and GUI) that can generate folders and files (with content) automatically. 
 
 == Versioning ==
