@@ -23,6 +23,11 @@ FolderGen is a Java Application (Command Line and GUI) that can generate folders
 == General information to start ==
 If you have the .jar file on you filesystem, you need a .[foldergenconf]-File. This file can be written in a default text editor like vim, notepad or something like that. For more about the foldergenconf, look at the wiki-site.
 
+=== Installation ===
+
+ # Only download the jar from "Downloads"
+ # On Debian / Ubuntu (etc.) you can download the *.deb package and install the new version _(... coming soon ...)_
+
 === Start folderGen (Version 1.2.0.0 and lower) ===
 {{{
 java -jar foldergen.jar C:\<filename>.foldergenconf
