@@ -7,6 +7,7 @@
  _(work in progress: *100%*)_
 </wiki:comment>
 == Version 1.5.0.0 ==
+ * Fixed licence in file headers
  * Restructure plugin module
  * Plugins can now modify the config
  * Fixed bug while creating two folders with files on the same direcotry in another directory
