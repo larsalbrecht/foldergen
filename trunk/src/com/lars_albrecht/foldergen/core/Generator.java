@@ -2,32 +2,11 @@
  * Copyright (c) 2011 Lars Chr. Albrecht
  * All rights reserved.
  * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
+ * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+ * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
  * 
- * Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer.
- * 
- * Redistributions in binary form must reproduce the above copyright
- * notice, this list of conditions and the following disclaimer in the
- * documentation and/or other materials provided with the distribution.
- * 
- * Neither the name of the project's author nor the names of its
- * contributors may be used to endorse or promote products derived from
- * this software without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
- * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
- * HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
- * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
@@ -52,12 +31,12 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.lars_albrecht.foldergen.core.generator.helper.Struct;
+import com.lars_albrecht.foldergen.core.generator.helper.StructItem;
 import com.lars_albrecht.foldergen.core.generator.worker.CopyWorker;
 import com.lars_albrecht.foldergen.core.generator.worker.DefaultContentWorker;
 import com.lars_albrecht.foldergen.core.generator.worker.FileWorker;
 import com.lars_albrecht.foldergen.core.generator.worker.FolderWorker;
-import com.lars_albrecht.foldergen.core.helper.Struct;
-import com.lars_albrecht.foldergen.core.helper.StructItem;
 import com.lars_albrecht.foldergen.core.helper.properies.PropertiesReader;
 import com.lars_albrecht.foldergen.helper.Utilities;
 import com.lars_albrecht.foldergen.plugin.classes.FolderGenPlugin;
@@ -68,7 +47,7 @@ import com.lars_albrecht.foldergen.plugin.interfaces.IFolderGenPlugin;
  * The Generator generates the folders and files using the given configfile.
  * 
  * @author lalbrecht
- * @version 1.5.4.0
+ * @version 1.5.4.1
  * 
  */
 public class Generator {
@@ -85,6 +64,9 @@ public class Generator {
 	private File rootPath = null;
 	private Boolean showConfirmation = false;
 	private Boolean usePlugins = false;
+
+	private Struct struct = null;
+	private StructItem lastItem = null;
 
 	/**
 	 * Generator constructor.
@@ -105,10 +87,10 @@ public class Generator {
 		this.isDebug = isDebug;
 		this.showConfirmation = showConfirmation;
 		this.usePlugins = usePlugins;
+		this.rootPath = (rootPath != null ? rootPath : new File(configFile.getParent()));
 
 		this.initGenerator();
 
-		this.rootPath = (rootPath != null ? rootPath : new File(configFile.getParent()));
 		if(this.isDebug) {
 			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.choosedrootpath")
 					+ this.rootPath.getAbsolutePath() + "\n");
@@ -122,12 +104,23 @@ public class Generator {
 		}
 	}
 
+	/**
+	 * Initilize Generator.
+	 */
 	private void initGenerator() {
+		this.initWorker();
+	}
+
+	/**
+	 * Loads worker and plugins (if needed) and add file types to list ("fileTypes").
+	 */
+	private void initWorker() {
 		Generator.fgpWorker.add(new FolderWorker());
 		Generator.fgpWorker.add(new FileWorker());
 		Generator.fgpWorker.add(new CopyWorker());
 		Generator.fgpWorker.add(new DefaultContentWorker());
 
+		// Load plugins if needed
 		if(this.usePlugins) {
 			this.loadPlugins();
 		}
@@ -142,6 +135,7 @@ public class Generator {
 				Generator.fileTypes.add((String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER));
 			}
 		}
+
 	}
 
 	/**
@@ -163,30 +157,19 @@ public class Generator {
 			Integer layer = 0;
 			Integer lastLayer = 0;
 			// Create struct for items
-			Struct struct = new Struct();
-			// Create structitem for the last created.
-			StructItem lastItem = null;
+			this.struct = new Struct();
 			// every line in file
 			while((line = in.readLine()) != null) {
 				// Split line
-				String[] basicInfoArr = line.trim().split("\\s", 2);
+				HashMap<Integer, String> basicInfo = this.getBasicInfoMapFromConfigLine(line);
+				String typeStr = this.getTypeFromConfigLine(line);
 
-				String typeStr = null;
-				String regexpTypeStr = "";
-				for(int i = 0; i < Generator.fileTypes.size(); i++) {
-					regexpTypeStr += "\\" + Generator.fileTypes.get(i);
-				}
-				Matcher m = Pattern.compile("([\\s]{0,})([" + regexpTypeStr + "]{1})([\\s]{1})").matcher(line);
-				if(m.find() && (m.groupCount() > 0)) {
-					typeStr = m.group(1);
-				}
-
-				if((typeStr != null) && (basicInfoArr != null) && (basicInfoArr.length == 2) && (basicInfoArr[0] != null)
-						&& (basicInfoArr[1] != null)) {
+				if((typeStr != null) && (basicInfo.size() > 0) && (basicInfo.containsKey("filename"))
+						&& (basicInfo.containsKey(IFolderGenPlugin.BASICINFO_FILETITLE))) {
 					// No content
 					for(FolderGenPlugin plugin : Generator.fgpWorker) {
 						if((plugin.getPluginType() != IFolderGenPlugin.PLUGINTYPE_CONFEXTENSION_CONTENT)
-								&& basicInfoArr[0].trim().equalsIgnoreCase(
+								&& basicInfo.get(IFolderGenPlugin.BASICINFO_FILETITLE).trim().equalsIgnoreCase(
 										(String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER))) {
 							if(this.isDebug) {
 								for(Entry<Integer, Object> e : plugin.getInfoMap().entrySet()) {
@@ -204,35 +187,30 @@ public class Generator {
 								layer = 0;
 							}
 							HashMap<String, String> additionalInfo = new HashMap<String, String>();
-							String itemTitle = null;
 
 							additionalInfo.put("type", (String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_INFOMARKER));
 							if(plugin.getPluginType() == IFolderGenPlugin.PLUGINTYPE_CONFEXTENSION_FOLDER) {
 								additionalInfo.put("folder", Boolean.toString(Boolean.TRUE));
 							}
 
-							itemTitle = plugin.getItemTitle(basicInfoArr);
-
-							if(plugin.getAdditionlInfo(basicInfoArr) != null) {
-								additionalInfo.putAll(plugin.getAdditionlInfo(basicInfoArr));
+							if(plugin.getAdditionlInfo(basicInfo) != null) {
+								additionalInfo.putAll(plugin.getAdditionlInfo(basicInfo));
 							}
 
-							Object[] workedLine = this.workLine(layer, lastLayer, itemTitle, struct, lastItem, additionalInfo);
-							struct = (Struct) workedLine[0];
-							lastItem = (StructItem) workedLine[1];
+							Object[] workedLine = this.workLine(layer, lastLayer, plugin.getItemTitle(basicInfo), additionalInfo);
+							this.struct = (Struct) workedLine[0];
+							this.lastItem = (StructItem) workedLine[1];
 							lastLayer = layer;
 							break;
-						} else {
-							if(this.isDebug) {
-								System.out.println(PropertiesReader.getInstance().getProperties("application.debug.notequals"));
-							}
+						} else if(this.isDebug) {
+							System.out.println(PropertiesReader.getInstance().getProperties("application.debug.notequals"));
 						}
 					}
 				} else {
 					// content
 					for(FolderGenPlugin plugin : Generator.fgpWorker) {
 						if((plugin.getPluginType() == IFolderGenPlugin.PLUGINTYPE_CONFEXTENSION_CONTENT)
-								&& basicInfoArr[0].trim().equalsIgnoreCase(
+								&& basicInfo.get(IFolderGenPlugin.BASICINFO_FILEMARKER).trim().equalsIgnoreCase(
 										(String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_CONTENTSTARTMARKER))) {
 							String contentLine = null;
 							String content = "";
@@ -245,30 +223,27 @@ public class Generator {
 							}
 							HashMap<String, Object> workerMap = new HashMap<String, Object>();
 							workerMap.put("content", content);
-							workerMap.put("lastItem", lastItem);
+							workerMap.put("lastItem", this.lastItem);
 
 							content = (String) plugin.doWork(workerMap).get("content");
 							if((Boolean) plugin.getInfoMapValue(IFolderGenPlugin.INFO_CONTENTREPLACE)) {
-								content = this.replaceMarker(lastItem, content);
+								content = this.replaceMarker(this.lastItem, content);
 							}
 
 							// add content to (last)item
-							lastItem.getAdditionalData().put("content", content);
+							this.lastItem.getAdditionalData().put("content", content);
 							break;
-						} else {
-							if(this.isDebug) {
-								System.out.println(PropertiesReader.getInstance().getProperties("application.debug.notequals"));
-							}
+						} else if(this.isDebug) {
+							System.out.println(PropertiesReader.getInstance().getProperties("application.debug.notequals"));
 						}
 					}
 				}
 			}
-			if((this.showConfirmation && this.confirmationWorker(struct, basicRootFolder)) || !this.showConfirmation) {
-				this.workStruct(struct, basicRootFolder);
-			}
-
-			if(this.isDebug) {
-				this.printStruct(struct, "", Boolean.TRUE);
+			if((this.showConfirmation && this.confirmationWorker(basicRootFolder)) || !this.showConfirmation) {
+				if(this.isDebug) {
+					this.printStruct(this.struct, "", Boolean.TRUE);
+				}
+				this.workStruct(this.struct, basicRootFolder);
 			}
 
 		} catch(IOException e) {
@@ -281,48 +256,79 @@ public class Generator {
 	}
 
 	/**
+	 * Returns basicInfoMap from cofiguration line.
 	 * 
+	 * @param line
+	 *            String
+	 * @return HashMap<String, String>
+	 */
+	private HashMap<Integer, String> getBasicInfoMapFromConfigLine(final String line) {
+		HashMap<Integer, String> tempResult = new HashMap<Integer, String>();
+		String[] basicInfoArr = line.trim().split("\\s", 2);
+
+		switch(basicInfoArr.length) {
+		case 2:
+			tempResult.put(IFolderGenPlugin.BASICINFO_FILETITLE, basicInfoArr[1]);
+		case 1:
+			tempResult.put(IFolderGenPlugin.BASICINFO_FILEMARKER, basicInfoArr[0]);
+			break;
+
+		}
+
+		return tempResult;
+	}
+
+	/**
+	 * Returns type from configuration line.
 	 * 
-	 * @param struct
-	 *            Struct
+	 * @param line
+	 *            String
+	 * @return String
+	 */
+	private String getTypeFromConfigLine(final String line) {
+		String regexpTypeStr = "";
+		for(int i = 0; i < Generator.fileTypes.size(); i++) {
+			regexpTypeStr += "\\" + Generator.fileTypes.get(i);
+		}
+		Matcher m = Pattern.compile("([\\s]{0,})([" + regexpTypeStr + "]{1})([\\s]{1})").matcher(line);
+		if(m.find() && (m.groupCount() > 0)) {
+			return m.group(1);
+		} else {
+			return null;
+		}
+	}
+
+	/**
+	 * 
 	 * @param basicRootFolder
 	 *            File
 	 * @return Boolean
 	 */
-	private Boolean confirmationWorker(final Struct struct, final File basicRootFolder) {
-		this.printStruct(struct, "", Boolean.FALSE);
+	private Boolean confirmationWorker(final File basicRootFolder) {
+		this.printStruct(this.struct, "", Boolean.FALSE);
 		System.out.println(PropertiesReader.getInstance().getProperties("application.output.confirmation.question"));
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String inputLine = null;
-		Boolean hasToWrite = null;
 		try {
-			while((hasToWrite == null) && ((inputLine = br.readLine()) != null)) {
+			while(((inputLine = br.readLine()) != null)) {
 				if(inputLine.equals("") || inputLine.equalsIgnoreCase("n") || inputLine.equalsIgnoreCase("н")) {
-					hasToWrite = false;
+					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.struct.nowork.nocreate"));
+					System.out.println("\n" + PropertiesReader.getInstance().getProperties("application.debug.struct.nowork"));
+					return Boolean.FALSE;
 				} else if(inputLine.equalsIgnoreCase("y") || inputLine.equalsIgnoreCase("j") || inputLine.equalsIgnoreCase("o")
 						|| inputLine.equalsIgnoreCase("Д")) {
-					hasToWrite = true;
-				}
-				if(this.isDebug) {
-					System.out.println("\n"
-							+ PropertiesReader.getInstance().getProperties("application.debug.confirmation.writenotice")
-							+ hasToWrite);
+
+					if(this.isDebug) {
+						System.out.println("\n" + PropertiesReader.getInstance().getProperties("application.debug.struct.work"));
+					}
+					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.struct.work.create"));
+					return Boolean.TRUE;
 				}
 			}
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
-		if(hasToWrite) {
-			if(this.isDebug) {
-				System.out.println("\n" + PropertiesReader.getInstance().getProperties("application.debug.struct.work"));
-			}
-			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.struct.work.create"));
-			this.workStruct(struct, basicRootFolder);
-		} else if(this.isDebug) {
-			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.struct.nowork.nocreate"));
-			System.out.println("\n" + PropertiesReader.getInstance().getProperties("application.debug.struct.nowork"));
-		}
-		return true;
+		return Boolean.FALSE;
 	}
 
 	/**
@@ -334,26 +340,22 @@ public class Generator {
 	 *            Integer
 	 * @param itemTitle
 	 *            String
-	 * @param struct
-	 *            Struct
-	 * @param lastItem
-	 *            StructItem
 	 * @param additionalInfo
 	 *            HashMap<String, String>
 	 * @return Object{struct, lastItem}
 	 */
-	private Object[] workLine(final Integer layer, final Integer lastLayer, final String itemTitle, final Struct struct,
-			final StructItem lastItem, final HashMap<String, String> additionalInfo) {
-		Object[] mulitpleResult = { struct, lastItem };
+	private Object[] workLine(final Integer layer, final Integer lastLayer, final String itemTitle,
+			final HashMap<String, String> additionalInfo) {
+		Object[] mulitpleResult = { this.struct, this.lastItem };
 		if(layer.equals(0)) { // zero / root layer
-			mulitpleResult[0] = this.workLayerZero(itemTitle, struct, lastItem, additionalInfo);
-			mulitpleResult[1] = struct.get(struct.size() - 1);
+			mulitpleResult[0] = this.workLayerZero(itemTitle, additionalInfo);
+			mulitpleResult[1] = this.struct.get(this.struct.size() - 1);
 		} else if(layer > lastLayer) { // layer down
-			mulitpleResult[1] = this.workLayerDown(itemTitle, struct, lastItem, additionalInfo);
+			mulitpleResult[1] = this.workLayerDown(itemTitle, additionalInfo);
 		} else if(layer < lastLayer) { // layer up
-			mulitpleResult[1] = this.workLayerUp(itemTitle, struct, lastItem, additionalInfo, lastLayer, layer);
+			mulitpleResult[1] = this.workLayerUp(itemTitle, additionalInfo, lastLayer, layer);
 		} else if(layer.equals(lastLayer)) { // same layer
-			mulitpleResult[1] = this.workLayerSame(itemTitle, struct, lastItem, additionalInfo);
+			mulitpleResult[1] = this.workLayerSame(itemTitle, additionalInfo);
 		}
 		return mulitpleResult;
 	}
@@ -363,24 +365,19 @@ public class Generator {
 	 * 
 	 * @param name
 	 *            String
-	 * @param struct
-	 *            Struct
-	 * @param lastItem
-	 *            StructItem
 	 * @param additionalInfo
 	 *            HashMap<String, String>
 	 * 
 	 * @return Struct Struct
 	 */
-	private Struct workLayerZero(final String name, final Struct struct, final StructItem lastItem,
-			final HashMap<String, String> additionalInfo) {
+	private Struct workLayerZero(final String name, final HashMap<String, String> additionalInfo) {
 		StructItem tempStructItem = null;
 		if(this.isDebug) {
 			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.zero") + name);
 		}
 		tempStructItem = new StructItem(name.trim(), additionalInfo, null);
-		struct.add(tempStructItem);
-		return struct;
+		this.struct.add(tempStructItem);
+		return this.struct;
 	}
 
 	/**
@@ -388,23 +385,18 @@ public class Generator {
 	 * 
 	 * @param name
 	 *            String
-	 * @param struct
-	 *            Struct
-	 * @param lastItem
-	 *            StructItem
 	 * @param additionalInfo
 	 *            HashMap<String, String>
 	 * 
 	 * @return StructItem StructItem
 	 */
-	private StructItem workLayerDown(final String name, final Struct struct, final StructItem lastItem,
-			final HashMap<String, String> additionalInfo) {
+	private StructItem workLayerDown(final String name, final HashMap<String, String> additionalInfo) {
 		StructItem tempStructItem = null;
 		if(this.isDebug) {
 			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.down") + name);
 		}
-		tempStructItem = new StructItem(name.trim(), additionalInfo, lastItem);
-		lastItem.getSubStruct().add(tempStructItem);
+		tempStructItem = new StructItem(name.trim(), additionalInfo, this.lastItem);
+		this.lastItem.getSubStruct().add(tempStructItem);
 		return tempStructItem;
 	}
 
@@ -413,10 +405,6 @@ public class Generator {
 	 * 
 	 * @param name
 	 *            String
-	 * @param struct
-	 *            Struct
-	 * @param lastItem
-	 *            StructItem
 	 * @param additionalInfo
 	 *            HashMap<String, String>
 	 * @param lastLayer
@@ -426,18 +414,18 @@ public class Generator {
 	 * 
 	 * @return StructItem StructItem
 	 */
-	private StructItem workLayerUp(final String name, final Struct struct, StructItem lastItem,
-			final HashMap<String, String> additionalInfo, final Integer lastLayer, final Integer layer) {
+	private StructItem workLayerUp(final String name, final HashMap<String, String> additionalInfo, final Integer lastLayer,
+			final Integer layer) {
 		StructItem tempStructItem = null;
 		if(this.isDebug) {
 			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.up") + name);
 		}
 		tempStructItem = new StructItem(name.trim(), additionalInfo, null);
 		for(int i = 0; i <= lastLayer - layer; i++) {
-			lastItem = lastItem.getParentStructItem();
+			this.lastItem = this.lastItem.getParentStructItem();
 		}
-		tempStructItem.setParentStructItem(lastItem);
-		lastItem.getSubStruct().add(tempStructItem);
+		tempStructItem.setParentStructItem(this.lastItem);
+		this.lastItem.getSubStruct().add(tempStructItem);
 		return tempStructItem;
 	}
 
@@ -446,23 +434,18 @@ public class Generator {
 	 * 
 	 * @param name
 	 *            String
-	 * @param struct
-	 *            Struct
-	 * @param lastItem
-	 *            StructItem
 	 * @param additionalInfo
 	 *            HashMap<String, String>
 	 * 
 	 * @return StructItem StructItem
 	 */
-	private StructItem workLayerSame(final String name, final Struct struct, final StructItem lastItem,
-			final HashMap<String, String> additionalInfo) {
+	private StructItem workLayerSame(final String name, final HashMap<String, String> additionalInfo) {
 		StructItem tempStructItem = null;
 		if(this.isDebug) {
 			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.equals") + name);
 		}
-		tempStructItem = new StructItem(name.trim(), additionalInfo, lastItem.getParentStructItem());
-		lastItem.getParentStructItem().getSubStruct().add(tempStructItem);
+		tempStructItem = new StructItem(name.trim(), additionalInfo, this.lastItem.getParentStructItem());
+		this.lastItem.getParentStructItem().getSubStruct().add(tempStructItem);
 		return tempStructItem;
 	}
 
@@ -672,7 +655,7 @@ public class Generator {
 	}
 
 	/**
-	 * Prints a given Struct "struct" in console with "seperator" to seperate.
+	 * Prints a given Struct "struct" in console with "seperator" to seperate recursive.
 	 * 
 	 * @param struct
 	 *            Struct

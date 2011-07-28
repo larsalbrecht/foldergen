@@ -64,7 +64,7 @@ public class MyReplacerDemo extends FolderGenPlugin {
 	}
 
 	@Override
-	public HashMap<String, String> getAdditionlInfo(final String[] basicInfo) {
+	public HashMap<String, String> getAdditionlInfo(final HashMap<Integer, String> basicInfo) {
 		return null;
 	}
 
@@ -74,7 +74,7 @@ public class MyReplacerDemo extends FolderGenPlugin {
 	}
 
 	@Override
-	public String getItemTitle(final String[] basicInfo) {
+	public String getItemTitle(final HashMap<Integer, String> basicInfo) {
 		return null;
 	}
 

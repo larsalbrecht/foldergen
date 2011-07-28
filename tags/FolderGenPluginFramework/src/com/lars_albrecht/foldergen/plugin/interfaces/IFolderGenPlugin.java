@@ -95,6 +95,16 @@ public interface IFolderGenPlugin {
 	final static Integer INFO_CONTENTREPLACE = 5;
 
 	/**
+	 * The filetitle. Can be more than a title, but usually this is only the title.
+	 */
+	final static Integer BASICINFO_FILETITLE = 1;
+
+	/**
+	 * The filemarker. e.g.: +
+	 */
+	final static Integer BASICINFO_FILEMARKER = 2;
+
+	/**
 	 * CONFEXTENSION: You only need to return null. You became a HashMap with "additionalData" (HashMap), "rootFolder" (File) and "name" (String)<br>
 	 * CONTENTEXTENSION: you need to return a HashMap with key "content" and became a HashMap with "content".
 	 * 
@@ -104,14 +114,12 @@ public interface IFolderGenPlugin {
 	HashMap<String, Object> doWork(final HashMap<String, Object> workerMap);
 
 	/**
-	 * Returns additional infos if return not null. basicInfo is a String-Array. It contains:<br>
-	 * basicInfo[0] = whitespaces in foldergenconf<br>
-	 * basicInfo[1] = all behind the filemarker<br>
+	 * Returns additional info if return not null. basicInfo is a HashMap<Integer, String>. It contains the BASICINFO_* statics.
 	 * 
 	 * @param basicInfo
 	 * @return HashMap<String, String>
 	 */
-	HashMap<String, String> getAdditionlInfo(final String[] basicInfo);
+	HashMap<String, String> getAdditionlInfo(final HashMap<Integer, String> basicInfo);
 
 	/**
 	 * Replaces the content for CONTENTEXTENSION-Plugins.
@@ -122,12 +130,12 @@ public interface IFolderGenPlugin {
 	String replaceContent(final String content);
 
 	/**
-	 * Returns the title for the item in file. In basic plugins you return basicInfo[1].trim();
+	 * Returns the title for the item in file. In basic plugins you return basicInfo.get(IFolderGenPlugin.BASICINFO_FILETITLE).trim();
 	 * 
 	 * @param basicInfo
 	 * @return String
 	 */
-	String getItemTitle(final String[] basicInfo);
+	String getItemTitle(final HashMap<Integer, String> basicInfo);
 
 	/**
 	 * Returns the plugin type. This is necessaray to load the plugin. You need to return one of the PLUGINTYPE... statics.
