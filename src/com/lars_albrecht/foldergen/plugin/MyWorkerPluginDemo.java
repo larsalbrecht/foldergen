@@ -66,15 +66,15 @@ public class MyWorkerPluginDemo extends FolderGenPlugin {
 	}
 
 	@Override
-	public HashMap<String, String> getAdditionlInfo(final String[] basicInfo) {
+	public HashMap<String, String> getAdditionlInfo(final HashMap<Integer, String> basicInfo) {
 		HashMap<String, String> tempMap = new HashMap<String, String>();
 		tempMap.put("content", "This is DEMO content from ${user.name}");
 		return tempMap;
 	}
 
 	@Override
-	public String getItemTitle(final String[] basicInfo) {
-		return basicInfo[1].trim();
+	public String getItemTitle(final HashMap<Integer, String> basicInfo) {
+		return basicInfo.get(IFolderGenPlugin.BASICINFO_FILETITLE).trim();
 	}
 
 	@Override
