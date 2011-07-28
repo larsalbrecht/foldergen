@@ -92,7 +92,7 @@ From version 1.4.0.0 parameters are read differently than before. As of now ther
  * -l,-locale {{{<arg>}}} Set the locale to change the application language (added in 1.4.6.0)
  * -r,-root {{{<arg>}}} Set the root folder to start writing in here (added in 1.4.6.0)
  * -p,-plugins       Set if you want to load additional plugins (added in 1.4.9.0)
- * -px,-proxy        Set if you want to let FolderGen search for a default proxy
+ * -px,-proxy        Set if you want to let FolderGen search for a default proxy (added in 1.5.0.0)
 
 
 {{{
