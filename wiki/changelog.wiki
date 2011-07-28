@@ -9,7 +9,7 @@
 
 == Version 1.5.0.1 - coming soon ==
  * Refactored (in parts) _(work in progress: *50%*)_
- * Removed basicInfoArr in Plugins. Use HashMap<Integer, String> in future _(work in progress: *100%*)_
+ * Removed basicInfoArr in Plugins. Use {{{HashMap<Integer, String>}}} in future _(work in progress: *100%*)_
 
 == Version 1.5.0.0 ==
  * Fixed licence in file headers
