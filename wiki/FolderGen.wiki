@@ -18,7 +18,7 @@ FolderGen is a Java Application (Command Line and GUI) that can generate folders
  * 3
   * Increments if a small (but bigger) bug is fixed. 
  * 4
-  * Increments if a small bug is fixed.
+  * Increments if a small bug is fixed, tiny feature or change or the code is refactored (in parts).
 
 == General information to start ==
 If you have the .jar file on you filesystem, you need a .[foldergenconf]-File. This file can be written in a default text editor like vim, notepad or something like that. For more about the foldergenconf, look at the wiki-site.
