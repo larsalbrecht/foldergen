@@ -1,0 +1,51 @@
++ MyWebApp
+	+ public
+		+ js
+			~ jquery-curr.js -> http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js
+			- general.js
+		+ css
+			~ reset.css -> /home/sampleuser/templates/reset.css
+			- general.css
+		+ img
+	+ private
+		+ includes
+			- header.inc
+			(((
+				<!DOCTYPE HTML>
+				<html lang="en-US">
+				<head>
+					<meta charset="UTF-8">
+					<title>My Sample Title</title>
+					<script type="text/javascript" src="/public/js/jquery-curr.js"></script>
+					<script type="text/javascript" src="/public/js/general.js"></script>
+					<link rel=stylesheet type="text/css" href="/public/css/general.css">
+				</head>
+				<body>
+					${plugin.demo}
+					<h1>My Sample Headline</h1>
+					<ul id="nav">
+						<li>${func.counter(i|1)} First</li>
+						<li>${func.counter(i)} Second</li>
+						<li>${func.counter(i)} Third</li>
+						<li>${func.counter(i)} Fourth</li>
+					</ul>
+					<?php include_once '/private/includes/footer.inc'; ?>
+				</body>
+				</html>
+			)))
+			- footer.inc
+			(((
+			<div id="footer">&copy; ${date.year} by ${user.name}</div>
+			)))
+	- index.php
+		(((
+		<?php
+			/*********************
+			/ (c) by ${user.name}
+			/*********************/
+			// my sample code
+			
+			// do something
+			<?php include_once '/private/includes/header.inc'; ?>
+		?>
+		)))

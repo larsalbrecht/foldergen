@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jardesc>
-    <jar path="FolderGen/jar/foldergenjar-1.5.0.0-src.jar"/>
-    <options buildIfNeeded="true" compress="true" descriptionLocation="/FolderGen/description-src.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="true" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="true"/>
+    <jar path="FolderGen/files/jar/foldergenjar-1.5.0.1-src.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/FolderGen/files/description-src.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="true" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="true"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
     <selectedElements exportClassFiles="false" exportJavaFiles="true" exportOutputFolder="false">
