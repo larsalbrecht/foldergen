@@ -31,7 +31,7 @@ Then it starts a file (-), a copy^1^ (~), a zip^2^ (>) or a folder (+). A zip-Fi
 {{{
 > /home/myzipfile.zip
 	- newfile
-}}
+}}}
 
 If a file exists, it will be *NOT* overwritten.
 
