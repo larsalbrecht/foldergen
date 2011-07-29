@@ -22,10 +22,13 @@ Example 01:
 	~ a folder copy -> /home/myfolder/
 		- a file in folder copy
 	~ a file from web -> http://www.example.com/examplefile
+	> /home/myzipfile.zip
 }}}
 
 Each line has a specified easy syntax. Each whitespace (eg. \t or \n) is used to indent the structure. Be carefully: use only one whitespace to indent the structure.
-Then it starts a file (-), a copy^1^ (~) or a folder (+). If a file exists, it will be *NOT* overwritten.
+Then it starts a file (-), a copy^1^ (~), a zip^2^ (>) or a folder (+). If
+
+If a file exists, it will be *NOT* overwritten.
 
 You can specify a new (copied) file / folder in a copied folder on the regular way.
 
@@ -112,3 +115,5 @@ Example 01:
 
 ----
 ^1^ : version 1.4.8.0 and above. From version 1.5.0.0 you can specify a URL to get the content in the new file (URL must start with http:// or https://).
+
+^2^ : version 1.5.1.0 and above.
