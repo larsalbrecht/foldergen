@@ -26,7 +26,12 @@ Example 01:
 }}}
 
 Each line has a specified easy syntax. Each whitespace (eg. \t or \n) is used to indent the structure. Be carefully: use only one whitespace to indent the structure.
-Then it starts a file (-), a copy^1^ (~), a zip^2^ (>) or a folder (+). If
+Then it starts a file (-), a copy^1^ (~), a zip^2^ (>) or a folder (+). A zip-File must end with .jar or .zip. If you link to a zip file, you can not create new files or folders in new generated folders:
+*This is not allowed:*
+{{{
+> /home/myzipfile.zip
+	- newfile
+}}
 
 If a file exists, it will be *NOT* overwritten.
 
