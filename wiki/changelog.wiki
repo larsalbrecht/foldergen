@@ -7,7 +7,10 @@
  _(work in progress: *100%*)_
 </wiki:comment>
 
-== Version 1.5.0.1 - coming soon ==
+== Version 1.5.1.0 - coming soon ==
+ * changes for Version 1.5.0.1 will be integrated here
+ * Added marker ">" to define a zip-file to extract _(work in progress: *75%*)_
+== Version 1.5.0.1 - discontinued ==
  * Refactored (in parts) _(work in progress: *50%*)_
  * Removed basicInfoArr in Plugins. Use {{{HashMap<Integer, String>}}} in future _(work in progress: *100%*)_
 
