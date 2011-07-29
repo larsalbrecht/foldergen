@@ -37,6 +37,7 @@ import com.lars_albrecht.foldergen.core.generator.worker.CopyWorker;
 import com.lars_albrecht.foldergen.core.generator.worker.DefaultContentWorker;
 import com.lars_albrecht.foldergen.core.generator.worker.FileWorker;
 import com.lars_albrecht.foldergen.core.generator.worker.FolderWorker;
+import com.lars_albrecht.foldergen.core.generator.worker.ZipWorker;
 import com.lars_albrecht.foldergen.core.helper.properies.PropertiesReader;
 import com.lars_albrecht.foldergen.helper.Utilities;
 import com.lars_albrecht.foldergen.plugin.classes.FolderGenPlugin;
@@ -119,6 +120,7 @@ public class Generator {
 		Generator.fgpWorker.add(new FileWorker());
 		Generator.fgpWorker.add(new CopyWorker());
 		Generator.fgpWorker.add(new DefaultContentWorker());
+		Generator.fgpWorker.add(new ZipWorker());
 
 		// Load plugins if needed
 		if(this.usePlugins) {
@@ -163,13 +165,12 @@ public class Generator {
 				// Split line
 				HashMap<Integer, String> basicInfo = this.getBasicInfoMapFromConfigLine(line);
 				String typeStr = this.getTypeFromConfigLine(line);
-
-				if((typeStr != null) && (basicInfo.size() > 0) && (basicInfo.containsKey("filename"))
+				if((typeStr != null) && (basicInfo.size() > 0) && (basicInfo.containsKey(IFolderGenPlugin.BASICINFO_FILETITLE))
 						&& (basicInfo.containsKey(IFolderGenPlugin.BASICINFO_FILETITLE))) {
 					// No content
 					for(FolderGenPlugin plugin : Generator.fgpWorker) {
 						if((plugin.getPluginType() != IFolderGenPlugin.PLUGINTYPE_CONFEXTENSION_CONTENT)
-								&& basicInfo.get(IFolderGenPlugin.BASICINFO_FILETITLE).trim().equalsIgnoreCase(
+								&& basicInfo.get(IFolderGenPlugin.BASICINFO_FILEMARKER).trim().equalsIgnoreCase(
 										(String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER))) {
 							if(this.isDebug) {
 								for(Entry<Integer, Object> e : plugin.getInfoMap().entrySet()) {
@@ -344,9 +345,10 @@ public class Generator {
 	 *            HashMap<String, String>
 	 * @return Object{struct, lastItem}
 	 */
-	private Object[] workLine(final Integer layer, final Integer lastLayer, final String itemTitle,
+	private Object[] workLine(final Integer layer, final Integer lastLayer, String itemTitle,
 			final HashMap<String, String> additionalInfo) {
 		Object[] mulitpleResult = { this.struct, this.lastItem };
+		itemTitle = (itemTitle == null ? "" : itemTitle);
 		if(layer.equals(0)) { // zero / root layer
 			mulitpleResult[0] = this.workLayerZero(itemTitle, additionalInfo);
 			mulitpleResult[1] = this.struct.get(this.struct.size() - 1);
