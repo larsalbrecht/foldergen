@@ -55,7 +55,7 @@ public final class FolderGenCLIHelper {
 				false, PropertiesReader.getInstance().getProperties("application.cli.parameters.confirmation")).addOption("l",
 				"locale", true, PropertiesReader.getInstance().getProperties("application.cli.parameters.locale")).addOption("p",
 				"plugins", true, PropertiesReader.getInstance().getProperties("application.cli.parameters.plugins")).addOption(
-				"px", "proxy", true, PropertiesReader.getInstance().getProperties("application.cli.parameters.proxy"));
+				"px", "proxy", false, PropertiesReader.getInstance().getProperties("application.cli.parameters.proxy"));
 		;
 		fgOptions.addOptionGroup(new OptionGroup().addOption(new Option("h", "help", false, PropertiesReader.getInstance()
 				.getProperties("application.cli.parameters.help"))));
