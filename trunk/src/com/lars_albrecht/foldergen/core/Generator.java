@@ -68,6 +68,8 @@ public class Generator {
 
 	private Struct struct = null;
 	private StructItem lastItem = null;
+	private Integer lastLayer = null;
+	private BufferedReader configFileReader = null;
 
 	/**
 	 * Generator constructor.
@@ -89,6 +91,7 @@ public class Generator {
 		this.showConfirmation = showConfirmation;
 		this.usePlugins = usePlugins;
 		this.rootPath = (rootPath != null ? rootPath : new File(configFile.getParent()));
+		this.lastLayer = 0;
 
 		this.initGenerator();
 
@@ -148,96 +151,27 @@ public class Generator {
 	 * @return Boolean Boolean
 	 */
 	private Boolean workFile(final File configFile) {
-		BufferedReader in = null;
 		File basicRootFolder = null;
 		try {
 			// Buffered reader reads the file
-			in = new BufferedReader(new FileReader(configFile));
+			this.configFileReader = new BufferedReader(new FileReader(configFile));
 			// set "basicRootFolder" to the folder of the config-file.
 			basicRootFolder = this.rootPath;
 			String line = null;
-			Integer layer = 0;
-			Integer lastLayer = 0;
 			// Create struct for items
 			this.struct = new Struct();
 			// every line in file
-			while((line = in.readLine()) != null) {
+			while((line = this.configFileReader.readLine()) != null) {
 				// Split line
 				HashMap<Integer, String> basicInfo = this.getBasicInfoMapFromConfigLine(line);
 				String typeStr = this.getTypeFromConfigLine(line);
 				if((typeStr != null) && (basicInfo.size() > 0) && (basicInfo.containsKey(IFolderGenPlugin.BASICINFO_FILETITLE))
 						&& (basicInfo.containsKey(IFolderGenPlugin.BASICINFO_FILETITLE))) {
 					// No content
-					for(FolderGenPlugin plugin : Generator.fgpWorker) {
-						if((plugin.getPluginType() != IFolderGenPlugin.PLUGINTYPE_CONFEXTENSION_CONTENT)
-								&& basicInfo.get(IFolderGenPlugin.BASICINFO_FILEMARKER).trim().equalsIgnoreCase(
-										(String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER))) {
-							if(this.isDebug) {
-								for(Entry<Integer, Object> e : plugin.getInfoMap().entrySet()) {
-									System.out.println(e.getKey() + " - " + e.getValue());
-								}
-								System.out.println(PropertiesReader.getInstance().getProperties(
-										"application.debug.workfile.plugin.plugintype")
-										+ plugin.getPluginType());
-								System.out.println(PropertiesReader.getInstance().getProperties("application.debug.is")
-										+ (String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_INFOMARKER) + " ("
-										+ (String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER) + ")");
-							}
-							layer = typeStr.split("\\s", -1).length - 1;
-							if(layer.equals("")) {
-								layer = 0;
-							}
-							HashMap<String, String> additionalInfo = new HashMap<String, String>();
-
-							additionalInfo.put("type", (String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_INFOMARKER));
-							if(plugin.getPluginType() == IFolderGenPlugin.PLUGINTYPE_CONFEXTENSION_FOLDER) {
-								additionalInfo.put("folder", Boolean.toString(Boolean.TRUE));
-							}
-
-							if(plugin.getAdditionlInfo(basicInfo) != null) {
-								additionalInfo.putAll(plugin.getAdditionlInfo(basicInfo));
-							}
-
-							Object[] workedLine = this.workLine(layer, lastLayer, plugin.getItemTitle(basicInfo), additionalInfo);
-							this.struct = (Struct) workedLine[0];
-							this.lastItem = (StructItem) workedLine[1];
-							lastLayer = layer;
-							break;
-						} else if(this.isDebug) {
-							System.out.println(PropertiesReader.getInstance().getProperties("application.debug.notequals"));
-						}
-					}
+					this.workNonContentWorker(basicInfo, typeStr);
 				} else {
 					// content
-					for(FolderGenPlugin plugin : Generator.fgpWorker) {
-						if((plugin.getPluginType() == IFolderGenPlugin.PLUGINTYPE_CONFEXTENSION_CONTENT)
-								&& basicInfo.get(IFolderGenPlugin.BASICINFO_FILEMARKER).trim().equalsIgnoreCase(
-										(String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_CONTENTSTARTMARKER))) {
-							String contentLine = null;
-							String content = "";
-							// read content
-							while(((contentLine = in.readLine()) != null)
-									&& !(contentLine.trim()
-											.equals(plugin.getInfoMapValue(IFolderGenPlugin.INFO_CONTENTENDMARKER)))) {
-								content += contentLine.trim();
-								content += "\r\n";
-							}
-							HashMap<String, Object> workerMap = new HashMap<String, Object>();
-							workerMap.put("content", content);
-							workerMap.put("lastItem", this.lastItem);
-
-							content = (String) plugin.doWork(workerMap).get("content");
-							if((Boolean) plugin.getInfoMapValue(IFolderGenPlugin.INFO_CONTENTREPLACE)) {
-								content = this.replaceMarker(this.lastItem, content);
-							}
-
-							// add content to (last)item
-							this.lastItem.getAdditionalData().put("content", content);
-							break;
-						} else if(this.isDebug) {
-							System.out.println(PropertiesReader.getInstance().getProperties("application.debug.notequals"));
-						}
-					}
+					this.workContentWorker(basicInfo);
 				}
 			}
 			if((this.showConfirmation && this.confirmationWorker(basicRootFolder)) || !this.showConfirmation) {
@@ -254,6 +188,93 @@ public class Generator {
 			return false;
 		}
 		return true;
+	}
+
+	/**
+	 * Work non content worker to create struct.
+	 * 
+	 * @param basicInfo
+	 *            HashMap<Integer, String>
+	 * @param typeStr
+	 *            String
+	 */
+	private void workNonContentWorker(final HashMap<Integer, String> basicInfo, final String typeStr) {
+		Integer layer = null;
+		for(FolderGenPlugin plugin : Generator.fgpWorker) {
+			if((plugin.getPluginType() != IFolderGenPlugin.PLUGINTYPE_CONFEXTENSION_CONTENT)
+					&& basicInfo.get(IFolderGenPlugin.BASICINFO_FILEMARKER).trim().equalsIgnoreCase(
+							(String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER))) {
+				if(this.isDebug) {
+					for(Entry<Integer, Object> e : plugin.getInfoMap().entrySet()) {
+						System.out.println(e.getKey() + " - " + e.getValue());
+					}
+					System.out.println(PropertiesReader.getInstance().getProperties(
+							"application.debug.workfile.plugin.plugintype")
+							+ plugin.getPluginType());
+					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.is")
+							+ (String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_INFOMARKER) + " ("
+							+ (String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER) + ")");
+				}
+				layer = typeStr.split("\\s", -1).length - 1;
+				if(layer.equals("")) {
+					layer = 0;
+				}
+				HashMap<String, String> additionalInfo = new HashMap<String, String>();
+
+				additionalInfo.put("type", (String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_INFOMARKER));
+				if(plugin.getPluginType() == IFolderGenPlugin.PLUGINTYPE_CONFEXTENSION_FOLDER) {
+					additionalInfo.put("folder", Boolean.toString(Boolean.TRUE));
+				}
+
+				if(plugin.getAdditionlInfo(basicInfo) != null) {
+					additionalInfo.putAll(plugin.getAdditionlInfo(basicInfo));
+				}
+
+				this.workLine(layer, plugin.getItemTitle(basicInfo), additionalInfo);
+				this.lastLayer = layer;
+				break;
+			} else if(this.isDebug) {
+				System.out.println(PropertiesReader.getInstance().getProperties("application.debug.notequals"));
+			}
+		}
+	}
+
+	/**
+	 * Work content worker to fill items with content.
+	 * 
+	 * @param basicInfo
+	 *            HashMap<Integer, String>
+	 * @throws IOException
+	 */
+	private void workContentWorker(final HashMap<Integer, String> basicInfo) throws IOException {
+		for(FolderGenPlugin plugin : Generator.fgpWorker) {
+			if((plugin.getPluginType() == IFolderGenPlugin.PLUGINTYPE_CONFEXTENSION_CONTENT)
+					&& basicInfo.get(IFolderGenPlugin.BASICINFO_FILEMARKER).trim().equalsIgnoreCase(
+							(String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_CONTENTSTARTMARKER))) {
+				String contentLine = null;
+				String content = "";
+				// read content
+				while(((contentLine = this.configFileReader.readLine()) != null)
+						&& !(contentLine.trim().equals(plugin.getInfoMapValue(IFolderGenPlugin.INFO_CONTENTENDMARKER)))) {
+					content += contentLine.trim();
+					content += "\r\n";
+				}
+				HashMap<String, Object> workerMap = new HashMap<String, Object>();
+				workerMap.put("content", content);
+				workerMap.put("lastItem", this.lastItem);
+
+				content = (String) plugin.doWork(workerMap).get("content");
+				if((Boolean) plugin.getInfoMapValue(IFolderGenPlugin.INFO_CONTENTREPLACE)) {
+					content = this.replaceMarker(this.lastItem, content);
+				}
+
+				// add content to (last)item
+				this.lastItem.getAdditionalData().put("content", content);
+				break;
+			} else if(this.isDebug) {
+				System.out.println(PropertiesReader.getInstance().getProperties("application.debug.notequals"));
+			}
+		}
 	}
 
 	/**
@@ -333,33 +354,27 @@ public class Generator {
 	}
 
 	/**
-	 * Works a line. Add structItem to struct with care of the indent. Returns struct and lastItem in the result Object-Array.
+	 * Works a line. Add structItem to struct with care of the indent.
 	 * 
 	 * @param layer
-	 *            Integer
-	 * @param lastLayer
 	 *            Integer
 	 * @param itemTitle
 	 *            String
 	 * @param additionalInfo
 	 *            HashMap<String, String>
-	 * @return Object{struct, lastItem}
 	 */
-	private Object[] workLine(final Integer layer, final Integer lastLayer, String itemTitle,
-			final HashMap<String, String> additionalInfo) {
-		Object[] mulitpleResult = { this.struct, this.lastItem };
+	private void workLine(final Integer layer, String itemTitle, final HashMap<String, String> additionalInfo) {
 		itemTitle = (itemTitle == null ? "" : itemTitle);
 		if(layer.equals(0)) { // zero / root layer
-			mulitpleResult[0] = this.workLayerZero(itemTitle, additionalInfo);
-			mulitpleResult[1] = this.struct.get(this.struct.size() - 1);
-		} else if(layer > lastLayer) { // layer down
-			mulitpleResult[1] = this.workLayerDown(itemTitle, additionalInfo);
-		} else if(layer < lastLayer) { // layer up
-			mulitpleResult[1] = this.workLayerUp(itemTitle, additionalInfo, lastLayer, layer);
-		} else if(layer.equals(lastLayer)) { // same layer
-			mulitpleResult[1] = this.workLayerSame(itemTitle, additionalInfo);
+			this.struct = this.workLayerZero(itemTitle, additionalInfo);
+			this.lastItem = this.struct.get(this.struct.size() - 1);
+		} else if(layer > this.lastLayer) { // layer down
+			this.lastItem = this.workLayerDown(itemTitle, additionalInfo);
+		} else if(layer < this.lastLayer) { // layer up
+			this.lastItem = this.workLayerUp(itemTitle, additionalInfo, this.lastLayer, layer);
+		} else if(layer.equals(this.lastLayer)) { // same layer
+			this.lastItem = this.workLayerSame(itemTitle, additionalInfo);
 		}
-		return mulitpleResult;
 	}
 
 	/**
