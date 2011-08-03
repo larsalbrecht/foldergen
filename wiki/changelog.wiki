@@ -8,7 +8,7 @@
 </wiki:comment>
 
 == Version 1.6.0.0 - coming soon ==
- * changes for Version 1.5.0.1 will be integrated here
+ * changes for Version 1.5.0.1 will be integrated here _(work in progress: *100%*)_
  * Added marker ">" to define a zip-file to extract _(work in progress: *100%*)_
  * Recode the GUI and add treeview to:
   * view the information _(work in progress: *75%*)_
