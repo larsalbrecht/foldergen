@@ -1,5 +1,5 @@
 #summary Changelog
-#labels Phase-Implementation,Featured
+#labels Phase-Implementation,Featured,Phase-Support,Phase-Design
 <wiki:toc max_depth="2" />
 <g:plusone size="standard"></g:plusone>
 = Changelog =
