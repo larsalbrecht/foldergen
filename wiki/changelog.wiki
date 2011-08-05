@@ -19,6 +19,7 @@
    * Italian (Google Translator)
  * Simple change of the plugin framework (version 1.5.1.0)
    * see: [Plugins]
+[Plugins#Plugins_(Version_1.6.0.0_|_Pluginframework_Version_1.5.1.0)]
 
 == Version 1.5.0.1 - discontinued ==
  * Refactored (in parts) _(work in progress: *50%*)_
