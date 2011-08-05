@@ -269,3 +269,25 @@ return the kind of the plugin (see {{{return IFolderGenPlugin.PLUGINTYPE_CONTENT
 
 ==== getItemTitle ====
 Returns the title for the file. Normally you use {{{basicInfo[1].trim()}}}.
+
+
+= Plugins (Version 1.6.0.0 | Pluginframework Version 1.5.1.0) =
+In version 1.5.1.0 of the pluginframework, you have to add something to your plugin code.
+
+IFolderGenPlugin has a new INFO_ variable: INFO_ADDITIONALKEYS
+This is a variable to add a list (seperate with semicolons) of additional keys you need for you plugin.
+
+In example FolderGen Worker "zip":
+Here we add a variable called "src" to specify the source of the zip file. Now we have to add this "src" to the list:
+
+ZipWorker constructor:
+{{{
+	public ZipWorker() {
+		this.infoMap.put(IFolderGenPlugin.INFO_TITLE, "ZipWorker");
+		this.infoMap.put(IFolderGenPlugin.INFO_FILEMARKER, ">");
+		this.infoMap.put(IFolderGenPlugin.INFO_INFOMARKER, "zip");
+		this.infoMap.put(IFolderGenPlugin.INFO_ADDITIONALKEYS, "src");
+	}
+}}}
+
+This is for the new treeview in version 1.6.0.0 of FolderGen.
