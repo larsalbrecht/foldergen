@@ -17,6 +17,9 @@ package com.lars_albrecht.foldergen.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,19 +32,21 @@ import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JRootPane;
+import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import com.lars_albrecht.foldergen.FolderGen;
 import com.lars_albrecht.foldergen.core.Generator;
 import com.lars_albrecht.foldergen.core.helper.properies.PropertiesReader;
+import com.lars_albrecht.foldergen.gui.helper.filesystem.FolderGenFileFilter;
+import com.lars_albrecht.foldergen.gui.tree.FolderGenTreeController;
 
 /**
  * The view is a java JFrame to choose the file with a gui.
  * 
  * @author lalbrecht
- * @version 1.5.2.0
+ * @version 1.5.3.0
  */
 @SuppressWarnings("serial")
 public class View extends JFrame implements ActionListener, ItemListener {
@@ -49,8 +54,9 @@ public class View extends JFrame implements ActionListener, ItemListener {
 	private JButton btnChooseFile = null;
 	private JButton btnChooseRootFolder = null;
 	private JButton btnStart = null;
+	private JButton btnShow = null;
 	private JFileChooser fcChooser = null;
-	private JRootPane rpPane = null;
+	private JPanel rpPane = null;
 
 	private JCheckBox cbConfirmation = null;
 	private JCheckBox cbPlugins = null;
@@ -85,18 +91,6 @@ public class View extends JFrame implements ActionListener, ItemListener {
 		this.showConfirmation = showConfirmation;
 		this.usePlugins = usePlugins;
 		this.initComponents();
-	}
-
-	/**
-	 * Adds the components to panes.
-	 */
-	private void addComponents() {
-		this.rpPane.add(this.btnChooseFile);
-		this.rpPane.add(this.btnStart);
-		this.rpPane.add(this.btnChooseRootFolder);
-		this.rpPane.add(this.cbConfirmation);
-		this.rpPane.add(this.cbPlugins);
-		this.add(this.rpPane);
 	}
 
 	/**
@@ -140,12 +134,11 @@ public class View extends JFrame implements ActionListener, ItemListener {
 		this.setLayout(new BorderLayout());
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setBounds((screenSize.width - 343) / 2, (screenSize.height - 130) / 2, 343, 130);
+		this.setBounds((screenSize.width - 340) / 2, (screenSize.height - 130) / 2, 340, 130);
 		this.setResizable(Boolean.FALSE);
 
 		this.createComponents();
 		this.configureComponents();
-		this.addComponents();
 		this.setVisible(true);
 	}
 
@@ -153,34 +146,64 @@ public class View extends JFrame implements ActionListener, ItemListener {
 	 * Configures the components.
 	 */
 	private void configureComponents() {
-		this.rpPane.setLayout(null);
-		this.btnChooseFile.setBounds(10, 10, 115, 25);
+		this.rpPane.setLayout(new GridBagLayout());
+		final GridBagConstraints gbc = new GridBagConstraints();
+
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.insets = new Insets(10, 0, 0, 10);
 		this.btnChooseFile.addActionListener(this);
+		this.rpPane.add(this.btnChooseFile, gbc);
 
-		this.btnChooseRootFolder.setBounds(135, 10, 190, 25);
+		gbc.gridx = 1;
+		gbc.gridy = 0;
+		gbc.gridwidth = 2;
+		gbc.insets = new Insets(10, 0, 0, 0);
 		this.btnChooseRootFolder.addActionListener(this);
+		this.rpPane.add(this.btnChooseRootFolder, gbc);
+		gbc.gridwidth = 1;
 
-		this.btnStart.setBounds(10, 65, 315, 25);
-		this.btnStart.addActionListener(this);
-
-		this.cbConfirmation.setBounds(10, 40, 115, 20);
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		gbc.insets = new Insets(10, 0, 0, 10);
 		this.cbConfirmation.addItemListener(this);
 		this.cbConfirmation.setSelected(this.showConfirmation);
+		this.rpPane.add(this.cbConfirmation, gbc);
 
-		this.cbPlugins.setBounds(135, 40, 100, 20);
+		gbc.gridx = 1;
+		gbc.gridy = 1;
 		this.cbPlugins.addItemListener(this);
 		this.cbPlugins.setSelected(this.usePlugins);
+		this.rpPane.add(this.cbPlugins, gbc);
+
+		gbc.gridx = 2;
+		gbc.gridy = 1;
+		gbc.insets = new Insets(10, 0, 0, 0);
+		this.btnShow.addActionListener(this);
+		this.rpPane.add(this.btnShow, gbc);
+
+		gbc.gridx = 0;
+		gbc.gridy = 2;
+		gbc.gridwidth = 3;
+		this.btnStart.addActionListener(this);
+		this.rpPane.add(this.btnStart, gbc);
+
+		this.add(this.rpPane);
+
 	}
 
 	/**
 	 * Creates the components for the view.
 	 */
 	private void createComponents() {
-		this.rpPane = new JRootPane();
+		this.rpPane = new JPanel();
 		this.btnChooseFile = new JButton(PropertiesReader.getInstance().getProperties("application.gui.filechooser.opener"));
 		this.btnChooseRootFolder = new JButton(PropertiesReader.getInstance().getProperties(
 				"application.gui.rootfolderchooser.opener"));
 		this.btnStart = new JButton(PropertiesReader.getInstance().getProperties("application.gui.button.start"));
+		this.btnShow = new JButton(PropertiesReader.getInstance().getProperties("application.gui.button.show"));
 
 		this.cbConfirmation = new JCheckBox(PropertiesReader.getInstance().getProperties("application.gui.checkbox.confirmation"));
 		this.cbPlugins = new JCheckBox(PropertiesReader.getInstance().getProperties("application.gui.checkbox.plugins"));
@@ -260,6 +283,20 @@ public class View extends JFrame implements ActionListener, ItemListener {
 				new Generator(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()), this.configFile,
 						this.isDebug, FolderGen.CONFIRMATION_HIDE, this.usePlugins);
 			}
+		} else if(e.getSource() == this.btnShow) {
+			this.setEnabled(Boolean.FALSE);
+			FolderGenTreeController treeC = FolderGenTreeController.getInstance(this);
+			if(this.configFile != null) {
+				treeC.setConfigFile(this.configFile);
+				treeC.setRootPath(this.rootPath);
+				treeC.fillTree();
+				treeC.showFrame();
+			} else {
+				JOptionPane.showMessageDialog(this, PropertiesReader.getInstance().getProperties(
+						"application.gui.messagedialog.noconfig.message"), PropertiesReader.getInstance().getProperties(
+						"application.gui.messagedialog.noconfig.title"), JOptionPane.INFORMATION_MESSAGE);
+			}
+
 		}
 
 	}

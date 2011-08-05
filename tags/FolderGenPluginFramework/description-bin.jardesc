@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <jardesc>
-    <jar path="FolderGenPluginFramework/jar/foldergenpluginframeworkjar-1.5.0.1-bin.jar"/>
+    <jar path="FolderGenPluginFramework/jar/foldergenpluginframeworkjar-1.5.1.0-bin.jar"/>
     <options buildIfNeeded="true" compress="true" descriptionLocation="/FolderGenPluginFramework/description-bin.jardesc" exportErrors="false" exportWarnings="false" includeDirectoryEntries="true" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="true"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>

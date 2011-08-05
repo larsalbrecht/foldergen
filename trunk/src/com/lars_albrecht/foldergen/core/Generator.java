@@ -22,15 +22,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.lars_albrecht.foldergen.core.generator.helper.FileType;
 import com.lars_albrecht.foldergen.core.generator.helper.Struct;
 import com.lars_albrecht.foldergen.core.generator.helper.StructItem;
 import com.lars_albrecht.foldergen.core.generator.worker.CopyWorker;
@@ -59,7 +62,7 @@ public class Generator {
 	private final static ArrayList<FolderGenPlugin> fgpWorker = new ArrayList<FolderGenPlugin>();
 	private final static ArrayList<FolderGenPlugin> fgpContentReplacer = new ArrayList<FolderGenPlugin>();
 
-	private final static ArrayList<String> fileTypes = new ArrayList<String>();
+	private final static ArrayList<FileType> fileTypes = new ArrayList<FileType>();
 
 	private Boolean isDebug = false;
 	private File rootPath = null;
@@ -101,11 +104,24 @@ public class Generator {
 		}
 
 		// If config file exists and is a file and parent != null
-		if(configFile.exists() && configFile.isFile() && (configFile.getParent() != null)) {
-			this.workFile(configFile);
+		if(configFile.exists() && configFile.isFile() && (configFile.getParent() != null) && this.workFile(configFile)
+				&& ((this.showConfirmation && this.confirmationWorker(this.rootPath)) || !this.showConfirmation)) {
+			if(this.isDebug) {
+				this.printStruct(this.struct, "", Boolean.TRUE);
+			}
+			this.workStruct(this.struct, this.rootPath);
 		} else {
 			System.out.println(PropertiesReader.getInstance().getProperties("application.output.wrongfile"));
 		}
+	}
+
+	public Generator(final Boolean isDebug, final Boolean showConfirmation, final Boolean usePlugins) {
+		this.isDebug = isDebug;
+		this.showConfirmation = showConfirmation;
+		this.usePlugins = usePlugins;
+		this.lastLayer = 0;
+
+		this.initGenerator();
 	}
 
 	/**
@@ -137,7 +153,14 @@ public class Generator {
 					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filetype.added")
 							+ plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER));
 				}
-				Generator.fileTypes.add((String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER));
+				for(Map.Entry<Integer, Object> iterable_element : plugin.getInfoMap().entrySet()) {
+					System.out.println("###### " + iterable_element.getKey() + " - " + iterable_element.getValue());
+				}
+
+				Generator.fileTypes.add(new FileType((String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER),
+						(String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_INFOMARKER), plugin.getInfoMap().containsKey(
+								IFolderGenPlugin.INFO_ADDITIONALKEYS) ? new ArrayList<String>(Arrays.asList(((String) plugin
+								.getInfoMapValue(IFolderGenPlugin.INFO_ADDITIONALKEYS)).split(";"))) : new ArrayList<String>()));
 			}
 		}
 
@@ -150,13 +173,10 @@ public class Generator {
 	 *            File
 	 * @return Boolean Boolean
 	 */
-	private Boolean workFile(final File configFile) {
-		File basicRootFolder = null;
+	public Boolean workFile(final File configFile) {
 		try {
 			// Buffered reader reads the file
 			this.configFileReader = new BufferedReader(new FileReader(configFile));
-			// set "basicRootFolder" to the folder of the config-file.
-			basicRootFolder = this.rootPath;
 			String line = null;
 			// Create struct for items
 			this.struct = new Struct();
@@ -174,13 +194,6 @@ public class Generator {
 					this.workContentWorker(basicInfo);
 				}
 			}
-			if((this.showConfirmation && this.confirmationWorker(basicRootFolder)) || !this.showConfirmation) {
-				if(this.isDebug) {
-					this.printStruct(this.struct, "", Boolean.TRUE);
-				}
-				this.workStruct(this.struct, basicRootFolder);
-			}
-
 		} catch(IOException e) {
 			if(this.isDebug) {
 				System.out.println(e.getMessage());
@@ -204,6 +217,7 @@ public class Generator {
 			if((plugin.getPluginType() != IFolderGenPlugin.PLUGINTYPE_CONFEXTENSION_CONTENT)
 					&& basicInfo.get(IFolderGenPlugin.BASICINFO_FILEMARKER).trim().equalsIgnoreCase(
 							(String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER))) {
+
 				if(this.isDebug) {
 					for(Entry<Integer, Object> e : plugin.getInfoMap().entrySet()) {
 						System.out.println(e.getKey() + " - " + e.getValue());
@@ -222,6 +236,7 @@ public class Generator {
 				HashMap<String, String> additionalInfo = new HashMap<String, String>();
 
 				additionalInfo.put("type", (String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_INFOMARKER));
+				additionalInfo.put("filetype", (String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER));
 				if(plugin.getPluginType() == IFolderGenPlugin.PLUGINTYPE_CONFEXTENSION_FOLDER) {
 					additionalInfo.put("folder", Boolean.toString(Boolean.TRUE));
 				}
@@ -309,8 +324,8 @@ public class Generator {
 	 */
 	private String getTypeFromConfigLine(final String line) {
 		String regexpTypeStr = "";
-		for(int i = 0; i < Generator.fileTypes.size(); i++) {
-			regexpTypeStr += "\\" + Generator.fileTypes.get(i);
+		for(int len = Generator.fileTypes.size(), i = 0; i < len; i++) {
+			regexpTypeStr += "\\" + Generator.fileTypes.get(i).getFilemarker();
 		}
 		Matcher m = Pattern.compile("([\\s]{0,})([" + regexpTypeStr + "]{1})([\\s]{1})").matcher(line);
 		if(m.find() && (m.groupCount() > 0)) {
@@ -639,7 +654,7 @@ public class Generator {
 	 *            File
 	 */
 	private void workStruct(final Struct struct, final File rootFolder) {
-		for(int i = 0; i < struct.size(); i++) {
+		for(int len = struct.size(), i = 0; i < len; i++) {
 			// get additional data from structItem
 			HashMap<String, String> tempAdditionalData = struct.get(i).getAdditionalData();
 			if(tempAdditionalData.containsKey("type") && (tempAdditionalData.get("type") != null)) {
@@ -681,8 +696,8 @@ public class Generator {
 	 * @param showAll
 	 *            Boolean
 	 */
-	private void printStruct(final Struct struct, final String seperator, final Boolean showAll) {
-		for(int i = 0; i < struct.size(); i++) {
+	public void printStruct(final Struct struct, final String seperator, final Boolean showAll) {
+		for(int len = struct.size(), i = 0; i < len; i++) {
 			System.out.println(seperator
 					+ i
 					+ " - "
@@ -694,6 +709,27 @@ public class Generator {
 			}
 		}
 
+	}
+
+	/**
+	 * @return the rootPath
+	 */
+	public synchronized final File getRootPath() {
+		return this.rootPath;
+	}
+
+	/**
+	 * @return the struct
+	 */
+	public synchronized final Struct getStruct() {
+		return this.struct;
+	}
+
+	/**
+	 * @return the filetypes
+	 */
+	public static synchronized final ArrayList<FileType> getFiletypes() {
+		return Generator.fileTypes;
 	}
 
 }

@@ -40,7 +40,7 @@ import java.util.HashMap;
 
 /**
  * @author lalbrecht
- * @version 1.0.0.0
+ * @version 1.0.1.0
  */
 public interface IFolderGenPlugin {
 
@@ -93,6 +93,11 @@ public interface IFolderGenPlugin {
 	 * If the content will be replaced in plugintype PLUGINTYPE_CONFEXTENSION_CONTENT.
 	 */
 	final static Integer INFO_CONTENTREPLACE = 5;
+
+	/**
+	 * Semikolon seperated list of additional keys
+	 */
+	final static Integer INFO_ADDITIONALKEYS = 6;
 
 	/**
 	 * The filetitle. Can be more than a title, but usually this is only the title.

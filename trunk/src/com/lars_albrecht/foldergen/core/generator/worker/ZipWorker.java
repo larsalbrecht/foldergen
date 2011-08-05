@@ -45,6 +45,7 @@ public class ZipWorker extends FolderGenPlugin {
 		this.infoMap.put(IFolderGenPlugin.INFO_TITLE, "ZipWorker");
 		this.infoMap.put(IFolderGenPlugin.INFO_FILEMARKER, ">");
 		this.infoMap.put(IFolderGenPlugin.INFO_INFOMARKER, "zip");
+		this.infoMap.put(IFolderGenPlugin.INFO_ADDITIONALKEYS, "src");
 	}
 
 	@Override

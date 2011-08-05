@@ -43,6 +43,7 @@ public class CopyWorker extends FolderGenPlugin {
 		this.infoMap.put(IFolderGenPlugin.INFO_TITLE, "CopyWorker");
 		this.infoMap.put(IFolderGenPlugin.INFO_FILEMARKER, "~");
 		this.infoMap.put(IFolderGenPlugin.INFO_INFOMARKER, "copy");
+		this.infoMap.put(IFolderGenPlugin.INFO_ADDITIONALKEYS, "src");
 	}
 
 	@Override
@@ -77,7 +78,7 @@ public class CopyWorker extends FolderGenPlugin {
 						String content = Utilities.getFileContentFromWeb(source);
 						f.createNewFile();
 						FileOutputStream fos = new FileOutputStream(f);
-						for(int j = 0; j < content.length(); j++) {
+						for(int len = content.length(), j = 0; j < len; j++) {
 							fos.write((byte) content.charAt(j));
 						}
 						fos.close();
