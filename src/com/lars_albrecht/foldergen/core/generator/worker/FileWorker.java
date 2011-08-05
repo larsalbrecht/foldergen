@@ -82,7 +82,7 @@ public class FileWorker extends FolderGenPlugin {
 				if(tempAdditionalData.containsKey("content") && (tempAdditionalData.get("content") != null)
 						&& !tempAdditionalData.get("content").equals("")) {
 					FileOutputStream fos = new FileOutputStream(f);
-					for(int j = 0; j < tempAdditionalData.get("content").length(); j++) {
+					for(int len = tempAdditionalData.get("content").length(), j = 0; j < len; j++) {
 						fos.write((byte) tempAdditionalData.get("content").charAt(j));
 					}
 					fos.close();
