@@ -25,8 +25,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
@@ -88,6 +91,15 @@ public class View extends JFrame implements ActionListener, ItemListener {
 		this.configFile = configFile;
 		this.showConfirmation = showConfirmation;
 		this.usePlugins = usePlugins;
+
+		BufferedImage image = null;
+		try {
+			image = ImageIO.read(this.getClass().getResource("/tp_deb_foldergen-32x32.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		this.setIconImage(image);
+
 		this.initComponents();
 	}
 
