@@ -19,7 +19,10 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
@@ -41,6 +44,14 @@ public class FolderGenTreeView extends JFrame {
 	public FolderGenTreeView(final FolderGenTreeController controller) {
 		super(PropertiesReader.getInstance().getProperties("application.gui.tree.title"));
 		this.controller = controller;
+
+		BufferedImage image = null;
+		try {
+			image = ImageIO.read(this.getClass().getResource("/tp_deb_foldergen-32x32.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		this.setIconImage(image);
 
 		this.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -67,21 +78,35 @@ public class FolderGenTreeView extends JFrame {
 	 * Fill tree with items.
 	 */
 	/**
-	 * private void fillRootNode() { this.dtm.insertNodeInto(new FolderGenMutableTreeNode(new FolderGenItem("MyFolder1", "+", "folder"), Boolean.TRUE), this.rootNode, this.rootNode.getChildCount());
+	 * private void fillRootNode() { this.dtm.insertNodeInto(new
+	 * FolderGenMutableTreeNode(new FolderGenItem("MyFolder1", "+", "folder"),
+	 * Boolean.TRUE), this.rootNode, this.rootNode.getChildCount());
 	 * 
-	 * this.dtm.insertNodeInto(new FolderGenMutableTreeNode(new FolderGenItem("MyTitle", "-", "file", new HashMap<String, Object>() { { this.put("content", "this is my content"); } })),
-	 * (MutableTreeNode) this.rootNode.getChildAt(0), this.rootNode.getChildAt(0).getChildCount());
+	 * this.dtm.insertNodeInto(new FolderGenMutableTreeNode(new
+	 * FolderGenItem("MyTitle", "-", "file", new HashMap<String, Object>() { {
+	 * this.put("content", "this is my content"); } })), (MutableTreeNode)
+	 * this.rootNode.getChildAt(0),
+	 * this.rootNode.getChildAt(0).getChildCount());
 	 * 
-	 * this.dtm.insertNodeInto(new FolderGenMutableTreeNode(new FolderGenItem("MyFolder2", "+", "folder"), Boolean.TRUE), this.rootNode, this.rootNode.getChildCount());
+	 * this.dtm.insertNodeInto(new FolderGenMutableTreeNode(new
+	 * FolderGenItem("MyFolder2", "+", "folder"), Boolean.TRUE), this.rootNode,
+	 * this.rootNode.getChildCount());
 	 * 
-	 * this.dtm.insertNodeInto(new FolderGenMutableTreeNode(new FolderGenItem("MyFolder3", "+", "folder"), Boolean.TRUE), this.rootNode, this.rootNode.getChildCount());
+	 * this.dtm.insertNodeInto(new FolderGenMutableTreeNode(new
+	 * FolderGenItem("MyFolder3", "+", "folder"), Boolean.TRUE), this.rootNode,
+	 * this.rootNode.getChildCount());
 	 * 
-	 * this.dtm.insertNodeInto(new FolderGenMutableTreeNode(new FolderGenItem("MyTitle2", "~", "copy", new HashMap<String, Object>() { { this.put("src", "/home/my/file"); } })), (MutableTreeNode)
-	 * this.rootNode.getChildAt(this.rootNode.getChildCount() - 1), this.rootNode.getChildAt( this.rootNode.getChildCount() - 1).getChildCount()); }
+	 * this.dtm.insertNodeInto(new FolderGenMutableTreeNode(new
+	 * FolderGenItem("MyTitle2", "~", "copy", new HashMap<String, Object>() { {
+	 * this.put("src", "/home/my/file"); } })), (MutableTreeNode)
+	 * this.rootNode.getChildAt(this.rootNode.getChildCount() - 1),
+	 * this.rootNode.getChildAt( this.rootNode.getChildCount() -
+	 * 1).getChildCount()); }
 	 **/
 
 	/**
-	 * Create the GUI and show it. For thread safety, this method should be invoked from the event dispatch thread.
+	 * Create the GUI and show it. For thread safety, this method should be
+	 * invoked from the event dispatch thread.
 	 */
 
 }

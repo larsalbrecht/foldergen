@@ -96,7 +96,7 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	 */
 	public void fillTypeComboBox() {
 		this.infoPanel.getCbTypeValueModel().addElement("");
-		for(FileType type : Generator.getFiletypes()) {
+		for (FileType type : Generator.getFiletypes()) {
 			this.infoPanel.getCbTypeValueModel().addElement(type);
 		}
 
@@ -106,7 +106,7 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	 * Generates the struct and add the struct to tree.
 	 */
 	public void fillTree() {
-		if(this.configFile != null) {
+		if (this.configFile != null) {
 			// create struct
 			this.generator.workFile(this.configFile);
 			// clear before adding
@@ -124,16 +124,14 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	 *            Struct
 	 */
 	private void addStructToTree(final Struct struct, final FolderGenMutableTreeNode node) {
-		for(int len = struct.size(), i = 0; i < len; i++) {
-			FolderGenMutableTreeNode subNode = new FolderGenMutableTreeNode(new FolderGenItem(struct.get(i).getName(), struct
-					.get(i).getAdditionalData().get("filetype"), struct.get(i).getAdditionalData().get("type"), struct.get(i)
-					.getAdditionalData()));
-			if(struct.get(i).getAdditionalData().containsKey("folder")
-					&& Boolean.parseBoolean(struct.get(i).getAdditionalData().get("folder"))) {
+		for (int len = struct.size(), i = 0; i < len; i++) {
+			FolderGenMutableTreeNode subNode = new FolderGenMutableTreeNode(new FolderGenItem(struct.get(i).getName(), struct.get(i).getAdditionalData().get("filetype"), struct.get(i)
+					.getAdditionalData().get("type"), struct.get(i).getAdditionalData()));
+			if (struct.get(i).getAdditionalData().containsKey("folder") && Boolean.parseBoolean(struct.get(i).getAdditionalData().get("folder"))) {
 				subNode.setIsFolder(Boolean.TRUE);
 			}
 			this.tree.getDtmTreeModel().insertNodeInto(subNode, node, node.getChildCount());
-			if((struct.get(i).getSubStruct() != null) && (struct.get(i).getSubStruct().size() > 0)) {
+			if ((struct.get(i).getSubStruct() != null) && (struct.get(i).getSubStruct().size() > 0)) {
 				subNode.setIsFolder(Boolean.TRUE);
 				this.addStructToTree(struct.get(i).getSubStruct(), subNode);
 			}
@@ -143,7 +141,7 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	private void getStructFromTree() {
 		TreeModel model = this.tree.getDtmTreeModel();
 		Object root;
-		if(model != null) {
+		if (model != null) {
 			root = model.getRoot();
 			this.workTreeItem(model, root, " ");
 		} else {
@@ -153,9 +151,9 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 
 	private void workTreeItem(final TreeModel model, final Object o, final String seperator) {
 		Integer childCount = model.getChildCount(o);
-		for(int i = 0; i < childCount; i++) {
+		for (int i = 0; i < childCount; i++) {
 			FolderGenMutableTreeNode child = (FolderGenMutableTreeNode) model.getChild(o, i);
-			if(model.isLeaf(child)) {
+			if (model.isLeaf(child)) {
 				this.struct.add(new StructItem(child.toString(), null));
 				System.out.println(seperator + child);
 			} else {
@@ -211,7 +209,7 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	 */
 	private void fillAddtionalInfoPanel(final HashMap<String, String> additionalData) {
 		this.additionalInfoPanel.getpInformation().removeAll();
-		if(additionalData != null) {
+		if (additionalData != null) {
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
 			gbc.gridwidth = 1;
@@ -221,8 +219,8 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 			keyTextField.setPreferredSize(new Dimension(75, 20));
 
 			int i = 0;
-			for(Map.Entry<String, String> e : additionalData.entrySet()) {
-				if((e.getKey() != "content") && (e.getKey() != "filetype") && (e.getKey() != "type") && (e.getKey() != "folder")) {
+			for (Map.Entry<String, String> e : additionalData.entrySet()) {
+				if ((e.getKey() != "content") && (e.getKey() != "filetype") && (e.getKey() != "type") && (e.getKey() != "folder")) {
 					gbc.gridy = i;
 					gbc.gridx = 0;
 					keyTextField.setText(e.getKey());
@@ -245,11 +243,12 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	 * @param treeSelectionEvent
 	 *            TreeSelectionEvent
 	 */
+	@Override
 	public void valueChanged(final TreeSelectionEvent treeSelectionEvent) {
 
 		// returns the selected treenode
 		final DefaultMutableTreeNode node = (DefaultMutableTreeNode) this.tree.getLastSelectedPathComponent();
-		if(node == null) {
+		if (node == null) {
 			return;
 		}
 
@@ -261,7 +260,7 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 		this.additionalInfoPanel.getpInformation().removeAll();
 
 		// if not class (so it is a file (isLeaf) or folder (!isLeaf), no root)
-		if(nodeInfo.getClass() != String.class) {
+		if (nodeInfo.getClass() != String.class) {
 			this.infoPanel.getCbTypeValue().setEnabled(Boolean.TRUE);
 			this.infoPanel.getTfTitleValue().setEnabled(Boolean.TRUE);
 			this.infoPanel.getTaContent().setEnabled(Boolean.TRUE);
@@ -271,19 +270,15 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 			// set the title type and content (if exists)
 			this.infoPanel.getTfTitleValue().setText(folderGenItem.getTitle());
 			this.infoPanel.getCbTypeValue().getModel().setSelectedItem(folderGenItem.getInfomarker());
-			if((folderGenItem.getAdditionalData().containsKey("folder") && Boolean.parseBoolean(folderGenItem.getAdditionalData()
-					.get("folder")))) {
+			if ((folderGenItem.getAdditionalData().containsKey("folder") && Boolean.parseBoolean(folderGenItem.getAdditionalData().get("folder")))) {
 				this.infoPanel.getTaContent().setText("");
 				this.infoPanel.getTaContent().setEnabled(Boolean.FALSE);
 				this.infoPanel.getCbTypeValue().setEnabled(Boolean.FALSE);
 			} else {
 				this.infoPanel.getCbTypeValue().setEnabled(Boolean.TRUE);
 				this.infoPanel.getTaContent().setEnabled(Boolean.TRUE);
-				this.infoPanel.getTaContent()
-						.setText(
-								((folderGenItem.getAdditionalData() != null)
-										&& folderGenItem.getAdditionalData().containsKey("content") ? folderGenItem
-										.getAdditionalData().get("content") : ""));
+				this.infoPanel.getTaContent().setText(
+						((folderGenItem.getAdditionalData() != null) && folderGenItem.getAdditionalData().containsKey("content") ? folderGenItem.getAdditionalData().get("content") : ""));
 
 			}
 
@@ -307,28 +302,27 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	 */
 	@Override
 	public void actionPerformed(final ActionEvent e) {
-		if(e.getSource() == this.infoPanel.getbSave()) {
+		if (e.getSource() == this.infoPanel.getbSave()) {
 			// Save settings
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) this.tree.getLastSelectedPathComponent();
-			if(node == null) {
+			if (node == null) {
 				return;
 			}
 
 			// create new node object
 			final Object nodeInfo = node.getUserObject();
 
-			// if not class (so it is a file (isLeaf) or folder (!isLeaf), no root)
-			if(nodeInfo.getClass() != String.class) {
+			// if not class (so it is a file (isLeaf) or folder (!isLeaf), no
+			// root)
+			if (nodeInfo.getClass() != String.class) {
 				// create new item to read out informations
 				final FolderGenItem folderGenItem = (FolderGenItem) nodeInfo;
 				folderGenItem.setTitle(this.infoPanel.getTfTitleValue().getText());
 
-				for(FileType type : Generator.getFiletypes()) {
-					if(type == this.infoPanel.getCbTypeValueModel().getSelectedItem()) {
-						folderGenItem.setFilemarker(((FileType) this.infoPanel.getCbTypeValueModel().getSelectedItem())
-								.getFilemarker());
-						folderGenItem.setInfomarker(((FileType) this.infoPanel.getCbTypeValueModel().getSelectedItem())
-								.getInfomarker());
+				for (FileType type : Generator.getFiletypes()) {
+					if (type == this.infoPanel.getCbTypeValueModel().getSelectedItem()) {
+						folderGenItem.setFilemarker(((FileType) this.infoPanel.getCbTypeValueModel().getSelectedItem()).getFilemarker());
+						folderGenItem.setInfomarker(((FileType) this.infoPanel.getCbTypeValueModel().getSelectedItem()).getInfomarker());
 						break;
 					}
 				}
@@ -348,11 +342,9 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	 */
 	@Override
 	public void itemStateChanged(final ItemEvent e) {
-		if((e.getSource() == this.infoPanel.getCbTypeValue())
-				&& e.getItem().getClass().getSimpleName().equalsIgnoreCase("filetype")
-				&& (e.getStateChange() == ItemEvent.SELECTED)) {
+		if ((e.getSource() == this.infoPanel.getCbTypeValue()) && e.getItem().getClass().getSimpleName().equalsIgnoreCase("filetype") && (e.getStateChange() == ItemEvent.SELECTED)) {
 			HashMap<String, String> addtionalInformations = new HashMap<String, String>();
-			for(String key : ((FileType) e.getItem()).getAdditionalKeys()) {
+			for (String key : ((FileType) e.getItem()).getAdditionalKeys()) {
 				addtionalInformations.put(key, "");
 			}
 			this.fillAddtionalInfoPanel(addtionalInformations);
