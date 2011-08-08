@@ -1,0 +1,43 @@
+#summary Code and build
+#labels Featured,Phase-Implementation
+
+= Introduction =
+Ich entwickle FolderGen mit Eclipse (Helios), Java 1.6 und Subversion (SVN).
+
+= Eclipse =
+Aktuell benutze ich folgende Eclipse-Plugins:
++ FatJar (Um Jar-Dateien zu erstellen die alle Daten enthalten. Zum Beispiel: FolderGenPluginFramework-jar)
++ Sublicpse (Um SVN in Eclipse benutzen zu können)
+
+
+= SVN =
+In SVN ist dieses Projekt folgendermaßen strukturiert:
+{{{
++ SVN
+ + trunk
+  ...
+ + branches
+ + tags
+  + FolderGenPluginFramework
+   ...
+  + FolderGenPlugins
+   ...
+}}}
+Im Trunk ist der Code von FolderGen. In den Tags befinden sich die anderen "Projekte".
+
+= build =
+Wenn man FolderGen selber "bauen" möchte, reicht es wenn man den Trunk und die Tags (den Ordner _FolderGenPluginFramework_) auschecked.
+
+In Eclipse habe ich zwei Projekte erstellt, eines mit FolderGen und eines mit dem PluginFramework.
+
+Im Build-Path muss die Datei foldergenpluginframeworkjar-current-full.jar hinzugefügt werden, damit FolderGen die Pluginstruktur kennt. Andernfalls können nicht alle Klassen aufgelößt werden.
+
+Wenn alle Klassen aufgelößt wurden und es keine Fehler mehr gibt, kann man FolderGen schon starten. Um eine Jar-Datei zu erstellen, kann man die *.jardesc-Dateien benutzen. *Vorsicht: Eclipse integriert die Datei foldergenpluginframeworkjar-current-full.jar nicht in die Jar-Datei.*
+
+Um dies zu beheben gibt es zwei Möglichkeiten: Kopiere die foldergenpluginframework-Dateien in Dein FolderGen-src Verzeichnis, oder benutze das Eclipse-Plugin "FatJar".
+
+FatJar fügt eine neue Option in Dein Context-Menu mit ein: Build Fat Jar
+
+Wenn man dort drauf klickt, öffnet sich ein neues Fenster. Hier kann man dem Jar nun einen Namen geben, eine manifest Datei angeben (oder neu erstellen lassen). Selbsverständlich muss noch die Main-Class angegeben werden. Unten muss noch "One-Jar" ausgewählt werden.
+
+Wenn man weiter klickt, kann man die Jar-Datei aus dem Projekt "FolderGenPluginFramework" hinzufügen. 

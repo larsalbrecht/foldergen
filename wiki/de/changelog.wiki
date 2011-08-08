@@ -1,0 +1,99 @@
+#summary Changelog
+#labels Phase-Implementation,Featured,Phase-Support,Phase-Design
+<wiki:toc max_depth="2" />
+<g:plusone size="standard"></g:plusone>
+= Changelog =
+<wiki:comment>
+ _(Fertiggestellt: *0%*)_
+</wiki:comment>
+
+== Version 1.6.0.0 - coming soon ==
+ * Änderungen aus Version 1.5.0.1 werden integriert _(Fertiggestellt: *100%*)_
+ * Marker ">" wurde hinzugefügt, um an diesem Ort eine Zip-/Jar-Datei zu extrahieren / entpacken _(Fertiggestellt: *100%*)_
+ * GUI wurde überarbeitet und eine Baumansicht wurde hinzugefügt. Diese kann folgendes tun:
+   * Anzeigen der Informationen einer Konfigurationsdatei _(Fertiggestellt: *100%*)_
+   * Änderungen der Informationen einer Konfigurationsdatei _(Fertiggestellt: *50%*)_
+   * Erweitern der Informationen einer Konfigurationsdatei _(Fertiggestellt: *0%*)_
+   * Exportieren der Informationen zu einer neuen Konfigurationsdatei _(Fertiggestellt: *0%*)_
+ * Übersetzung wurde hinzugefügt:
+   * Italienisch (Google Translator)
+ * Kleine Änderung am Plugin Framework wurde durchgeführt (version 1.5.1.0)
+   * siehe: [Plugins]
+
+== Version 1.5.0.1 - nicht veröffentlicht ==
+ * Weiterer Code wurde überarbeitet _(Fertiggestellt: *50%*)_
+ * Das Array "basicInfoArr" wurde aus den Plugins entfernt. Ab jetzt wird eine {{{HashMap<Integer, String>}}} benutzt. _(Fertiggestellt: *100%*)_
+
+== Version 1.5.0.0 ==
+ * Weitere BSD-Lizenzheader wurden in den Quellcodedateien ergänzt
+ * Das Pluginmodul wurde umgeschrieben
+ * Plugins können nun die Konfigurationsdatei ändern
+ * Ein Fehler wurde korrigiert: Wenn man zwei Ordnern mit Dateien in einem anderen Ordner erstellt hat, gab es diesen Fehler
+ * Quellcodedateien und Pakete wurden überarbeitet
+ * Der Marker "~" kann nun eine Datei aus dem Internet herunterladen
+ * Proxy-benutzung wurde hinzugefügt (Wird automatisch erkannt - Systemproxy: z.B. die Einstellungen aus dem Internet Explorer (Windows))
+   * Parameter -px | -proxy zum aktivieren der Proxysuche wurde hinzugefügt
+ * Eine Checkbox wurde hinzugefügt, um Plugins in der Oberfläche aktivieren oder deaktivieren zu können
+ * Eine Checkbox wurde hinzugefügt, um die Abfrage in der Oberfläche aktivieren oder deaktivieren zu können
+ * GUI wurde umstrukturiert
+ * Quellcodedateien wurden überarbeitet (refactored)
+
+== Version 1.4.9.0 ==
+ * Einfache [Plugins Plugin]umgebung wurde hinzugefügt, mit der es möglich ist, eigene Content-Marker-Replacer zu erstellen
+ * Parameter -p | -plugins wurde hinzugefügt, um zu bestimmen ob die Plugins geladen werden sollen
+_Hinweis: Dies ist eine Alpha-Version_
+
+== Version 1.4.8.0 ==
+ * [foldergenconf#Markers_(Version_1.2_and_above) Marker] ${func.getfilecontent(filepath)} wurde hinzugefügt. Dieser ermöglicht es Dateiinhalte einzufügen
+ * Marker "~" wurde für die [foldergenconf FolderGen-Konfigurationsdatei] hinzugefügt, um eine Kopie einer Datei bzw. eines Ordners hier zu erstellen.
+ * Ein paar Fehler in der Ausgabe wurden korrigiert
+ * GUI erweitert
+   * Funktion um den Rootfolder auszuwählen
+   * Startbutton um FolderGen zu starten
+
+== Version 1.4.7.0 ==
+ * [foldergenconf#Markers_(Version_1.2_and_above) Marker] ${func.counter(X)} wurde angepasst, um bei einer bestimmten Zahl zu beginnen. Zum Beispiel: ${func.counter(x|10)} um bei 10 zu starten
+ * [foldergenconf#Markers_(Version_1.2_and_above) Marker] ${func.counter(X)} wurde angepasst, um nicht nur einzelne Buchstaben, sondern auch Wörter zuzulassen. Zum Beispiel: ${func.counter(meinzähler|10)}
+
+== Version 1.4.6.1 ==
+ * Debug-Ausgaben wurden entfernt
+
+== Version 1.4.6.0 ==
+ * Parameter -r | root wurde hinzugefügt. Mit diesem ist es möglich den Startordner festulegen, wo die Dateien und Ordner erstellt werden sollen
+ * Parameter -co | -confirmation wurde hinzugefügt. Mit diesem ist es möglich eine Abfrage zu erzwingen, bevor die Dateien und Ordner erstellt werden
+ * Abfragedialog wurde für die GUI und den CLI-Modus hinzugefügt
+ * Parameter -l | locale wurde hinzugefügt. Mit diesem ist es möglich die Sprache für das Programm zu ändern, unabhängig von der Systemsprache
+   * en (Englisch)
+   * de (Deutsch)
+   * fr (Französisch)
+   * ru (Russisch)
+
+== Version 1.4.5.0 ==
+ * "Properties"-Dateien mit allen Ausgabetexten wurden hinzugefügt
+ * Übersetzungen wurden hinzugefügt
+   * (Englisch)
+   * Deutsch (Muttersprache)
+   * Französisch (Google Translator)
+   * Russisch (Google Translator)
+ * System Look and Feel wurde für den GUI-Modus hinzugefügt. GUI passt sich dem Betriebssystem an, wenn dies möglich ist
+ * Fehler bei debug = 0 wurden behoben
+ * BSD-Lizenz wurde in den Quellcodedateien aktualisiert
+
+== Version 1.4.0.1 ==
+ * Fehlerkorrektur: GUI konnte in der version 1.4.0.0 nicht geöffnet werden
+
+== Version 1.4.0.0 ==
+ * Neue Startparameter (benutzt [http://commons.apache.org/cli/ Apache Common CLI]) um Fehler vorzubeugen
+
+== Version 1.3.0.0 ==
+ * Eine einfache GUI zum Auswählen der Datei wurde hinzugefügt
+ * Ein paar Startparameter wurden hinzugefügt um zwischen GUI und Konsole umzuschalten
+
+== Version 1.2.0.0 ==
+ * [foldergenconf#Markers_(Version_1.2_and_above) Markers] wurden für die Inhaltstemplates hinzugefügt
+
+== Version 1.0.0.0 ==
+Generator mit folgenden Features:
+ * generieren von Ordnern
+ * generieren von Dateien
+ * generieren von Inhalt in den Dateien

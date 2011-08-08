@@ -39,4 +39,4 @@ Now you have two choices: Copy the foldergenpluginframework-files to your Folder
 
 FatJar adds a new option to your context menu: Build Fat Jar
 Click it and give the jar a name. Then you can create a new manifest for all next builds. Then you must choose the Main-Class. Select "One-JAR" and click "Next >". 
-Now you cann check the added FolderGenPluginFramework"-Jar to Fat Jar. Press Finish and test ;)
+Now you can check the added "FolderGenPluginFramework"-Jar to Fat Jar. Press Finish and test ;)
