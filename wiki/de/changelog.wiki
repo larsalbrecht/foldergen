@@ -12,9 +12,9 @@
  * Marker ">" wurde hinzugefügt, um an diesem Ort eine Zip-/Jar-Datei zu extrahieren / entpacken _(Fertiggestellt: *100%*)_
  * GUI wurde überarbeitet und eine Baumansicht wurde hinzugefügt. Diese kann folgendes tun:
    * Anzeigen der Informationen einer Konfigurationsdatei _(Fertiggestellt: *100%*)_
-   * Änderungen der Informationen einer Konfigurationsdatei _(Fertiggestellt: *50%*)_
-   * Erweitern der Informationen einer Konfigurationsdatei _(Fertiggestellt: *0%*)_
-   * Exportieren der Informationen zu einer neuen Konfigurationsdatei _(Fertiggestellt: *50%*)_
+   * Änderungen der Informationen einer Konfigurationsdatei _(Fertiggestellt: *75%*)_
+   * Erstelle neue Dateien und Ordner mit der geänderten Konfigurationsdatei (ohne diese als Datei zu speichern) _(Fertiggestellt: *100%*)_
+   * Exportieren der Informationen zu einer neuen Konfigurationsdatei _(Fertiggestellt: *100%*)_
  * Übersetzung wurde hinzugefügt:
    * Italienisch (Google Translator)
  * Kleine Änderung am Plugin Framework wurde durchgeführt (version 1.5.1.0)

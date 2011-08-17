@@ -23,12 +23,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -147,30 +150,41 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 		}
 	}
 
+	/**
+	 * Get struct from tree and save new struct in this.struct.
+	 */
 	private void getStructFromTree() {
 		TreeModel model = this.tree.getDtmTreeModel();
-		Object root;
 		if(model != null) {
-			root = model.getRoot();
 			this.struct.clear();
-			this.workTreeItem(model, root, " ");
+			this.struct = this.workTreeItem((FolderGenMutableTreeNode) model.getChild(model.getRoot(), 0), null);
 		} else {
 			System.out.println("Tree is empty.");
 		}
 	}
 
-	private void workTreeItem(final TreeModel model, final Object o, final String seperator) {
-		Integer childCount = model.getChildCount(o);
-		for(int i = 0; i < childCount; i++) {
-			FolderGenMutableTreeNode child = (FolderGenMutableTreeNode) model.getChild(o, i);
-			if(model.isLeaf(child)) {
-				// System.out.println(seperator + child);
-				this.struct.add(new StructItem(child.toString(), null));
-			} else {
-				// System.out.println(seperator + child);
-				this.workTreeItem(model, child, seperator + seperator);
+	/**
+	 * Returns a struct with the new created struct from JTree.
+	 * 
+	 * @param node
+	 *            FolderGenMutableTreeNode
+	 * @param lastItem
+	 *            StructItem
+	 * @return Struct
+	 */
+	private Struct workTreeItem(final FolderGenMutableTreeNode node, final StructItem lastItem) {
+		Struct tempStruct = new Struct();
+		FolderGenItem tempItem = (FolderGenItem) node.getUserObject();
+		StructItem tempStructItem = new StructItem(tempItem.getTitle(), tempItem.getAdditionalData(), lastItem);
+
+		if(!node.isLeaf()) {
+			for(int i = 0; i < node.getChildCount(); i++) {
+				tempStructItem.getSubStruct().addAll(
+						this.workTreeItem((FolderGenMutableTreeNode) node.getChildAt(i), tempStructItem));
 			}
 		}
+		tempStruct.add(tempStructItem);
+		return tempStruct;
 	}
 
 	/**
@@ -345,10 +359,10 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 				}
 
 				this.tree.getDtmTreeModel().reload(node);
-				// this.tree.revalidate();
 				this.getStructFromTree();
 			}
 		} else if(e.getSource() == this.view.getMiExportAll()) {
+			// Export the JTree-Entries to a file
 			this.fcChooser.setFileFilter(new FolderGenFileFilter());
 			this.fcChooser.setDialogTitle(PropertiesReader.getInstance().getProperties("application.gui.filechooser.title"));
 			this.fcChooser.setCurrentDirectory((this.rootPath != null ? this.rootPath : (this.configFile != null ? new File(
@@ -362,9 +376,22 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 					e1.printStackTrace();
 				}
 				if(file.isFile() && file.exists()) {
-					System.out.println(this.generator.getStringFromStruct(this.struct, "", ""));
-					System.out.println(file.getName());
-					// this.configFile = file;
+					BufferedWriter bw = null;
+					try {
+						bw = new BufferedWriter(new FileWriter(file));
+						bw.write(Generator.getStringFromStruct(this.struct, "", ""));
+						bw.close();
+						this.configFile = file;
+						JOptionPane.showMessageDialog(this.view, PropertiesReader.getInstance().getProperties(
+								"application.gui.messagedialog.configexported.message"), PropertiesReader.getInstance()
+								.getProperties("application.gui.messagedialog.configexported.title"),
+								JOptionPane.INFORMATION_MESSAGE);
+					} catch(IOException ex) {
+						JOptionPane.showMessageDialog(this.view, PropertiesReader.getInstance().getProperties(
+								"application.gui.messagedialog.configexportederror.message"), PropertiesReader.getInstance()
+								.getProperties("application.gui.messagedialog.configexportederror.title"),
+								JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			}
 		}
@@ -459,6 +486,21 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	 */
 	public static synchronized final void setParentView(final View parentView) {
 		FolderGenTreeController.parentView = parentView;
+	}
+
+	/**
+	 * @return the struct
+	 */
+	public synchronized final Struct getStruct() {
+		return this.struct;
+	}
+
+	/**
+	 * @param struct
+	 *            the struct to set
+	 */
+	public synchronized final void setStruct(final Struct struct) {
+		this.struct = struct;
 	}
 
 }

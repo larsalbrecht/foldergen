@@ -115,12 +115,30 @@ public class Generator {
 		}
 	}
 
-	public Generator(final Boolean isDebug, final Boolean showConfirmation, final Boolean usePlugins) {
+	public Generator(final Struct struct, final File rootPath, final Boolean isDebug, final Boolean showConfirmation,
+			final Boolean usePlugins) {
+		this.struct = struct;
+		this.rootPath = rootPath;
 		this.isDebug = isDebug;
 		this.showConfirmation = showConfirmation;
 		this.usePlugins = usePlugins;
 		this.lastLayer = 0;
 
+		this.initGenerator();
+
+		if((this.showConfirmation && this.confirmationWorker(this.rootPath)) || !this.showConfirmation) {
+			if(this.isDebug) {
+				this.printStruct(this.struct, "", Boolean.TRUE);
+			}
+			this.workStruct(this.struct, this.rootPath);
+		}
+	}
+
+	public Generator(final Boolean isDebug, final Boolean showConfirmation, final Boolean usePlugins) {
+		this.isDebug = isDebug;
+		this.showConfirmation = showConfirmation;
+		this.usePlugins = usePlugins;
+		this.lastLayer = 0;
 		this.initGenerator();
 	}
 
@@ -710,16 +728,33 @@ public class Generator {
 		}
 	}
 
-	public String getStringFromStruct(final Struct struct, final String seperator, String structStr) {
+	/**
+	 * Returns a string that represents a foldergenconf-file.
+	 * 
+	 * @param struct
+	 *            Struct
+	 * @param seperator
+	 *            String
+	 * @param structStr
+	 *            String
+	 * @return String
+	 */
+	public static String getStringFromStruct(final Struct struct, final String seperator, String structStr) {
 		for(int len = struct.size(), i = 0; i < len; i++) {
 			System.out.println("struct.get(i).getName(); " + struct.get(i).getName());
-			// TODO differ from filetypes to create real string. e.g.: Copy is not created like file or folder.
-			structStr = structStr + seperator + struct.get(i).getAdditionalData().get("filetype") + " " + struct.get(i).getName();
-
-			if(struct.get(i).getSubStruct() != null) {
-				this.getStringFromStruct(struct.get(i).getSubStruct(), seperator + "\t", structStr);
+			String itemName = struct.get(i).getName();
+			if(itemName.equals("") && (struct.get(i).getAdditionalData().get("src") != null)
+					&& !struct.get(i).getAdditionalData().get("src").equals("")) {
+				itemName = struct.get(i).getAdditionalData().get("src");
+			} else if((struct.get(i).getAdditionalData().get("src") != null)
+					&& !struct.get(i).getAdditionalData().get("src").equals("")) {
+				itemName = itemName + " -> " + struct.get(i).getAdditionalData().get("src");
 			}
+			structStr = structStr + "\n" + seperator + struct.get(i).getAdditionalData().get("filetype") + " " + itemName;
 
+			if((struct.get(i).getSubStruct() != null) && (struct.get(i).getSubStruct().size() > 0)) {
+				structStr = Generator.getStringFromStruct(struct.get(i).getSubStruct(), seperator + "\t", structStr);
+			}
 		}
 		return structStr;
 	}

@@ -78,6 +78,7 @@ public class FolderGenTreeView extends JFrame {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(final WindowEvent e) {
+				FolderGenTreeController.getParentView().setStruct(FolderGenTreeView.this.controller.getStruct());
 				FolderGenTreeController.getParentView().setEnabled(true);
 			}
 		});

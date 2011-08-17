@@ -41,6 +41,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import com.lars_albrecht.foldergen.FolderGen;
 import com.lars_albrecht.foldergen.core.Generator;
+import com.lars_albrecht.foldergen.core.generator.helper.Struct;
 import com.lars_albrecht.foldergen.core.helper.properies.PropertiesReader;
 import com.lars_albrecht.foldergen.gui.helper.filesystem.FolderGenFileFilter;
 import com.lars_albrecht.foldergen.gui.tree.FolderGenTreeController;
@@ -69,6 +70,8 @@ public class View extends JFrame implements ActionListener, ItemListener {
 	private File configFile = null;
 	private Boolean showConfirmation = Boolean.FALSE;
 	private Boolean usePlugins = Boolean.FALSE;
+
+	private Struct struct = null;
 
 	/**
 	 * The GUI of FolderGen.
@@ -288,13 +291,23 @@ public class View extends JFrame implements ActionListener, ItemListener {
 						"application.gui.messagedialog.confirmation.message"), PropertiesReader.getInstance().getProperties(
 						"application.gui.messagedialog.confirmation.title"), JOptionPane.YES_NO_OPTION,
 						JOptionPane.INFORMATION_MESSAGE) == 0) {
-					new Generator(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()), this.configFile,
-							this.isDebug, FolderGen.CONFIRMATION_HIDE, this.usePlugins);
+					if(this.struct != null) {
+						new Generator(this.struct, this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()),
+								this.isDebug, this.showConfirmation, this.usePlugins);
+					} else {
+						new Generator(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()),
+								this.configFile, this.isDebug, FolderGen.CONFIRMATION_HIDE, this.usePlugins);
+					}
 
 				}
 			} else {
-				new Generator(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()), this.configFile,
-						this.isDebug, FolderGen.CONFIRMATION_HIDE, this.usePlugins);
+				if(this.struct != null) {
+					new Generator(this.struct, this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()),
+							this.isDebug, this.showConfirmation, this.usePlugins);
+				} else {
+					new Generator(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()), this.configFile,
+							this.isDebug, FolderGen.CONFIRMATION_HIDE, this.usePlugins);
+				}
 			}
 		} else if(e.getSource() == this.btnShow) {
 			if(this.configFile == null) {
@@ -328,4 +341,13 @@ public class View extends JFrame implements ActionListener, ItemListener {
 			this.usePlugins = this.cbPlugins.getSelectedObjects() != null ? Boolean.TRUE : Boolean.FALSE;
 		}
 	}
+
+	/**
+	 * @param struct
+	 *            the struct to set
+	 */
+	public synchronized final void setStruct(final Struct struct) {
+		this.struct = struct;
+	}
+
 }
