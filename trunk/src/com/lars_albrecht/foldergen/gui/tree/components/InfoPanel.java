@@ -68,6 +68,7 @@ public class InfoPanel extends JPanel {
 		this.cbTypeValue = new JComboBox(this.cbTypeValueModel);
 		this.cbTypeValue.addItemListener(this.controller);
 		this.taContent = new JTextArea();
+		this.taContent.setTabSize(2);
 
 		gbc.insets = new Insets(10, 0, 0, 0);
 

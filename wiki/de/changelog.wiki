@@ -4,7 +4,7 @@
 <g:plusone size="standard"></g:plusone>
 = Changelog =
 <wiki:comment>
- _(Fertiggestellt: *0%*)_
+ _(Fertiggestellt: *100%*)_
 </wiki:comment>
 
 == Version 1.6.0.0 - coming soon ==
@@ -14,7 +14,7 @@
    * Anzeigen der Informationen einer Konfigurationsdatei _(Fertiggestellt: *100%*)_
    * Änderungen der Informationen einer Konfigurationsdatei _(Fertiggestellt: *50%*)_
    * Erweitern der Informationen einer Konfigurationsdatei _(Fertiggestellt: *0%*)_
-   * Exportieren der Informationen zu einer neuen Konfigurationsdatei _(Fertiggestellt: *0%*)_
+   * Exportieren der Informationen zu einer neuen Konfigurationsdatei _(Fertiggestellt: *50%*)_
  * Übersetzung wurde hinzugefügt:
    * Italienisch (Google Translator)
  * Kleine Änderung am Plugin Framework wurde durchgeführt (version 1.5.1.0)

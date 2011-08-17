@@ -17,6 +17,8 @@ package com.lars_albrecht.foldergen.gui.tree.components;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
@@ -24,6 +26,10 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.KeyStroke;
 import javax.swing.WindowConstants;
 
 import com.lars_albrecht.foldergen.core.helper.properies.PropertiesReader;
@@ -38,17 +44,29 @@ import com.lars_albrecht.foldergen.gui.tree.FolderGenTreeController;
 @SuppressWarnings("serial")
 public class FolderGenTreeView extends JFrame {
 
-	@SuppressWarnings("unused")
 	private FolderGenTreeController controller = null;
+
+	private JMenuBar mbMenu = null;
+	private JMenu menuFile = null;
+	private JMenuItem miExportAll = null;
 
 	public FolderGenTreeView(final FolderGenTreeController controller) {
 		super(PropertiesReader.getInstance().getProperties("application.gui.tree.title"));
 		this.controller = controller;
 
+		this.initTreeView();
+
+	}
+
+	/**
+	 * Initilize the tree view. Set the image and create the components with "createComponents()".
+	 */
+	private void initTreeView() {
 		BufferedImage image = null;
 		try {
-			image = ImageIO.read(this.getClass().getResource("/tp_deb_foldergen-32x32.png"));
-		} catch (IOException e) {
+			image = ImageIO.read(this.getClass()
+					.getResource(PropertiesReader.getInstance().getProperties("application.iconpath")));
+		} catch(IOException e) {
 			e.printStackTrace();
 		}
 		this.setIconImage(image);
@@ -64,6 +82,31 @@ public class FolderGenTreeView extends JFrame {
 			}
 		});
 
+		this.createComponents();
+	}
+
+	/**
+	 * Create the components and add them to view.
+	 */
+	private void createComponents() {
+		this.mbMenu = new JMenuBar();
+		this.menuFile = new JMenu(PropertiesReader.getInstance().getProperties("application.gui.tree.menu.file.title"));
+		this.menuFile.setMnemonic(KeyEvent.VK_D);
+		this.menuFile.getAccessibleContext().setAccessibleDescription(
+				PropertiesReader.getInstance().getProperties("application.gui.tree.menu.file.description"));
+
+		this.miExportAll = new JMenuItem(PropertiesReader.getInstance().getProperties(
+				"application.gui.tree.menu.item.export.title"));
+		this.miExportAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		this.miExportAll.getAccessibleContext().setAccessibleDescription(
+				PropertiesReader.getInstance().getProperties("application.gui.tree.menu.item.export.description"));
+
+		this.miExportAll.addActionListener(this.controller);
+
+		this.menuFile.add(this.miExportAll);
+		this.menuFile.addSeparator();
+		this.mbMenu.add(this.menuFile);
+		this.setJMenuBar(this.mbMenu);
 	}
 
 	/**
@@ -75,38 +118,48 @@ public class FolderGenTreeView extends JFrame {
 	}
 
 	/**
-	 * Fill tree with items.
+	 * @return the mbMenu
 	 */
-	/**
-	 * private void fillRootNode() { this.dtm.insertNodeInto(new
-	 * FolderGenMutableTreeNode(new FolderGenItem("MyFolder1", "+", "folder"),
-	 * Boolean.TRUE), this.rootNode, this.rootNode.getChildCount());
-	 * 
-	 * this.dtm.insertNodeInto(new FolderGenMutableTreeNode(new
-	 * FolderGenItem("MyTitle", "-", "file", new HashMap<String, Object>() { {
-	 * this.put("content", "this is my content"); } })), (MutableTreeNode)
-	 * this.rootNode.getChildAt(0),
-	 * this.rootNode.getChildAt(0).getChildCount());
-	 * 
-	 * this.dtm.insertNodeInto(new FolderGenMutableTreeNode(new
-	 * FolderGenItem("MyFolder2", "+", "folder"), Boolean.TRUE), this.rootNode,
-	 * this.rootNode.getChildCount());
-	 * 
-	 * this.dtm.insertNodeInto(new FolderGenMutableTreeNode(new
-	 * FolderGenItem("MyFolder3", "+", "folder"), Boolean.TRUE), this.rootNode,
-	 * this.rootNode.getChildCount());
-	 * 
-	 * this.dtm.insertNodeInto(new FolderGenMutableTreeNode(new
-	 * FolderGenItem("MyTitle2", "~", "copy", new HashMap<String, Object>() { {
-	 * this.put("src", "/home/my/file"); } })), (MutableTreeNode)
-	 * this.rootNode.getChildAt(this.rootNode.getChildCount() - 1),
-	 * this.rootNode.getChildAt( this.rootNode.getChildCount() -
-	 * 1).getChildCount()); }
-	 **/
+	public synchronized final JMenuBar getMbMenu() {
+		return this.mbMenu;
+	}
 
 	/**
-	 * Create the GUI and show it. For thread safety, this method should be
-	 * invoked from the event dispatch thread.
+	 * @param mbMenu
+	 *            the mbMenu to set
 	 */
+	public synchronized final void setMbMenu(final JMenuBar mbMenu) {
+		this.mbMenu = mbMenu;
+	}
+
+	/**
+	 * @return the menuFile
+	 */
+	public synchronized final JMenu getMenuFile() {
+		return this.menuFile;
+	}
+
+	/**
+	 * @param menuFile
+	 *            the menuFile to set
+	 */
+	public synchronized final void setMenuFile(final JMenu menuFile) {
+		this.menuFile = menuFile;
+	}
+
+	/**
+	 * @return the miExportAll
+	 */
+	public synchronized final JMenuItem getMiExportAll() {
+		return this.miExportAll;
+	}
+
+	/**
+	 * @param miExportAll
+	 *            the miExportAll to set
+	 */
+	public synchronized final void setMiExportAll(final JMenuItem miExportAll) {
+		this.miExportAll = miExportAll;
+	}
 
 }

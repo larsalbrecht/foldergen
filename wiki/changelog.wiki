@@ -11,7 +11,7 @@
  * changes for Version 1.5.0.1 will be integrated here _(work in progress: *100%*)_
  * Added marker ">" to define a zip-file to extract _(work in progress: *100%*)_
  * Recode the GUI and add treeview to:
-  * view the information _(work in progress: *90%*)_
+  * view the information _(work in progress: *100%*)_
   * change the information _(work in progress: *50%*)_
   * create the new files and folders with the changed config _(work in progress: *0%*)_
   * export the information to new config _(work in progress: *50%*)_
