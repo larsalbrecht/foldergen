@@ -67,7 +67,6 @@ public class FolderGen {
 	 */
 	public FolderGen(final String[] args) {
 		// Variable for the config file
-
 		try {
 			// Saves parameter states in appConf
 			this.appConf = FolderGenCLIHelper.parseArguments(args);

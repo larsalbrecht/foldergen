@@ -708,7 +708,20 @@ public class Generator {
 				this.printStruct(struct.get(i).getSubStruct(), seperator + "\t", showAll);
 			}
 		}
+	}
 
+	public String getStringFromStruct(final Struct struct, final String seperator, String structStr) {
+		for(int len = struct.size(), i = 0; i < len; i++) {
+			System.out.println("struct.get(i).getName(); " + struct.get(i).getName());
+			// TODO differ from filetypes to create real string. e.g.: Copy is not created like file or folder.
+			structStr = structStr + seperator + struct.get(i).getAdditionalData().get("filetype") + " " + struct.get(i).getName();
+
+			if(struct.get(i).getSubStruct() != null) {
+				this.getStringFromStruct(struct.get(i).getSubStruct(), seperator + "\t", structStr);
+			}
+
+		}
+		return structStr;
 	}
 
 	/**
