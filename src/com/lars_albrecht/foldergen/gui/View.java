@@ -70,11 +70,12 @@ public class View extends JFrame implements ActionListener, ItemListener {
 	private File configFile = null;
 	private Boolean showConfirmation = Boolean.FALSE;
 	private Boolean usePlugins = Boolean.FALSE;
+	private Integer overwrite = null;
 
 	private Struct struct = null;
 
 	/**
-	 * The GUI of FolderGen.
+	 * 
 	 * 
 	 * @param rootPath
 	 *            File
@@ -86,9 +87,11 @@ public class View extends JFrame implements ActionListener, ItemListener {
 	 *            Boolean
 	 * @param usePlugins
 	 *            Boolean
+	 * @param overwrite
+	 *            Integer
 	 */
 	public View(final File rootPath, final File configFile, final Boolean isDebug, final Boolean showConfirmation,
-			final Boolean usePlugins) {
+			final Boolean usePlugins, final Integer overwrite) {
 		super(PropertiesReader.getInstance().getProperties("application.name") + " - "
 				+ PropertiesReader.getInstance().getProperties("application.version"));
 		this.isDebug = isDebug;
@@ -96,6 +99,7 @@ public class View extends JFrame implements ActionListener, ItemListener {
 		this.configFile = configFile;
 		this.showConfirmation = showConfirmation;
 		this.usePlugins = usePlugins;
+		this.overwrite = overwrite;
 
 		BufferedImage image = null;
 		try {
@@ -293,20 +297,20 @@ public class View extends JFrame implements ActionListener, ItemListener {
 						JOptionPane.INFORMATION_MESSAGE) == 0) {
 					if(this.struct != null) {
 						new Generator(this.struct, this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()),
-								this.isDebug, this.showConfirmation, this.usePlugins);
+								this.isDebug, this.showConfirmation, this.usePlugins, this.overwrite);
 					} else {
 						new Generator(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()),
-								this.configFile, this.isDebug, FolderGen.CONFIRMATION_HIDE, this.usePlugins);
+								this.configFile, this.isDebug, FolderGen.CONFIRMATION_HIDE, this.usePlugins, this.overwrite);
 					}
 
 				}
 			} else {
 				if(this.struct != null) {
 					new Generator(this.struct, this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()),
-							this.isDebug, this.showConfirmation, this.usePlugins);
+							this.isDebug, this.showConfirmation, this.usePlugins, this.overwrite);
 				} else {
 					new Generator(this.rootPath != null ? this.rootPath : new File(this.configFile.getParent()), this.configFile,
-							this.isDebug, FolderGen.CONFIRMATION_HIDE, this.usePlugins);
+							this.isDebug, FolderGen.CONFIRMATION_HIDE, this.usePlugins, this.overwrite);
 				}
 			}
 		} else if(e.getSource() == this.btnShow) {

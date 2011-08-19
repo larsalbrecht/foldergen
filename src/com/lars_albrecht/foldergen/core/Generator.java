@@ -68,6 +68,8 @@ public class Generator {
 	private File rootPath = null;
 	private Boolean showConfirmation = false;
 	private Boolean usePlugins = false;
+	@SuppressWarnings("unused")
+	private Integer overwrite = null;
 
 	private Struct struct = null;
 	private StructItem lastItem = null;
@@ -87,13 +89,17 @@ public class Generator {
 	 *            Boolean
 	 * @param usePlugins
 	 *            Boolean
+	 * @param overwrite
+	 *            Integer
 	 */
 	public Generator(final File rootPath, final File configFile, final Boolean isDebug, final Boolean showConfirmation,
-			final Boolean usePlugins) {
+			final Boolean usePlugins, final Integer overwrite) {
 		this.isDebug = isDebug;
 		this.showConfirmation = showConfirmation;
 		this.usePlugins = usePlugins;
 		this.rootPath = (rootPath != null ? rootPath : new File(configFile.getParent()));
+		this.overwrite = overwrite;
+
 		this.lastLayer = 0;
 
 		this.initGenerator();
@@ -115,13 +121,32 @@ public class Generator {
 		}
 	}
 
+	/**
+	 * 
+	 * Generator constructor.
+	 * 
+	 * @param struct
+	 *            Struct
+	 * @param rootPath
+	 *            File
+	 * @param isDebug
+	 *            Boolean
+	 * @param showConfirmation
+	 *            Boolean
+	 * @param usePlugins
+	 *            Boolean
+	 * @param overwrite
+	 *            Integer
+	 */
 	public Generator(final Struct struct, final File rootPath, final Boolean isDebug, final Boolean showConfirmation,
-			final Boolean usePlugins) {
+			final Boolean usePlugins, final Integer overwrite) {
 		this.struct = struct;
 		this.rootPath = rootPath;
 		this.isDebug = isDebug;
 		this.showConfirmation = showConfirmation;
 		this.usePlugins = usePlugins;
+		this.overwrite = overwrite;
+
 		this.lastLayer = 0;
 
 		this.initGenerator();
@@ -134,10 +159,21 @@ public class Generator {
 		}
 	}
 
+	/**
+	 * Generator constructor.
+	 * 
+	 * @param isDebug
+	 *            Boolean
+	 * @param showConfirmation
+	 *            Boolean
+	 * @param usePlugins
+	 *            Boolean
+	 */
 	public Generator(final Boolean isDebug, final Boolean showConfirmation, final Boolean usePlugins) {
 		this.isDebug = isDebug;
 		this.showConfirmation = showConfirmation;
 		this.usePlugins = usePlugins;
+
 		this.lastLayer = 0;
 		this.initGenerator();
 	}

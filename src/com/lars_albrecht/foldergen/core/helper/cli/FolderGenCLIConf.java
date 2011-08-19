@@ -27,6 +27,10 @@ import java.util.Locale;
  */
 public final class FolderGenCLIConf {
 
+	final static Integer OVERWRITE_OFF = 0;
+	final static Integer OVERWRITE_FORCE = 1;
+	final static Integer OVERWRITE_ASK = 2;
+
 	private File rootPath = null;
 	private File configFile = null;
 	private Boolean isGui = null;
@@ -35,6 +39,7 @@ public final class FolderGenCLIConf {
 	private Locale locale = null;
 	private Boolean usePlugins = null;
 	private Boolean useProxy = null;
+	private Integer overwrite = null;
 
 	public FolderGenCLIConf() {
 		this.isGui = Boolean.FALSE;
@@ -43,6 +48,7 @@ public final class FolderGenCLIConf {
 		this.locale = Locale.getDefault();
 		this.usePlugins = Boolean.FALSE;
 		this.useProxy = Boolean.FALSE;
+		this.overwrite = FolderGenCLIConf.OVERWRITE_OFF;
 	}
 
 	/**
@@ -163,6 +169,21 @@ public final class FolderGenCLIConf {
 	 */
 	public synchronized final void setUseProxy(final Boolean useProxy) {
 		this.useProxy = useProxy;
+	}
+
+	/**
+	 * @return the overwrite
+	 */
+	public synchronized final Integer getOverwrite() {
+		return this.overwrite;
+	}
+
+	/**
+	 * @param overwrite
+	 *            the overwrite to set
+	 */
+	public synchronized final void setOverwrite(final Integer overwrite) {
+		this.overwrite = overwrite;
 	}
 
 }
