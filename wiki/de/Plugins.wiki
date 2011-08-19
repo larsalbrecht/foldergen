@@ -1,29 +1,29 @@
-#summary All about plugins
+#summary Alles über Plugins
 #labels Featured,Phase-Implementation
 <wiki:toc max_depth="3" />
 
 <g:plusone size="standard"></g:plusone>
 = Plugins (Version 1.4.9.0 | Pluginframework Version 1.0.0.0) =
-_Be carefully with this. This is *NOT* final and the code to produce a plugin can be changed in near future_
+_Sei vorsichtig mit dieser Version. Diese Version ist *NICHT* Final und die Möglichkeit ein Plugin zu erstellen, kann und wird sich in Zukunft ändern.
 
-== How to use ==
-You need only to put the jar of the plugin to the folder where FolderGen is.
+== Wie benutzt man Plugins ==
+Man muss nur die .jar-Datei des Plugins in den Hautpordner von FolderGen kopieren.
 
-== How to code ==
-It is really simple to create a plugin in this version. You need to add "foldergenpluginframeworkjar-< version >.jar" to you buildpath. Then you can create a class that extends "CoreMarkerReplacer" (com.lars_albrecht.foldergen.plugin.classes.CoreMarkerReplacer).
+== Wie erstellt man ein Plugin ==
+Es ist wirklich einfach ein Plugin für diese Version zu erstellen. Man muss die "foldergenpluginframeworkjar-< version >.jar" zum Buildpath hinzufügen. Dann kann eine Klasse erstellt werden, die die Klasse "CoreMarkerReplacer" (com.lars_albrecht.foldergen.plugin.classes.CoreMarkerReplacer) erweitert.
 
-Now, you need only to overwrite two methods:
+Jetzt müssen nur zwei Methoden überschrieben werden:
 {{{replaceContent()}}}
 {{{getName()}}}
 
-In "getName" you return the name of the plugin, e.g.: MyDemoPlugin
+"getName" gibt den Titel des Plugins zurück, z.B.: MeinDemoPlugin
 
-In "replaceContent" you have the var "content" in "this.getContent()". In here you will have the content from FolderGen. Here you can do something like:
+In "replaceContent" hat man die Variable "content" aus "this.getContent()". Hier kommt der Inhalt der Datei herein und kann hier manipuliert bzw. angepasst werden:
 {{{
 return this.getContent().replaceAll("(\\$\\{plugin.demo\\})", this.getName() + " DEMO");
 }}}
 
-=== Example Demo Class ===
+=== Beispiel Demo Klasse ===
 {{{
 /**
  * 
@@ -33,12 +33,12 @@ package com.lars_albrecht.foldergen.plugin;
 import com.lars_albrecht.foldergen.plugin.classes.CoreMarkerReplacer;
 
 /**
- * Replaces ${plugin.demo} with "MyPluginDemo DEMO".
+ * Ersetzt ${plugin.demo} mit "MeinDemoPlugin DEMO".
  * 
  * @author lalbrecht
  * @version 1.0.0.0
  */
-public class MyPluginDemo extends CoreMarkerReplacer {
+public class MeinDemoPlugin extends CoreMarkerReplacer {
 
 	@Override
 	public String replaceContent() {
@@ -47,7 +47,7 @@ public class MyPluginDemo extends CoreMarkerReplacer {
 
 	@Override
 	public String getName() {
-		return "MyPluginDemo";
+		return "MeinDemoPlugin";
 	}
 
 }
@@ -56,45 +56,44 @@ public class MyPluginDemo extends CoreMarkerReplacer {
 
 
 = Plugins (Version 1.5.0.0 | Pluginframework Version 1.5.0.0) =
-In version 1.5.0.0 there is a new pluginframework to create plugins for FolderGen. You can now not only add a marker replacer, the plugin framework in version 1.5.0.0 can do more.
+In Version 1.5.0.0 gibt es ein neues pluginframework um Plugins für FolderGen zu erstellen. Jetzt können nicht nur eigene Marker hinzugefügt werden, sondern es können mehr Sachen mit dem neuen Pluginframeworm gemacht werden.
 
-== Plugintypes ==
+== Plugintypen ==
 
-A Plugin to ...
- * ... replace own markers in content.
- * ... create special types of files.
- * ... create special types of folders.
- * ... create special types of files with content.
+Ein Plugin um ...
+ * ... eigene Marker in Inhalten zu ersetzten
+ * ... eigene Dateitypen zu erstellen
+ * ... eigene Ordertypen zu erstellen
+ * ... eigene Dateitypen mit Inhalten zu erstellen
 
 
-== How to use ==
-You need only to put the jar of the plugin to the folder where FolderGen is.
+== Wie benutzt man Plugins ==
+Man muss nur die .jar-Datei des Plugins in den Hautpordner von FolderGen kopieren.
 
-== How to code ==
-It is really simple to create a plugin in this version. You need to add "foldergenpluginframeworkjar-< version >.jar" to you buildpath.
-Now you can start to create your own plugin.
+== Wie erstellt man ein Plugin ==
+Es ist wirklich einfach ein Plugin für diese Version zu erstellen. Man muss die "foldergenpluginframeworkjar-< version >.jar" zum Buildpath hinzufügen.
 
-You need to extend your class from PluginClass "FolderGenPlugin".
+Die eigene neue Klasse muss die Pluginklasse "FolderGenPlugin" erweitern.
 
-=== Build a marker replacer plugin ===
-Have a look at the download area, there is the plugin I describe here.
+=== Erstelle einen eigenen Marker ===
+Dieses Plugin ist im Downloadbereich zu sehen.
 
 {{{
 /**
- * Replaces ${plugin.demo} with "MyPluginDemo DEMO".
+ * Ersetzt ${plugin.demo} mit "MeinDemoPlugin DEMO".
  * 
  * @author lalbrecht
  * @version 1.0.0.0
  */
-public class MyReplacerDemo extends FolderGenPlugin {
+public class MeinDemoPlugin extends FolderGenPlugin {
 
 	@Override
 	public String replaceContent(final String content) {
 		return content.replaceAll("(\\$\\{plugin.demo\\})", this.infoMap.get(IFolderGenPlugin.INFO_TITLE) + " DEMO");
 	}
 
-	public MyReplacerDemo() {
-		this.infoMap.put(IFolderGenPlugin.INFO_TITLE, "MyReplacerDemo");
+	public MeinDemoPlugin() {
+		this.infoMap.put(IFolderGenPlugin.INFO_TITLE, "MeinDemoPlugin");
 	}
 
 	@Override
@@ -122,33 +121,33 @@ public class MyReplacerDemo extends FolderGenPlugin {
 }}}
 
 ==== replaceContent ====
-This function replaces the content. You became a String as parameter and send a String back in FolderGen with return.
+Diese Funktion ersetzt den Inhalt. Man erhält einen Text als Parameter und gibt einen Text an FolderGen zurück.
 
-In this example, the plugin returns the pluginname + " DEMO". So it returns "MyReplacerDemo DEMO".
+In diesem Beispiel gibt das Plugin pluginname + " DEMO" zurück. Also im Endeffekt: "MeinDemoPlugin DEMO".
 
-==== MyReplacerDemo ====
-This is the constructor. Here you fill the infoMap HashMap with the pluginname:
-{{{this.infoMap.put(IFolderGenPlugin.INFO_TITLE, "MyReplacerDemo");}}}
+==== MeinDemoPlugin ====
+Dies ist der Konstruktro. Hier wird die HashMap "infoMap" mit dem Pluginnamen gefüllt.
+{{{this.infoMap.put(IFolderGenPlugin.INFO_TITLE, "MeinDemoPlugin");}}}
 
 ==== doWork ====
-return null in this kind of plugin.
+Bei dieser Art von Plugin wird "null" zurück gegeben.
 
 ==== getAdditionlInfo ====
-return null in this kind of plugin.
+Bei dieser Art von Plugin wird "null" zurück gegeben.
 
 ==== getPluginType ====
-{{{return IFolderGenPlugin.PLUGINTYPE_CONTENTEXTENSION_REPLACER}}} in this kind of plugin.
+{{{return IFolderGenPlugin.PLUGINTYPE_CONTENTEXTENSION_REPLACER}}} bei dieser Art von Plugin.
 
 ==== getItemTitle ====
-return null in this kind of plugin.
+Bei dieser Art von Plugin wird "null" zurück gegeben.
 
 
-=== Build a foldergenconf plugin ===
-With this kind of plugins, you can create a special marker in the foldergenconf. Have a look at the download area, there is the plugin I describe here.
+=== Erstelle ein foldergenconf Plugin ===
+Mit dieser Art von Plugins, können eigene Datei- und Ordnertypen für die foldergenconf erstellt werden. Dieses Plugin ist im Downloadbereich zu sehen.
 
 {{{
 /**
- * Generate a new file with the content "This is DEMO content from ${user.name}". "${user.name}" will be replaced with your local username.
+ * Erstellt eine neue Datei mit dem Inhalt "Dies ist ein DEMO Inhalt von ${user.name}". "${user.name}" wird bei der Generierung durch den aktuellen Benutztnamen ersetzt.
  * 
  * @author lalbrecht
  * @version 1.0.0.0
@@ -207,7 +206,7 @@ public class MyWorkerPluginDemo extends FolderGenPlugin {
 	@Override
 	public HashMap<String, String> getAdditionlInfo(final String[] basicInfo) {
 		HashMap<String, String> tempMap = new HashMap<String, String>();
-		tempMap.put("content", "This is DEMO content from ${user.name}");
+		tempMap.put("content", "Dies ist ein DEMO Inhalt von ${user.name}");
 		return tempMap;
 	}
 
@@ -228,59 +227,58 @@ public class MyWorkerPluginDemo extends FolderGenPlugin {
 }}}
 
 ==== replaceContent ====
-In this kind of plugin you can/must return null.
+Bei dieser Art von Plugin kann / muss "null" zurück gegeben werden.
 
 ==== MyWorkerPluginDemo ====
-This is the constructor. Here you fill the infoMap HashMap with the pluginname:
+Dies ist der Kontruktor. Hier wird die HashMap "infoMap" mit Informationen gefüllt:
 {{{		this.infoMap.put(IFolderGenPlugin.INFO_TITLE, "MyWorkerPluginDemo");
 		this.infoMap.put(IFolderGenPlugin.INFO_FILEMARKER, "#");
 		this.infoMap.put(IFolderGenPlugin.INFO_INFOMARKER, "demo");
 		this.infoMap.put(IFolderGenPlugin.INFO_CONTENTREPLACE, Boolean.TRUE);}}}
 
  * INFO_TITLE
-  * This is the Pluginname
+  * Dies ist der Pluginname
  * INFO_FILEMARKER
-  * This is the marker in the foldergenconf. 
+  * Dies ist der Marker in der foldergenconf 
  * INFO_INFOMARKER
-  * This is a extended markername.
+  * Dies ist ein erweiterter (beschreibender) Marker
  * INFO_CONTENTREPLACE
-  * If set to "TRUE", the default replacements run over the content
+  * Wenn dies "TRUE" ist, werden die Standardmarker auch ersetzt
 
 ==== workFile ====
-This is a internal function. It creats the file and write it down to filesystem. If "content" is set, it writes the content in the file.
+Dies ist eine interne Funktion. Sie erstellt die Datei und schreibt sie in das Dateisystem. Wenn "content" gesetzt ist, wird der Inhalt in die die Datei geschrieben.
 
 ==== doWork ====
-Here you do the "job". You will get a workerMap ({{{HashMap<String, Object>}}}). You can find some information here you can use.
+Hier wird der "job" erledigt. Man bekommt eine Variable "workerMap" ({{{HashMap<String, Object>}}}). In dieser findet man einige Informationen die man benutzten kann.
  * additionalData
-  * This is a {{{HashMap<String, String>}}}
-   * type (see INFO_INFOMARKER)
-   * content (the content that can be written)
+  * Dies ist eine {{{HashMap<String, String>}}}
+   * type (siehe INFO_INFOMARKER)
+   * content (Der Inhalt der geschrieben werden kann)
  * rootFolder
-  * This is the top of the file. It is type File.
+  * Dies ist der Hauptordner vom Typ "File"
  * name
-  * This is the name of the item.
+  * Dies ist der Name des Elementes
 
 ==== getAdditionlInfo ====
-You became a basicInfo String Array. Here you find some basic informations (see example above).
-If you set "content" in result, this will be written later.
+Man bekommt ein "basicInfo" Text Array. Hier befindet sich einige Standardinformationen (siehe Beispiel oben).
+Wenn man "content" im Ergebnis zurück gibt, wird dies später in die Datei geschrieben.
 
 ==== getPluginType ====
-return the kind of the plugin (see {{{return IFolderGenPlugin.PLUGINTYPE_CONTENTEXTENSION[...]}}}).
+Gibt den Typen des Plugins zurück (siehe {{{return IFolderGenPlugin.PLUGINTYPE_CONTENTEXTENSION[...]}}}).
 
 ==== getItemTitle ====
-Returns the title for the file. Normally you use {{{basicInfo[1].trim()}}}.
-
+Gibt den Titel des Elements bzw. der Datei zurück. Normalerweise wird hier {{{basicInfo[1].trim()}}} benutzt.
 
 = Plugins (Version 1.6.0.0 | Pluginframework Version 1.5.1.0) =
-In version 1.5.1.0 of the pluginframework, you have to add something to your plugin code.
+Ab Version 1.5.1.0 des Pluginframeworks müssen einige Änderungen vorgenommen werden.
 
-IFolderGenPlugin has a new INFO_ variable: INFO_ADDITIONALKEYS
-This is a variable to add a list (seperate with semicolons) of additional keys you need for you plugin.
+IFolderGenPlugin hat eine neue INFO_ Variable: INFO_ADDITIONALKEYS
+Deise Variable wird benutzt um eine Liste (unterteilt mit Semikolons) von "Schlüsseln" zurück zu geben, die für das eigene Plugin gebraucht werden.
 
-In example FolderGen Worker "zip":
-Here we add a variable called "src" to specify the source of the zip file. Now we have to add this "src" to the list:
+Als Beispiel das Plugin bzw. der "Worker" "zip":
+Hier wird eine Variable "src" benutzt um den Pfad zur ZIP-Datei anzugeben. Also müssen wir "src" zu der Liste hinzufügen:
 
-ZipWorker constructor:
+ZipWorker Konstruktor:
 {{{
 	public ZipWorker() {
 		this.infoMap.put(IFolderGenPlugin.INFO_TITLE, "ZipWorker");
@@ -290,4 +288,4 @@ ZipWorker constructor:
 	}
 }}}
 
-This is for the new treeview in version 1.6.0.0 of FolderGen.
+Dies ist für die neue Baumansicht in Version 1.6.0.0 von FolderGen.

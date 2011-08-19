@@ -8,6 +8,10 @@
 </wiki:comment>
 
 == Version 1.6.0.0 - coming soon ==
+ <wiki:comment>* Added parameter -o / -overwrite to select an option what is to do with existing files / folders _(work in progress: *0%*)_
+  * off - Overwrite nothing (default)
+  * force - Overwrite all
+  * ask - Ask what to do for every file</wiki:comment>
  * changes for Version 1.5.0.1 will be integrated here _(work in progress: *100%*)_
  * Added marker ">" to define a zip-file to extract _(work in progress: *100%*)_
  * Recode the GUI and add treeview to:

@@ -110,10 +110,10 @@ public class FolderGen {
 		}
 		if(this.appConf.getIsGui()) {
 			new View(this.appConf.getRootPath(), this.appConf.getConfigFile(), this.appConf.getIsDebug(), this.appConf
-					.getShowConfirmation(), this.appConf.getUsePlugins());
+					.getShowConfirmation(), this.appConf.getUsePlugins(), this.appConf.getOverwrite());
 		} else {
 			new Generator(this.appConf.getRootPath(), this.appConf.getConfigFile(), this.appConf.getIsDebug(), this.appConf
-					.getShowConfirmation(), this.appConf.getUsePlugins());
+					.getShowConfirmation(), this.appConf.getUsePlugins(), this.appConf.getOverwrite());
 		}
 	}
 

@@ -1,124 +1,123 @@
-#summary All about the foldergenconf
+#summary Alles über die foldergenconf
 #labels Featured,Phase-Deploy
 <wiki:toc max_depth="3" />
 
 <g:plusone size="standard"></g:plusone>
 = foldergenconf =
-The foldergenconf is the config file for FolderGen. You can create your own foldergenconf by using a simple texteditor like (g)vim, notepad, notepad++, scite or something like that. The file can not be UTF8 with byte order mark (BOM). If you create this kind of file, the first layer will not be created. Will be fixed in future. If you need to use UTF8, then use plain UTF8 files without BOM.
-
+Die foldergenconf ist eine Konfigurationsdatei für FolderGen. Man kann seine eigene foldergenconf mit einem einfachen Texteditor wie (G)Vim, notepad, notepad++, scite oder ähnlichen Programmen erstellen. Die Datei darf nicht im UTF8-Format mit Byte Order Mark (kurz: BOM) gespeicher sein. Wenn es so eine Datei ist, dann wird die oberste Ebene nicht erstellt. Dies wird irgendwann in der Zukunft repariert. Wenn UTF8 gebraucht wird, dann kann man auch eine UTF8-Datei ohne BOM erstellen.
 
 == foldergenconf content ==
 
-Example 01:
+Beispiel 01:
 {{{
-+ My Root Folder
-	- a sample file
-	- another file
-	+ A subfolder in My Root Folder
-		+ A subfolder in a subfolder
-		- A file in a subfolder
-	- another file2
-	~ a file copy -> /home/myfile
-	~ a folder copy -> /home/myfolder/
-		- a file in folder copy
-	~ a file from web -> http://www.example.com/examplefile
-	> /home/myzipfile.zip
++ Mein Haupt Ordner
+	- eine Beispiel Datei
+	- eine andere Datei
+	+ ein Unterorder in Mein Haupt Ordner
+		+ ein Unterordner im Unterordner
+		- eine Datei in einem Unterordner
+	- eine andere Datei 2
+	~ eine datei kopie -> /home/meinedatei
+	~ eine ordner kopie -> /home/meinordner/
+		- eine datei in einem kopierten ordner
+	~ eine datei aus dem weg -> http://www.example.com/beispieldatei
+	> /home/meinezipdatei.zip
 }}}
 
-Each line has a specified easy syntax. Each whitespace (eg. \t or \n) is used to indent the structure. Be carefully: use only one whitespace to indent the structure.
-Then it starts a file (-), a copy^1^ (~), a zip^2^ (>) or a folder (+). A zip-File must end with .jar or .zip. If you link to a zip file, you can not create new files or folders in new generated folders:
-*This is not allowed:*
+Jede Zeile hat eine bestimmte Syntax. Jedes Leerzeichen (z.B. \t oder \n) wird benutzt um die Struktur zu erzeigen. Vorsicht: nutze nur eine Art von Leerzeichen um die Struktur zu erzeugen (z.B. nur Tabs (\t)).
+Dann folgt der Start einer Datei (-), einer Kopie^1^ (~), einer Zip-Datei^2^ (>) oder eines Ordners (+). Eine Zip-Datei muss mit .jar oder .zip enden. Wenn man eine neue Zip-Datei erstellt, können keine neuen Ordner oder Dateien hinterlegt werden:
+*Dies ist nicht erlaubt:*
 {{{
-> /home/myzipfile.zip
-	- newfile
+> /home/meinezipdatei.zip
+	- neue Datei
 }}}
 
-If a file exists, it will be *NOT* overwritten.
+Wenn eine Datei existiert, wird diese *NICHT* überschrieben.
 
-You can specify a new (copied) file / folder in a copied folder on the regular way.
+Man kann neue Dateien / Ordner in einem kopierten Ordner auf dem gleichen Weg erzeugen, wie bei normalen Ordnern. 
 
-If you want so specify template content for a file, you can use "(((" and ")))" to limit this in the foldergenconf-file.
+Wenn man Inhalt für eine Datei anlegen möchte, kann man dies mit "(((" und ")))" machen, um den Bereich zu markieren der in der Datei erscheinen soll.
 
-If you specify a file1 in file0, the file1 will *NOT* be written.
+Wenn man eine Datei in einer Datei erstellen möchte, wird dies nicht geschrieben.
 
 {{{
-+ My Root Folder
-	+ subfolder 1
-		- file1
++ Mein Haupt Ordner
+	+ ein Unterorder in Mein Haupt Ordner
+		- eine Datei
 		(((
 		/*************************
-		 * This is a template
+		 * Dies ist ein Template
 		 ************************/
-		 You can specify this text inside the foldergenconf-file.
-		 This content will be pasted in file1 in subfolder1 (subfolder of My Root Folder)
+		 Man kann den Text für die Datei in der foldergenconf festlegen.
+		 Dieser Inhalten wird geparst und in die Datei "eine Datei" geschrieben.
 		)))
-		- file2
-+ Another Root Folder
-	+ Another Subfolder
-		- file3
+		- eine zweite Datei
++ Ein anderer Haupt Ordner
+	+ ein Unterorder in Ein anderer Haupt Ordner
+		- eine dritte Datei
 		(((
-		Another content for another file.
+		Anderer Inhalt für eine andere Datei
 		)))
 }}}
 
-=== Markers (Version 1.2 and above) ===
-You can use markers inside the template content. 
-	 * ${user.name} - returns the username
-	 * ${user.homedir} - returns the user home dir
-	 * ${system.os} - returns the operating system
-	 * ${file.currentdir} - returns the current dir
-	 * ${file.name} - returns the current filename
-	 * ${date.year} - returns the current year as decimal
-	 * ${date.month} - returns the current month as decimal
-	 * ${date.day} - returns the current day as decimal
-	 * ${date.hour} - returns the current hour as decimal
-	 * ${date.minute} - returns the current minute as decimal
-	 * ${date.second} - returns the current second as decimal
-	 * ${date.isleap(YEAR)} - returns true or false
-	 * ${date.formatcurrent([Format FORMAT])} - returns the current formatted date/time
-	 * ${func.counter(VAR)} - counter for a VAR
-	 * ${func.counter(VAR|STARTNUMBER)} - counter for a VAR with startnumber STARTNUMBER
-	 * ${func.getfilecontent(filepath)} - return the content of the given file
-	 * ... more comming soon ...
+=== Marker (ab Version 1.2) ===
+Man kann Marker in templates benutzen.
+	 * ${user.name} - Gibt den Benutzernamen zurück
+	 * ${user.homedir} - Gibt das Benutzer Home Verzeichnis zurück
+	 * ${system.os} - Gibt das Betriebssystem zurück
+	 * ${file.currentdir} - Gibt das aktuelle Verzeichnis zurück
+	 * ${file.name} - Gibt den aktuellen Dateinamen zurück
+	 * ${date.year} - Gibt das aktuelle Jahr zurück
+	 * ${date.month} - Gibt den aktuellen Monat zurück
+	 * ${date.day} - Gibt den aktuellen Tag zurück
+	 * ${date.hour} - Gibt die aktuelle Stunde zurück
+	 * ${date.minute} - Gibt die aktuelle Minute zurück
+	 * ${date.second} - Gibt die aktuellen Sekunden zurück
+	 * ${date.isleap(YEAR)} - Ist das Jahr ein Schaltjahr?
+	 * ${date.formatcurrent([Format FORMAT])} - Gibt das aktuelle Datum als formatierten Text zurück
+	 * ${func.counter(VAR)} - Zähler für eine VAR(iable)
+	 * ${func.counter(VAR|STARTNUMBER)} - Zähler für eine VAR(iable) mit einer STARTNUMBER
+	 * ${func.getfilecontent(filepath)} - Gibt den Inhalt der angegebenen Datei zurück
+	 * ... mehr kommt bald ...
 
-Example 01:
+Beispiel 01:
 {{{
-+ My Root Folder
-	- file-additional
++ Mein Haupt Ordner
+	- Dateizusatz
 		(((
-		Additional Text
+		Zusätzlicher Text
 		)))
-	- file
+	- Datei
 		(((
 		/*************************
-		 * This is a template ${file.name}
-		 * author: ${user.name} @ 
+		 * Dies ist ein Template ${file.name}
+		 * Autor: ${user.name} @ 
 		 * ${date.day}.${date.month}.${date.year}
 		 * ${date.hour}:${date.minute}:${date.second}
-		 * leapyear: ${date.isleapyear(${date.year})}
+		 * Schaltjahr: ${date.isleapyear(${date.year})}
 		 * ${date.formatcurrent(d.M.yy)}
 		 ************************/
-		 You can specify this text inside the foldergenconf-file.
-		 This content will be pasted in file1 in subfolder1 (subfolder of My Root Folder)
-		 ${func.counter(a)} : Zero
-			${func.counter(b)} : Zero Zero
-			${func.counter(b)} : Zero First
-			${func.counter(b)} : Zero Second
-		 ${func.counter(a)} : First
-		 ${func.counter(a)} : Second
+		 Man kann den Text für die Datei in der foldergenconf festlegen.
+		 Dieser Inhalten wird geparst und in die Datei "eine Datei" geschrieben.
+		 ${func.counter(a)} : 0
+			${func.counter(b)} : Null Null
+			${func.counter(b)} : Null Eins
+			${func.counter(b)} : Null Zwei
+		 ${func.counter(a)} : Eins
+		 ${func.counter(a)} : Zwei
 
-		 ${func.counter(c|10)} : Ten
-			${func.counter(d|1)} : Ten Zero
-			${func.counter(d)} : Ten Second
-			${func.counter(d)} : Ten Third
-		 ${func.counter(c|20)} : Twenty
-		 ${func.counter(c)} : Eleven (first counter takes the win)
-		 ${func.getfilecontent(C:\My Root Folder\file-additional)}
+		 ${func.counter(c|10)} : Zehn
+			${func.counter(d|1)} : Zehn Eins
+			${func.counter(d)} : Zehn Zwei
+			${func.counter(d)} : Zehn Drei
+		 ${func.counter(c|20)} : Zwanzig
+		 ${func.counter(c)} : Elf (Der erste Zähler zählt)
+		 ${func.getfilecontent(C:\Mein Haupt Ordner\Dateizusatz)}
 
 
 }}}
 
 ----
-^1^ : version 1.4.8.0 and above. From version 1.5.0.0 you can specify a URL to get the content in the new file (URL must start with http:// or https://).
+^1^ : Version 1.4.8.0 und höher. Ab Version 1.5.0.0 können URLs angegeben werden aus denen der Inhalt für die neue Datei kommt (URL muss mit http:// oder https:// anfangen).
 
-^2^ : version 1.5.1.0 and above.
+^2^ : Version 1.5.1.0 und höher.

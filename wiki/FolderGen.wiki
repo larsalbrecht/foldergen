@@ -26,7 +26,7 @@ If you have the .jar file on you filesystem, you need a .[foldergenconf]-File. T
 === Installation ===
 
  # Only download the jar from "Downloads"
- # On Debian / Ubuntu (etc.) you can download the *.deb package and install the new version _(... coming soon ...)_
+ # On Debian / Ubuntu (etc.) you can download the .deb package and install the new version _(... coming soon ...)_
 
 === Start folderGen (Version 1.2.0.0 and lower) ===
 {{{
@@ -84,15 +84,16 @@ Start FolderGen without file and without gui is not allowed.
 === Start folderGen (Version 1.4.0.0 and above) ===
 From version 1.4.0.0 parameters are read differently than before. As of now there are the following parameters, which values can be given:
 
- * -c,-config {{{<arg>}}}  Config file (*.foldergenconf)
- * -d,-debug         Show debug prints
- * -g,-gui           use GUI
- * -h,-help          Show this help entry
- * -co,-confirmation Shows a confirmation dialog before writing (added in 1.4.6.0)
- * -l,-locale {{{<arg>}}} Set the locale to change the application language (added in 1.4.6.0)
- * -r,-root {{{<arg>}}} Set the root folder to start writing in here (added in 1.4.6.0)
- * -p,-plugins       Set if you want to load additional plugins (added in 1.4.9.0)
- * -px,-proxy        Set if you want to let FolderGen search for a default proxy (added in 1.5.0.0)
+ * -c,-config {{{<arg>}}}  	Config file (*.foldergenconf)
+ * -d,-debug         		Show debug prints
+ * -g,-gui           		use GUI
+ * -h,-help          		Show this help entry
+ * -co,-confirmation 		Shows a confirmation dialog before writing (added in 1.4.6.0)
+ * -l,-locale {{{<arg>}}} 	Set the locale to change the application language (added in 1.4.6.0)
+ * -r,-root {{{<arg>}}} 	Set the root folder to start writing in here (added in 1.4.6.0)
+ * -p,-plugins       		Set if you want to load additional plugins (added in 1.4.9.0)
+ * -px,-proxy        		Set if you want to let FolderGen search for a default proxy (added in 1.5.0.0)
+<wiki:comment> * -o,--overwrite <arg>  	Set if you want to overwrite existing files (added in 1.6.0.0)</wiki:comment>
 
 
 {{{

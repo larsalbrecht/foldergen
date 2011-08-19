@@ -1,4 +1,4 @@
-#summary Something about the format syntax
+#summary Ein wenig über die format-Syntax
 #labels Phase-Deploy
 <wiki:toc max_depth="3" />
 
@@ -6,9 +6,9 @@
 = Format =
 == ${date.formatcurrent(FORMAT)} ==
 
-The "FORMAT" string is like Java SimpleDateFormat (see: http://download.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html):
+Der "FORMAT" text ist wie in Java "SimpleDateFormat" (mehr dazu: http://download.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html):
 
-|| Letter || Date or Time Component || Presentation || Examples ||
+|| Buchstabe || Datum oder Zeitkomponente || Anzeige || Beispiel ||
 || G || Era designator || Text 	|| AD  ||
 || y || Year 	|| Year 	|| 1996; 96  ||
 || M || Month in year || Month 	|| July; Jul; 07  ||

@@ -8,6 +8,10 @@
 </wiki:comment>
 
 == Version 1.6.0.0 - coming soon ==
+<wiki:comment> * Parameter -o / -overwrite wurde hinzugefügt um zu wählen was mit vorhandenen Dateien gemacht werden soll _(Fertiggestellt: *0%*)_
+  * off (Überschreibt nichts (Standard))
+  * force (Überschreibt alles)
+  * ask (Fragt für jede Datei was zu tun ist)</wiki:comment>
  * Änderungen aus Version 1.5.0.1 werden integriert _(Fertiggestellt: *100%*)_
  * Marker ">" wurde hinzugefügt, um an diesem Ort eine Zip-/Jar-Datei zu extrahieren / entpacken _(Fertiggestellt: *100%*)_
  * GUI wurde überarbeitet und eine Baumansicht wurde hinzugefügt. Diese kann folgendes tun:

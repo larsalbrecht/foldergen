@@ -1,152 +1,152 @@
-#summary General informations about FolderGen
+#summary Allgemeine Informationen über FolderGen
 #labels Featured,Phase-Deploy
 <wiki:toc max_depth="3" />
 
 <g:plusone size="standard"></g:plusone>
 = folderGen =
-FolderGen is to generate automatically folders and files using a config file (called: foldergenconf). You can specify content for files to fill them automatically.
+FolderGen wird verwendet um automatisch Ordner und Dateien über eine Konfigurationsdatei (foldergenconf genannt) zu erstellen. Man kann auch Inhalte für Dateien festlegen, die automatisch in die Dateien geschrieben werden.
 
-== What is folderGen? ==
-FolderGen is a Java Application (Command Line and GUI) that can generate folders and files (with content) automatically. 
+== Was ist folderGen? ==
+FolderGen ist eine Java Anwendung (Kommandozeile und GUI) mit der man automatisch Ordner und Dateien (mit Inhalt) erstellen kann.
 
-== Versioning ==
+== Versionierung ==
 {{{1.2.3.4}}}
  * 1
-  * Increments if code is refactored, bigger features added or I _feel_ if this must grow up.
+  * Wird erhöht wenn viel Code neugeschrieben (refactored) wurde, größere neue Funktionen (Features) hinzugefügt wurden oder wenn ich das _gefühl_ habe, sie müsste steigen.
  * 2
-  * Increments if a new feature (small to medium) is added or a feature is revised.
+  * Wird erhöht wenn neue (kleine bis mittlere) Funktionen (Features) hinzugefügt wurden oder eine Funktion verbessert wurde.
  * 3
-  * Increments if a small (but bigger) bug is fixed. 
+  * Wird erhöht wenn es kleine (aber wichtigen) Fehlerkorrekturen gab. 
  * 4
-  * Increments if a small bug is fixed, tiny feature or change or the code is refactored (in parts).
+  * Wird erhöht wenn kleine Fehler korrigiert wurden, oder wenn kleine Funktionen (Features) verändert wurden. Auch wenn der Quellcode (teilweise) neu geschrieben (refactored) wurde.
 
-== General information to start ==
-If you have the .jar file on you filesystem, you need a .[foldergenconf]-File. This file can be written in a default text editor like vim, notepad or something like that. For more about the foldergenconf, look at the wiki-site.
+== Allgemeine Informationen zum Start ==
+Wenn man die .jar-Datei hat, braucht man noch eine .[foldergenconf]-Datei. Diese Datei kann mit einem einfachen Editor erstellt werden. Hierfür eignen sich z.B.: (g)VIM, notepad oder etwas in der Art. Für mehr Informationen über die foldergenconf, lohnt sich ein Blick in die Wiki-Seite.
 
 === Installation ===
+ # Lade die Jar-Datei im Downloadbereich herunter
+ # Unter Debian / Ubuntu (und weiteren Debiandistributionen) kann man auch das .deb-Paket herunterladen und installieren _(... coming soon...)_
 
- # Only download the jar from "Downloads"
- # On Debian / Ubuntu (etc.) you can download the *.deb package and install the new version _(... coming soon ...)_
-
-=== Start folderGen (Version 1.2.0.0 and lower) ===
+=== Starte folderGen (Version 1.2.0.0 und niedriger) ===
 {{{
-java -jar foldergen.jar C:\<filename>.foldergenconf
+java -jar foldergen.jar C:\<dateiname>.foldergenconf
 }}}
-or 
+oder 
 {{{
-java -jar foldergen.jar /home/testuser/<filename>.foldergenconf
-}}}
-
-=== Start folderGen (Version 1.2.0.0 to Version 1.3.0.0) ===
-{{{
-java -jar foldergen.jar C:\<filename>.foldergenconf
-}}}
-or 
-{{{
-java -jar foldergen.jar /home/testuser/<filename>.foldergenconf
+java -jar foldergen.jar /home/testuser/<dateiname>.foldergenconf
 }}}
 
-
-==== More Examples ====
-Start with gui and file (without debug):
+=== Starte folderGen (Version 1.2.0.0 bis Version 1.3.0.0) ===
 {{{
-java -jar foldergen.jar C:\<filename>.foldergenconf true
+java -jar foldergen.jar C:\<dateiname>.foldergenconf
+}}}
+oder 
+{{{
+java -jar foldergen.jar /home/testuser/<dateiname>.foldergenconf
 }}}
 
-Start with gui and file (with debug):
+
+==== Mehr Beispiele ====
+Starte mit GUI und Konfigurationsdatei (ohne debug-modus):
 {{{
-java -jar foldergen.jar C:\<filename>.foldergenconf true true
+java -jar foldergen.jar C:\<dateiname>.foldergenconf true
 }}}
 
-Start without gui and with file (without debug):
+Starte mit GUI und Konfigurationsdatei (mit debug-modus):
 {{{
-java -jar foldergen.jar C:\<filename>.foldergenconf
+java -jar foldergen.jar C:\<dateiname>.foldergenconf true true
 }}}
 
-Start without gui and with file (with debug):
+Starte ohne GUI und mit Konfigurationsdatei (ohne debug-modus):
 {{{
-java -jar foldergen.jar C:\<filename>.foldergenconf false true
+java -jar foldergen.jar C:\<dateiname>.foldergenconf
 }}}
 
-Start with gui and without file (without debug):
+Starte ohne GUI und mit Konfigurationsdatei (mit debug-modus):
+{{{
+java -jar foldergen.jar C:\<dateiname>.foldergenconf false true
+}}}
+
+Starte mit GUI und ohne Konfigurationsdatei (ohne debug-modus):
 {{{
 java -jar foldergen.jar true false
 }}}
 
-Start with gui and without file (with debug):
+Starte mit GUI und ohne Konfigurationsdatei (mit debug-modus):
 {{{
 java -jar foldergen.jar true true
 }}}
 
-Start FolderGen without file and without gui is not allowed.
+FolderGen ohne Konfigurationsdatei und ohne GUI zu starten, ist nicht erlaubt bzw. nicht möglich.
 
 
-=== Start folderGen (Version 1.4.0.0 and above) ===
-From version 1.4.0.0 parameters are read differently than before. As of now there are the following parameters, which values can be given:
+=== Starte folderGen (Version 1.4.0.0 und höher) ===
+Ab der Version 1.4.0.0 werden die Startparameter anders eingelesen als vorher. Ab jetzt gibt es folgende Parameter:
 
- * -c,-config {{{<arg>}}}  Config file (*.foldergenconf)
- * -d,-debug         Show debug prints
- * -g,-gui           use GUI
- * -h,-help          Show this help entry
- * -co,-confirmation Shows a confirmation dialog before writing (added in 1.4.6.0)
- * -l,-locale {{{<arg>}}} Set the locale to change the application language (added in 1.4.6.0)
- * -r,-root {{{<arg>}}} Set the root folder to start writing in here (added in 1.4.6.0)
- * -p,-plugins       Set if you want to load additional plugins (added in 1.4.9.0)
- * -px,-proxy        Set if you want to let FolderGen search for a default proxy (added in 1.5.0.0)
+ * -c,-config {{{<arg>}}}  	Konfigurationsdatei (*.foldergenconf)
+ * -d,-debug         		Zeigt Debugausgaben
+ * -g,-gui           		benutzt die GUI
+ * -h,-help          		Zeigt diesen Hilfe-Eintrag (auf englisch)
+ * -co,-confirmation 		Zeigt ein Abfragefenster bevor Dateien und Ordner geschrieben werden (hinzugefügt in 1.4.6.0)
+ * -l,-locale {{{<arg>}}} 	Setzt die Sprache um das Programm zu übersetzten (hinzugefügt in 1.4.6.0)
+ * -r,-root {{{<arg>}}} 	Setzt den Startordner um die Ordner und Dateien hier zu erstellen (hinzugefügt in 1.4.6.0)
+ * -p,-plugins       		Wenn dies gesetzt ist, werden vorhandene Plugins geladen (hinzugefügt in 1.4.9.0)
+ * -px,-proxy        		Wenn dies gesetzt ist, versucht FolderGen den Standardproxy zu benutzen, falls einer gesetzt ist (hinzugefügt in 1.5.0.0)
+<wiki:comment> * -o,--overwrite <arg>  	Überschreibe Dateien und Ordner (hinzugefügt in 1.6.0.0)</wiki:comment>
 
 
 {{{
-java -jar foldergen.jar -c C:\<filename>.foldergenconf
+java -jar foldergen.jar -c C:\<dateiname>.foldergenconf
 }}}
-or 
+oder
 {{{
-java -jar foldergen.jar -c /home/testuser/<filename>.foldergenconf
+java -jar foldergen.jar -c /home/testuser/<dateiname>.foldergenconf
 }}}
 
 ==== More Examples ====
-Start with gui and file (without debug):
+Starte mit GUI und Konfigurationsdatei (ohne debug):
 {{{
-java -jar foldergen.jar -c C:\<filename>.foldergenconf -g
+java -jar foldergen.jar -c C:\<dateiname>.foldergenconf -g
 }}}
 
-Start with gui and file (with debug):
+Starte mit GUI und Konfigurationsdatei (mit debug):
 {{{
-java -jar foldergen.jar -c C:\<filename>.foldergenconf -g -d
+java -jar foldergen.jar -c C:\<dateiname>.foldergenconf -g -d
 }}}
 
-Start without gui and with file (without debug):
+Starte ohne GUI und mit Konfigurationsdatei (ohne debug):
 {{{
-java -jar foldergen.jar -config C:\<filename>.foldergenconf
+java -jar foldergen.jar -config C:\<dateiname>.foldergenconf
 }}}
 
-Start without gui and with file (with debug):
+Starte ohne GUI und mit Konfigurationsdatei (mit debug):
 {{{
-java -jar foldergen.jar -c C:\<filename>.foldergenconf -debug
+java -jar foldergen.jar -c C:\<dateiname>.foldergenconf -debug
 }}}
 
-Start with gui and without file (without debug):
+Starte ohne GUI und ohne Konfigurationsdatei (ohne debug):
 {{{
 java -jar foldergen.jar -gui
 }}}
 
-Start with gui and without file (with debug):
+Starte mit GUI und ohne Konfigurationsdatei (mit debug):
 {{{
 java -jar foldergen.jar -g -debug
 }}}
 
-Start with plugins (available in version 1.4.9.0 and above) and with gui (with debug):
+Starte mit Plugins (verfügbar ab version 1.4.9.0) und mit GUI (mit debug):
 {{{
 java -jar foldergen.jar -g -p
 }}}
 
-Start FolderGen without file and without gui is not allowed.
+FolderGen ohne Konfigurationsdatei und ohne GUI zu starten, ist nicht erlaubt bzw. nicht möglich.
 
-=== In Eclipse as "external tools" ===
-In Eclipse you can specify external tools. It is easy to configure.
+=== In Eclipse als "external tools" ===
+In Eclipse kann man "External Tools" erstellen. Dies ist einfach einzurichten:
 
- # Open the "External Tools Configurations" menu
+ # Öffne das Menü "External Tools Configurations"
  # Location: ${env_var:JAVA_HOME}/bin/java.exe
- # Working Directory: {{{<any>}}}
- # Arguments: -jar <path/to/>foldergenjar.jar
+ # Working Directory: {{{<beliebig>}}}
+ # Arguments: -jar <pfad/zur/>foldergenjar.jar
 
-You can specify any additional foldergen parameter behind "{{{-jar <path/to/>foldergenjar.jar}}}".
+Man kann auch weitere Parameter hinter "{{{-jar <path/to/>foldergenjar.jar}}}" einstellen.

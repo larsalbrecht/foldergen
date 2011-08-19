@@ -1,7 +1,7 @@
-#summary Translations
+#summary Übersetzungen
 #labels Featured
 
 = General =
-On the wiki site [changelog], you can see the available translations for FolderGen. 
+Auf der Wiki-Seite [changelog] kann man die vorhandenen Übersetzungen für FolderGen sehen.
 
-You can see, that the most translations are made with the Google translator. If you speak any language (except German) fluently, and you want a small file to translate, then you can contact me.
+Man kann sehen das die meisten Übersetzungen über den Google Übersetzter gemacht wurden. Wenn du eine Sprache flüssig sprichst, und Du interesse daran hast eine kleine Datei mit Texten zu übersetzten, kannst Du mich gerne kontaktieren.

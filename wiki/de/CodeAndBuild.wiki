@@ -1,4 +1,4 @@
-#summary Code and build
+#summary Programmieren und bauen
 #labels Featured,Phase-Implementation
 
 = Introduction =

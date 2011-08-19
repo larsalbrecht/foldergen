@@ -55,7 +55,9 @@ public final class FolderGenCLIHelper {
 				false, PropertiesReader.getInstance().getProperties("application.cli.parameters.confirmation")).addOption("l",
 				"locale", true, PropertiesReader.getInstance().getProperties("application.cli.parameters.locale")).addOption("p",
 				"plugins", true, PropertiesReader.getInstance().getProperties("application.cli.parameters.plugins")).addOption(
-				"px", "proxy", false, PropertiesReader.getInstance().getProperties("application.cli.parameters.proxy"));
+				"px", "proxy", false, PropertiesReader.getInstance().getProperties("application.cli.parameters.proxy"))
+				.addOption("o", "overwrite", true,
+						PropertiesReader.getInstance().getProperties("application.cli.parameters.overwrite"));
 		;
 		fgOptions.addOptionGroup(new OptionGroup().addOption(new Option("h", "help", false, PropertiesReader.getInstance()
 				.getProperties("application.cli.parameters.help"))));
@@ -96,17 +98,13 @@ public final class FolderGenCLIHelper {
 		final Options options = FolderGenCLIHelper.createOptions();
 		CommandLine commandLine = null;
 		commandLine = cmdLineGnuParser.parse(options, commandLineArguments);
-		if(commandLine.hasOption("config")) {
-			conf.setConfigFile(new File(commandLine.getOptionValue("config")));
+		if(commandLine.hasOption("config") || commandLine.hasOption("c")) {
+			conf.setConfigFile(new File(commandLine.hasOption("config") ? commandLine.getOptionValue("config") : commandLine
+					.getOptionValue("c")));
 		}
-		if(commandLine.hasOption("c")) {
-			conf.setConfigFile(new File(commandLine.getOptionValue("c")));
-		}
-		if(commandLine.hasOption("root")) {
-			conf.setRootPath(new File(commandLine.getOptionValue("root")));
-		}
-		if(commandLine.hasOption("r")) {
-			conf.setRootPath(new File(commandLine.getOptionValue("r")));
+		if(commandLine.hasOption("root") || commandLine.hasOption("r")) {
+			conf.setRootPath(new File(commandLine.hasOption("root") ? commandLine.getOptionValue("root") : commandLine
+					.getOptionValue("r")));
 		}
 		if(commandLine.hasOption("g") || commandLine.hasOption("gui")) {
 			conf.setIsGui(Boolean.TRUE);
@@ -117,11 +115,9 @@ public final class FolderGenCLIHelper {
 		if(commandLine.hasOption("co") || commandLine.hasOption("confirmation")) {
 			conf.setShowConfirmation(Boolean.TRUE);
 		}
-		if(commandLine.hasOption("locale")) {
-			conf.setLocale(new Locale(commandLine.getOptionValue("locale")));
-		}
-		if(commandLine.hasOption("l")) {
-			conf.setLocale(new Locale(commandLine.getOptionValue("l")));
+		if(commandLine.hasOption("locale") || commandLine.hasOption("l")) {
+			conf.setLocale(new Locale(commandLine.hasOption("locale") ? commandLine.getOptionValue("locale") : commandLine
+					.getOptionValue("l")));
 		}
 		if(commandLine.hasOption("p") || commandLine.hasOption("plugins")) {
 			conf.setUsePlugins(Boolean.TRUE);
@@ -134,6 +130,18 @@ public final class FolderGenCLIHelper {
 					"application.cli.seperator"), PropertiesReader.getInstance().getProperties("application.cli.seperator"), 1,
 					2, true, System.out);
 			System.exit(-1);
+		}
+		if(commandLine.hasOption("overwrite") || commandLine.hasOption("o")) {
+			String overwriteParam = commandLine.hasOption("overwrite") ? commandLine.getOptionValue("overwrite") : commandLine
+					.getOptionValue("o");
+			if(overwriteParam.equals("no")) {
+				conf.setOverwrite(FolderGenCLIConf.OVERWRITE_OFF);
+			} else if(overwriteParam.equals("force")) {
+				conf.setOverwrite(FolderGenCLIConf.OVERWRITE_FORCE);
+			} else if(overwriteParam.equals("ask")) {
+				conf.setOverwrite(FolderGenCLIConf.OVERWRITE_ASK);
+			}
+
 		}
 		return conf;
 	}
