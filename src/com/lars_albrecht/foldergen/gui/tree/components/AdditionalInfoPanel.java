@@ -60,6 +60,10 @@ public class AdditionalInfoPanel extends JPanel {
 		gbc.gridx = 1;
 		gbc.gridy = 2;
 		gbc.gridwidth = 1;
+		gbc.weighty = 1;
+		gbc.weightx = 1;
+		gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+		gbc.fill = GridBagConstraints.BOTH;
 		this.pInformation = new JPanel(new GridBagLayout());
 		this.add(this.pInformation, gbc);
 	}

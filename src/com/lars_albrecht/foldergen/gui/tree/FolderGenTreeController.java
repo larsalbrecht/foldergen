@@ -105,7 +105,7 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	 */
 	public void fillTypeComboBox() {
 		this.infoPanel.getCbTypeValueModel().addElement("");
-		for(FileType type : Generator.getFiletypes()) {
+		for (FileType type : Generator.getFiletypes()) {
 			this.infoPanel.getCbTypeValueModel().addElement(type);
 		}
 
@@ -115,7 +115,7 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	 * Generates the struct and add the struct to tree.
 	 */
 	public void fillTree() {
-		if(this.configFile != null) {
+		if (this.configFile != null) {
 			// create struct
 			this.generator.workFile(this.configFile);
 			// clear before adding
@@ -134,16 +134,14 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	 *            Struct
 	 */
 	private void addStructToTree(final Struct struct, final FolderGenMutableTreeNode node) {
-		for(int len = struct.size(), i = 0; i < len; i++) {
-			FolderGenMutableTreeNode subNode = new FolderGenMutableTreeNode(new FolderGenItem(struct.get(i).getName(), struct
-					.get(i).getAdditionalData().get("filetype"), struct.get(i).getAdditionalData().get("type"), struct.get(i)
-					.getAdditionalData()));
-			if(struct.get(i).getAdditionalData().containsKey("folder")
-					&& Boolean.parseBoolean(struct.get(i).getAdditionalData().get("folder"))) {
+		for (int len = struct.size(), i = 0; i < len; i++) {
+			FolderGenMutableTreeNode subNode = new FolderGenMutableTreeNode(new FolderGenItem(struct.get(i).getName(), struct.get(i).getAdditionalData().get("filetype"), struct.get(i)
+					.getAdditionalData().get("type"), struct.get(i).getAdditionalData()));
+			if (struct.get(i).getAdditionalData().containsKey("folder") && Boolean.parseBoolean(struct.get(i).getAdditionalData().get("folder"))) {
 				subNode.setIsFolder(Boolean.TRUE);
 			}
 			this.tree.getDtmTreeModel().insertNodeInto(subNode, node, node.getChildCount());
-			if((struct.get(i).getSubStruct() != null) && (struct.get(i).getSubStruct().size() > 0)) {
+			if ((struct.get(i).getSubStruct() != null) && (struct.get(i).getSubStruct().size() > 0)) {
 				subNode.setIsFolder(Boolean.TRUE);
 				this.addStructToTree(struct.get(i).getSubStruct(), subNode);
 			}
@@ -155,7 +153,7 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	 */
 	private void getStructFromTree() {
 		TreeModel model = this.tree.getDtmTreeModel();
-		if(model != null) {
+		if (model != null) {
 			this.struct.clear();
 			this.struct = this.workTreeItem((FolderGenMutableTreeNode) model.getChild(model.getRoot(), 0), null);
 		} else {
@@ -177,10 +175,9 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 		FolderGenItem tempItem = (FolderGenItem) node.getUserObject();
 		StructItem tempStructItem = new StructItem(tempItem.getTitle(), tempItem.getAdditionalData(), lastItem);
 
-		if(!node.isLeaf()) {
-			for(int i = 0; i < node.getChildCount(); i++) {
-				tempStructItem.getSubStruct().addAll(
-						this.workTreeItem((FolderGenMutableTreeNode) node.getChildAt(i), tempStructItem));
+		if (!node.isLeaf()) {
+			for (int i = 0; i < node.getChildCount(); i++) {
+				tempStructItem.getSubStruct().addAll(this.workTreeItem((FolderGenMutableTreeNode) node.getChildAt(i), tempStructItem));
 			}
 		}
 		tempStruct.add(tempStructItem);
@@ -194,14 +191,18 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 		final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		final GridBagConstraints gbc = new GridBagConstraints();
 		JPanel basePanel = new JPanel(new GridBagLayout());
-
+		gbc.weightx = .6;
+		gbc.weighty = 1;
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		gbc.anchor = GridBagConstraints.NORTHWEST;
+		gbc.fill = GridBagConstraints.BOTH;
+		gbc.insets = new Insets(10, 10, 0, 0);
+		gbc.anchor = GridBagConstraints.FIRST_LINE_START;
 		basePanel.add(this.infoPanel, gbc);
 
-		gbc.anchor = GridBagConstraints.NORTHEAST;
-		gbc.insets = new Insets(0, 10, 0, 0);
+		gbc.weightx = .4;
+		gbc.anchor = GridBagConstraints.FIRST_LINE_START;
+		gbc.insets = new Insets(10, 10, 0, 0);
 		gbc.gridx = 1;
 		basePanel.add(this.additionalInfoPanel, gbc);
 
@@ -233,26 +234,30 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	 */
 	private void fillAddtionalInfoPanel(final HashMap<String, String> additionalData) {
 		this.additionalInfoPanel.getpInformation().removeAll();
-		if(additionalData != null) {
+		if (additionalData != null) {
 			final GridBagConstraints gbc = new GridBagConstraints();
 			gbc.fill = GridBagConstraints.HORIZONTAL;
+			gbc.anchor = GridBagConstraints.FIRST_LINE_START;
 			gbc.gridwidth = 1;
+			gbc.weighty = 1;
 			JTextField valTextField = new JTextField(), keyTextField = new JTextField();
 
 			valTextField.setPreferredSize(new Dimension(250, 20));
 			keyTextField.setPreferredSize(new Dimension(75, 20));
 
 			int i = 0;
-			for(Map.Entry<String, String> e : additionalData.entrySet()) {
-				if((e.getKey() != "content") && (e.getKey() != "filetype") && (e.getKey() != "type") && (e.getKey() != "folder")) {
+			for (Map.Entry<String, String> e : additionalData.entrySet()) {
+				if ((e.getKey() != "content") && (e.getKey() != "filetype") && (e.getKey() != "type") && (e.getKey() != "folder")) {
 					gbc.gridy = i;
 					gbc.gridx = 0;
 					keyTextField.setText(e.getKey());
-					gbc.insets = new Insets(0, 0, 10, 10);
+					gbc.insets = new Insets(i > 0 ? 10 : 0, 0, 10, 10);
 					this.additionalInfoPanel.getpInformation().add(keyTextField, gbc);
+
+					gbc.weightx = 0.1;
 					gbc.gridx = 1;
 					valTextField.setText(e.getValue());
-					gbc.insets = new Insets(0, 0, 10, 0);
+					gbc.insets = new Insets(i > 0 ? 10 : 0, 0, 10, 0);
 					this.additionalInfoPanel.getpInformation().add(valTextField, gbc);
 					i++;
 				}
@@ -272,7 +277,7 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 
 		// returns the selected treenode
 		final DefaultMutableTreeNode node = (DefaultMutableTreeNode) this.tree.getLastSelectedPathComponent();
-		if(node == null) {
+		if (node == null) {
 			return;
 		}
 
@@ -284,7 +289,7 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 		this.additionalInfoPanel.getpInformation().removeAll();
 
 		// if not class (so it is a file (isLeaf) or folder (!isLeaf), no root)
-		if(nodeInfo.getClass() != String.class) {
+		if (nodeInfo.getClass() != String.class) {
 			this.infoPanel.getCbTypeValue().setEnabled(Boolean.TRUE);
 			this.infoPanel.getTfTitleValue().setEnabled(Boolean.TRUE);
 			this.infoPanel.getTaContent().setEnabled(Boolean.TRUE);
@@ -294,19 +299,15 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 			// set the title type and content (if exists)
 			this.infoPanel.getTfTitleValue().setText(folderGenItem.getTitle());
 			this.infoPanel.getCbTypeValue().getModel().setSelectedItem(folderGenItem.getInfomarker());
-			if((folderGenItem.getAdditionalData().containsKey("folder") && Boolean.parseBoolean(folderGenItem.getAdditionalData()
-					.get("folder")))) {
+			if ((folderGenItem.getAdditionalData().containsKey("folder") && Boolean.parseBoolean(folderGenItem.getAdditionalData().get("folder")))) {
 				this.infoPanel.getTaContent().setText("");
 				this.infoPanel.getTaContent().setEnabled(Boolean.FALSE);
 				this.infoPanel.getCbTypeValue().setEnabled(Boolean.FALSE);
 			} else {
 				this.infoPanel.getCbTypeValue().setEnabled(Boolean.TRUE);
 				this.infoPanel.getTaContent().setEnabled(Boolean.TRUE);
-				this.infoPanel.getTaContent()
-						.setText(
-								((folderGenItem.getAdditionalData() != null)
-										&& folderGenItem.getAdditionalData().containsKey("content") ? folderGenItem
-										.getAdditionalData().get("content") : ""));
+				this.infoPanel.getTaContent().setText(
+						((folderGenItem.getAdditionalData() != null) && folderGenItem.getAdditionalData().containsKey("content") ? folderGenItem.getAdditionalData().get("content") : ""));
 
 			}
 
@@ -331,10 +332,10 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	@Override
 	public void actionPerformed(final ActionEvent e) {
 		this.fcChooser = new JFileChooser();
-		if(e.getSource() == this.infoPanel.getbSave()) {
+		if (e.getSource() == this.infoPanel.getbSave()) {
 			// Save settings
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) this.tree.getLastSelectedPathComponent();
-			if(node == null) {
+			if (node == null) {
 				return;
 			}
 
@@ -343,17 +344,15 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 
 			// if not class (so it is a file (isLeaf) or folder (!isLeaf), no
 			// root)
-			if(nodeInfo.getClass() != String.class) {
+			if (nodeInfo.getClass() != String.class) {
 				// create new item to read out informations
 				final FolderGenItem folderGenItem = (FolderGenItem) nodeInfo;
 				folderGenItem.setTitle(this.infoPanel.getTfTitleValue().getText());
 
-				for(FileType type : Generator.getFiletypes()) {
-					if(type == this.infoPanel.getCbTypeValueModel().getSelectedItem()) {
-						folderGenItem.setFilemarker(((FileType) this.infoPanel.getCbTypeValueModel().getSelectedItem())
-								.getFilemarker());
-						folderGenItem.setInfomarker(((FileType) this.infoPanel.getCbTypeValueModel().getSelectedItem())
-								.getInfomarker());
+				for (FileType type : Generator.getFiletypes()) {
+					if (type == this.infoPanel.getCbTypeValueModel().getSelectedItem()) {
+						folderGenItem.setFilemarker(((FileType) this.infoPanel.getCbTypeValueModel().getSelectedItem()).getFilemarker());
+						folderGenItem.setInfomarker(((FileType) this.infoPanel.getCbTypeValueModel().getSelectedItem()).getInfomarker());
 						break;
 					}
 				}
@@ -361,36 +360,31 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 				this.tree.getDtmTreeModel().reload(node);
 				this.getStructFromTree();
 			}
-		} else if(e.getSource() == this.view.getMiExportAll()) {
+		} else if (e.getSource() == this.view.getMiExportAll()) {
 			// Export the JTree-Entries to a file
 			this.fcChooser.setFileFilter(new FolderGenFileFilter());
 			this.fcChooser.setDialogTitle(PropertiesReader.getInstance().getProperties("application.gui.filechooser.title"));
-			this.fcChooser.setCurrentDirectory((this.rootPath != null ? this.rootPath : (this.configFile != null ? new File(
-					this.configFile.getParent()) : new File(System.getProperty("user.dir")))));
+			this.fcChooser.setCurrentDirectory((this.rootPath != null ? this.rootPath : (this.configFile != null ? new File(this.configFile.getParent()) : new File(System.getProperty("user.dir")))));
 			Integer returnVal = this.fcChooser.showSaveDialog(this.view);
-			if(returnVal == JFileChooser.APPROVE_OPTION) {
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
 				File file = this.fcChooser.getSelectedFile();
 				try {
 					file.createNewFile();
-				} catch(IOException e1) {
+				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
-				if(file.isFile() && file.exists()) {
+				if (file.isFile() && file.exists()) {
 					BufferedWriter bw = null;
 					try {
 						bw = new BufferedWriter(new FileWriter(file));
 						bw.write(Generator.getStringFromStruct(this.struct, "", ""));
 						bw.close();
 						this.configFile = file;
-						JOptionPane.showMessageDialog(this.view, PropertiesReader.getInstance().getProperties(
-								"application.gui.messagedialog.configexported.message"), PropertiesReader.getInstance()
-								.getProperties("application.gui.messagedialog.configexported.title"),
-								JOptionPane.INFORMATION_MESSAGE);
-					} catch(IOException ex) {
-						JOptionPane.showMessageDialog(this.view, PropertiesReader.getInstance().getProperties(
-								"application.gui.messagedialog.configexportederror.message"), PropertiesReader.getInstance()
-								.getProperties("application.gui.messagedialog.configexportederror.title"),
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(this.view, PropertiesReader.getInstance().getProperties("application.gui.messagedialog.configexported.message"), PropertiesReader.getInstance()
+								.getProperties("application.gui.messagedialog.configexported.title"), JOptionPane.INFORMATION_MESSAGE);
+					} catch (IOException ex) {
+						JOptionPane.showMessageDialog(this.view, PropertiesReader.getInstance().getProperties("application.gui.messagedialog.configexportederror.message"), PropertiesReader
+								.getInstance().getProperties("application.gui.messagedialog.configexportederror.title"), JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
@@ -405,11 +399,9 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	 */
 	@Override
 	public void itemStateChanged(final ItemEvent e) {
-		if((e.getSource() == this.infoPanel.getCbTypeValue())
-				&& e.getItem().getClass().getSimpleName().equalsIgnoreCase("filetype")
-				&& (e.getStateChange() == ItemEvent.SELECTED)) {
+		if ((e.getSource() == this.infoPanel.getCbTypeValue()) && e.getItem().getClass().getSimpleName().equalsIgnoreCase("filetype") && (e.getStateChange() == ItemEvent.SELECTED)) {
 			HashMap<String, String> addtionalInformations = new HashMap<String, String>();
-			for(String key : ((FileType) e.getItem()).getAdditionalKeys()) {
+			for (String key : ((FileType) e.getItem()).getAdditionalKeys()) {
 				addtionalInformations.put(key, "");
 			}
 			this.fillAddtionalInfoPanel(addtionalInformations);
