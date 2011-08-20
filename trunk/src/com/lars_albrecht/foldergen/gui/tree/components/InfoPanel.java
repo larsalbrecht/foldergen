@@ -33,7 +33,8 @@ import com.lars_albrecht.foldergen.core.helper.properies.PropertiesReader;
 import com.lars_albrecht.foldergen.gui.tree.FolderGenTreeController;
 
 /**
- * Extended JPanel that represents the panel on the right side in the view. In this panel you will find all settings defined to the selected item in tree.
+ * Extended JPanel that represents the panel on the right side in the view. In
+ * this panel you will find all settings defined to the selected item in tree.
  * 
  * @author lalbrecht
  * @version 1.0.0.0
@@ -101,13 +102,20 @@ public class InfoPanel extends JPanel {
 		gbc.gridx = 2;
 		gbc.gridy = 4;
 		gbc.gridwidth = 2;
+		gbc.weightx = 1.0;
+		gbc.weighty = 1.0;
+		gbc.fill = GridBagConstraints.BOTH;
 		spTaContent.setPreferredSize(new Dimension(300, 150));
 		this.add(spTaContent, gbc);
 
+		gbc.weightx = 0.0;
+		gbc.weighty = 0.0;
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.gridx = 2;
 		gbc.gridy = 5;
 		gbc.gridheight = 1;
 		gbc.gridwidth = 2;
+		gbc.insets = new Insets(10, 0, 10, 0);
 		this.bSave = new JButton(PropertiesReader.getInstance().getProperties("application.gui.tree.button.save"));
 		this.bSave.addActionListener(this.controller);
 		this.add(this.bSave, gbc);
