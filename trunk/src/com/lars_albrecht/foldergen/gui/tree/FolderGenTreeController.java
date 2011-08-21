@@ -81,6 +81,8 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 
 	private Struct struct = new Struct();
 
+	private final HashMap<JTextField, JTextField> additionalInfoMap = new HashMap<JTextField, JTextField>();
+
 	public FolderGenTreeController() {
 		this.infoPanel = new InfoPanel(this);
 		this.tree = new Tree(this);
@@ -151,7 +153,7 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	/**
 	 * Get struct from tree and save new struct in this.struct.
 	 */
-	private void getStructFromTree() {
+	private void setStructFromTree() {
 		TreeModel model = this.tree.getDtmTreeModel();
 		if (model != null) {
 			this.struct.clear();
@@ -159,6 +161,7 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 		} else {
 			System.out.println("Tree is empty.");
 		}
+		generator.printStruct(this.struct, "", true);
 	}
 
 	/**
@@ -173,6 +176,9 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	private Struct workTreeItem(final FolderGenMutableTreeNode node, final StructItem lastItem) {
 		Struct tempStruct = new Struct();
 		FolderGenItem tempItem = (FolderGenItem) node.getUserObject();
+		HashMap<String, String> tempAdditionalInfo = tempItem.getAdditionalData();
+		tempAdditionalInfo.put("filetype", tempItem.getFilemarker());
+		tempAdditionalInfo.put("type", tempItem.getFilemarker());
 		StructItem tempStructItem = new StructItem(tempItem.getTitle(), tempItem.getAdditionalData(), lastItem);
 
 		if (!node.isLeaf()) {
@@ -246,8 +252,10 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 			keyTextField.setPreferredSize(new Dimension(75, 20));
 
 			int i = 0;
+			this.additionalInfoMap.clear();
 			for (Map.Entry<String, String> e : additionalData.entrySet()) {
 				if ((e.getKey() != "content") && (e.getKey() != "filetype") && (e.getKey() != "type") && (e.getKey() != "folder")) {
+					additionalInfoMap.put(keyTextField, valTextField);
 					gbc.gridy = i;
 					gbc.gridx = 0;
 					keyTextField.setText(e.getKey());
@@ -339,7 +347,7 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 				return;
 			}
 
-			// create new node object
+			// create new node object and read out
 			final Object nodeInfo = node.getUserObject();
 
 			// if not class (so it is a file (isLeaf) or folder (!isLeaf), no
@@ -356,9 +364,14 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 						break;
 					}
 				}
+				folderGenItem.getAdditionalData().clear();
+				for (Map.Entry<JTextField, JTextField> entry : this.additionalInfoMap.entrySet()) {
+					folderGenItem.getAdditionalData().put(entry.getKey().getText(), entry.getValue().getText());
+				}
+				node.setUserObject(folderGenItem);
 
 				this.tree.getDtmTreeModel().reload(node);
-				this.getStructFromTree();
+				this.setStructFromTree();
 			}
 		} else if (e.getSource() == this.view.getMiExportAll()) {
 			// Export the JTree-Entries to a file
