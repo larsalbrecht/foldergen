@@ -18,6 +18,7 @@
   * view the information _(work in progress: *100%*)_
   * change the information _(work in progress: *75%*)_
   * create the new files and folders with the changed config _(work in progress: *100%*)_
+  * create new config with files and folders from filesystem
   * export the information to new config _(work in progress: *100%*)_
  * Added Translations
    * Italian (Google Translator)
