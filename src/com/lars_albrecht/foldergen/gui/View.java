@@ -19,6 +19,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.HeadlessException;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -26,7 +27,9 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -64,12 +67,14 @@ public class View extends JFrame implements ActionListener, ItemListener {
 
 	private JCheckBox cbConfirmation = null;
 	private JCheckBox cbPlugins = null;
+	private JCheckBox cbCreate = null;
 
 	private Boolean isDebug = Boolean.FALSE;
 	private File rootPath = null;
 	private File configFile = null;
 	private Boolean showConfirmation = Boolean.FALSE;
 	private Boolean usePlugins = Boolean.FALSE;
+	private final Boolean createNew = Boolean.FALSE;
 	private Integer overwrite = null;
 
 	private Struct struct = null;
@@ -154,7 +159,7 @@ public class View extends JFrame implements ActionListener, ItemListener {
 		this.setLayout(new BorderLayout());
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setBounds((screenSize.width - 340) / 2, (screenSize.height - 130) / 2, 340, 130);
+		this.setBounds((screenSize.width - 400) / 2, (screenSize.height - 130) / 2, 400, 130);
 		this.setResizable(Boolean.FALSE);
 
 		this.createComponents();
@@ -179,11 +184,16 @@ public class View extends JFrame implements ActionListener, ItemListener {
 
 		gbc.gridx = 1;
 		gbc.gridy = 0;
-		gbc.gridwidth = 2;
-		gbc.insets = new Insets(10, 0, 0, 0);
+		gbc.insets = new Insets(10, 0, 0, 10);
 		this.btnChooseRootFolder.addActionListener(this);
 		this.rpPane.add(this.btnChooseRootFolder, gbc);
 		gbc.gridwidth = 1;
+
+		gbc.gridx = 2;
+		gbc.gridy = 0;
+		gbc.insets = new Insets(10, 0, 0, 0);
+		this.btnShow.addActionListener(this);
+		this.rpPane.add(this.btnShow, gbc);
 
 		gbc.gridx = 0;
 		gbc.gridy = 1;
@@ -194,15 +204,16 @@ public class View extends JFrame implements ActionListener, ItemListener {
 
 		gbc.gridx = 1;
 		gbc.gridy = 1;
+		gbc.insets = new Insets(10, 0, 0, 0);
 		this.cbPlugins.addItemListener(this);
 		this.cbPlugins.setSelected(this.usePlugins);
 		this.rpPane.add(this.cbPlugins, gbc);
 
 		gbc.gridx = 2;
 		gbc.gridy = 1;
-		gbc.insets = new Insets(10, 0, 0, 0);
-		this.btnShow.addActionListener(this);
-		this.rpPane.add(this.btnShow, gbc);
+		this.cbCreate.addItemListener(this);
+		this.cbCreate.setSelected(this.createNew);
+		this.rpPane.add(this.cbCreate, gbc);
 
 		gbc.gridx = 0;
 		gbc.gridy = 2;
@@ -227,6 +238,8 @@ public class View extends JFrame implements ActionListener, ItemListener {
 
 		this.cbConfirmation = new JCheckBox(PropertiesReader.getInstance().getProperties("application.gui.checkbox.confirmation"));
 		this.cbPlugins = new JCheckBox(PropertiesReader.getInstance().getProperties("application.gui.checkbox.plugins"));
+		this.cbCreate = new JCheckBox(PropertiesReader.getInstance().getProperties("application.gui.checkbox.create"));
+		// Create new
 	}
 
 	/**
@@ -238,27 +251,38 @@ public class View extends JFrame implements ActionListener, ItemListener {
 	@Override
 	public void actionPerformed(final ActionEvent e) {
 		if(e.getSource().equals(this.btnChooseFile)) {
-			if(this.isDebug) {
-				System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.opener.click"));
-			}
 			this.fcChooser = new JFileChooser();
 			this.fcChooser.setCurrentDirectory((this.rootPath != null ? this.rootPath : (this.configFile != null ? new File(
 					this.configFile.getParent()) : new File(System.getProperty("user.dir")))));
 			this.fcChooser.setFileFilter(new FolderGenFileFilter());
 			this.fcChooser.setDialogTitle(PropertiesReader.getInstance().getProperties("application.gui.filechooser.title"));
-			Integer returnVal = this.fcChooser.showOpenDialog(this);
-			if(returnVal == JFileChooser.APPROVE_OPTION) {
-				File file = this.fcChooser.getSelectedFile();
-				if(this.isDebug) {
-					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.approved")
-							+ file.getName());
-				}
-				if(file.isFile() && file.exists()) {
+			if(this.cbCreate.isSelected()) {
+				Integer returnVal = this.fcChooser.showSaveDialog(this);
+				if(returnVal == JFileChooser.APPROVE_OPTION) {
+					File file = this.fcChooser.getSelectedFile();
 					this.configFile = file;
 				}
 			} else {
 				if(this.isDebug) {
-					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.canceled"));
+					System.out
+							.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.opener.click"));
+				}
+
+				Integer returnVal = this.fcChooser.showOpenDialog(this);
+				if(returnVal == JFileChooser.APPROVE_OPTION) {
+					File file = this.fcChooser.getSelectedFile();
+					if(this.isDebug) {
+						System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.approved")
+								+ file.getName());
+					}
+					if(file.isFile() && file.exists()) {
+						this.configFile = file;
+					}
+				} else {
+					if(this.isDebug) {
+						System.out
+								.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.canceled"));
+					}
 				}
 			}
 		} else if(e.getSource() == this.btnChooseRootFolder) {
@@ -290,6 +314,36 @@ public class View extends JFrame implements ActionListener, ItemListener {
 				}
 			}
 		} else if(e.getSource() == this.btnStart) {
+			if(this.cbCreate.isSelected()) {
+				try {
+					if(this.configFile.exists()
+							|| (this.configFile.createNewFile() && this.configFile.exists() && this.configFile.isFile())) {
+						BufferedWriter bw = null;
+						try {
+							bw = new BufferedWriter(new FileWriter(this.configFile));
+							bw.write(Generator.getStringFromStruct(Generator.getStructFromFilesystem(this.rootPath), "", ""));
+							bw.close();
+
+							JOptionPane.showMessageDialog(this, PropertiesReader.getInstance().getProperties(
+									"application.gui.messagedialog.configcreated.message"), PropertiesReader.getInstance()
+									.getProperties("application.gui.messagedialog.configcreated.title"),
+									JOptionPane.INFORMATION_MESSAGE);
+						} catch(IOException ex) {
+							JOptionPane.showMessageDialog(this, PropertiesReader.getInstance().getProperties(
+									"application.gui.messagedialog.configcreatederror.message"), PropertiesReader.getInstance()
+									.getProperties("application.gui.messagedialog.configcreatederror.title"),
+									JOptionPane.ERROR_MESSAGE);
+						}
+					}
+				} catch(HeadlessException e1) {
+					e1.printStackTrace();
+				} catch(IOException e1) {
+					e1.printStackTrace();
+				}
+			} else {
+
+			}
+
 			if(this.showConfirmation) {
 				if(JOptionPane.showConfirmDialog(this, PropertiesReader.getInstance().getProperties(
 						"application.gui.messagedialog.confirmation.message"), PropertiesReader.getInstance().getProperties(
@@ -314,7 +368,7 @@ public class View extends JFrame implements ActionListener, ItemListener {
 				}
 			}
 		} else if(e.getSource() == this.btnShow) {
-			if(this.configFile == null) {
+			if((this.configFile == null) || !this.configFile.exists()) {
 				JOptionPane.showMessageDialog(this, PropertiesReader.getInstance().getProperties(
 						"application.gui.messagedialog.noconfig.message"), PropertiesReader.getInstance().getProperties(
 						"application.gui.messagedialog.noconfig.title"), JOptionPane.INFORMATION_MESSAGE);
