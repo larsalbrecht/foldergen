@@ -1,0 +1,17 @@
+com.lars_albrecht.foldergen
+com.lars_albrecht.foldergen.core
+com.lars_albrecht.foldergen.core.generator.helper
+com.lars_albrecht.foldergen.core.generator.worker
+com.lars_albrecht.foldergen.core.helper.cli
+com.lars_albrecht.foldergen.core.helper.properies
+com.lars_albrecht.foldergen.gui
+com.lars_albrecht.foldergen.gui.helper.filesystem
+com.lars_albrecht.foldergen.gui.tree
+com.lars_albrecht.foldergen.gui.tree.components
+com.lars_albrecht.foldergen.gui.tree.helper
+com.lars_albrecht.foldergen.helper
+com.lars_albrecht.foldergen.plugin.classes
+com.lars_albrecht.foldergen.plugin.filter
+com.lars_albrecht.foldergen.plugin.finder
+com.lars_albrecht.foldergen.plugin.interfaces
+org.apache.commons.cli

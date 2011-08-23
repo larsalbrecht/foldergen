@@ -49,6 +49,7 @@ public class FolderGenTreeView extends JFrame {
 	private JMenuBar mbMenu = null;
 	private JMenu menuFile = null;
 	private JMenuItem miExportAll = null;
+	private JMenuItem miExit = null;
 
 	public FolderGenTreeView(final FolderGenTreeController controller) {
 		super(PropertiesReader.getInstance().getProperties("application.gui.tree.title"));
@@ -104,8 +105,15 @@ public class FolderGenTreeView extends JFrame {
 
 		this.miExportAll.addActionListener(this.controller);
 
+		this.miExit = new JMenuItem(PropertiesReader.getInstance().getProperties("application.gui.tree.menu.item.exit.title"));
+		this.miExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, ActionEvent.ALT_MASK));
+		this.miExit.getAccessibleContext().setAccessibleDescription(
+				PropertiesReader.getInstance().getProperties("application.gui.tree.menu.item.exit.description"));
+		this.miExit.addActionListener(this.controller);
+
 		this.menuFile.add(this.miExportAll);
 		this.menuFile.addSeparator();
+		this.menuFile.add(this.miExit);
 		this.mbMenu.add(this.menuFile);
 		this.setJMenuBar(this.mbMenu);
 	}
@@ -161,6 +169,21 @@ public class FolderGenTreeView extends JFrame {
 	 */
 	public synchronized final void setMiExportAll(final JMenuItem miExportAll) {
 		this.miExportAll = miExportAll;
+	}
+
+	/**
+	 * @return the miExit
+	 */
+	public synchronized final JMenuItem getMiExit() {
+		return this.miExit;
+	}
+
+	/**
+	 * @param miExit
+	 *            the miExit to set
+	 */
+	public synchronized final void setMiExit(final JMenuItem miExit) {
+		this.miExit = miExit;
 	}
 
 }

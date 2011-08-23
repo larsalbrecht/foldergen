@@ -27,24 +27,17 @@ import java.util.HashMap;
 public class FolderGenItem {
 
 	private String title = null;
-	private String filemarker = null;
-	private String infomarker = null;
 	private HashMap<String, String> additionalData = null;
 
-	public FolderGenItem(final String title, final String filemarker, final String infomarker,
-			final HashMap<String, String> hashMap) {
+	public FolderGenItem(final String title, final HashMap<String, String> hashMap) {
 		super();
 		this.title = title;
-		this.filemarker = filemarker;
-		this.infomarker = infomarker;
 		this.additionalData = hashMap;
 	}
 
-	public FolderGenItem(final String title, final String filemarker, final String infomarker) {
+	public FolderGenItem(final String title) {
 		super();
 		this.title = title;
-		this.filemarker = filemarker;
-		this.infomarker = infomarker;
 	}
 
 	/**
@@ -60,36 +53,6 @@ public class FolderGenItem {
 	 */
 	public synchronized final void setTitle(final String title) {
 		this.title = title;
-	}
-
-	/**
-	 * @return the filemarker
-	 */
-	public synchronized final String getFilemarker() {
-		return this.filemarker;
-	}
-
-	/**
-	 * @param filemarker
-	 *            the filemarker to set
-	 */
-	public synchronized final void setFilemarker(final String filemarker) {
-		this.filemarker = filemarker;
-	}
-
-	/**
-	 * @return the infomarker
-	 */
-	public synchronized final String getInfomarker() {
-		return this.infomarker;
-	}
-
-	/**
-	 * @param infomarker
-	 *            the infomarker to set
-	 */
-	public synchronized final void setInfomarker(final String infomarker) {
-		this.infomarker = infomarker;
 	}
 
 	/**

@@ -42,6 +42,7 @@ import com.lars_albrecht.foldergen.core.generator.worker.FileWorker;
 import com.lars_albrecht.foldergen.core.generator.worker.FolderWorker;
 import com.lars_albrecht.foldergen.core.generator.worker.ZipWorker;
 import com.lars_albrecht.foldergen.core.helper.properies.PropertiesReader;
+import com.lars_albrecht.foldergen.gui.helper.filesystem.FolderGenItem;
 import com.lars_albrecht.foldergen.helper.Utilities;
 import com.lars_albrecht.foldergen.plugin.classes.FolderGenPlugin;
 import com.lars_albrecht.foldergen.plugin.finder.PluginFinder;
@@ -793,6 +794,52 @@ public class Generator {
 			}
 		}
 		return structStr;
+	}
+
+	/**
+	 * Get struct from filesystem and returns new struct.
+	 * 
+	 * @param directory
+	 *            File
+	 * @return Struct
+	 */
+	public static Struct getStructFromFilesystem(final File directory) {
+		if(directory.exists() && directory.isDirectory()) {
+			return Generator.workFileItem(directory, null);
+		}
+		return null;
+	}
+
+	/**
+	 * Returns a struct with the new created struct from JTree.
+	 * 
+	 * @param path
+	 *            File
+	 * @param lastItem
+	 *            StructItem
+	 * @return Struct
+	 */
+	public static Struct workFileItem(final File path, final StructItem lastItem) {
+		Struct tempStruct = new Struct();
+		HashMap<String, String> tempAdditionalInfo = new HashMap<String, String>();
+		FolderGenItem tempItem = new FolderGenItem(path.getName(), tempAdditionalInfo);
+		StructItem tempStructItem = new StructItem(tempItem.getTitle(), tempItem.getAdditionalData(), lastItem);
+
+		if(path.isDirectory()) {
+			tempItem.getAdditionalData().put("filetype", "+");
+			tempItem.getAdditionalData().put("type", "folder");
+			File[] files = path.listFiles();
+			if(files != null) {
+				for(File file : files) {
+					tempStructItem.getSubStruct().addAll(Generator.workFileItem(file, tempStructItem)); // ruft sich selbst auf
+				}
+			}
+		} else {
+			tempItem.getAdditionalData().put("filetype", "-");
+			tempItem.getAdditionalData().put("type", "file");
+		}
+		tempStruct.add(tempStructItem);
+		return tempStruct;
 	}
 
 	/**
