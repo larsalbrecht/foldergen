@@ -76,14 +76,20 @@ public class FolderGen {
 				FolderGenCLIHelper.printUsage(PropertiesReader.getInstance().getProperties("application.name"),
 						FolderGenCLIHelper.createOptions(), System.out);
 			} else {
+				if(this.appConf.getLocale() != null) { // set locale if needed
+					PropertiesReader.getInstance().setLocale(this.appConf.getLocale());
+				}
+				if(this.appConf.getHelp()) {
+					FolderGenCLIHelper.printHelp(FolderGenCLIHelper.createOptions(), 80, PropertiesReader.getInstance()
+							.getProperties("application.cli.seperator"), PropertiesReader.getInstance().getProperties(
+							"application.cli.seperator"), 1, 2, true, System.out);
+					System.exit(-1);
+				}
 				// no gui and no config file or config file is not valid
 				if(!this.appConf.getIsGui() && (!this.appConf.getConfigFile().exists() || !this.appConf.getConfigFile().isFile())) {
 					FolderGenCLIHelper.printUsage(PropertiesReader.getInstance().getProperties("application.name"),
 							FolderGenCLIHelper.createOptions(), System.out);
 				} else {
-					if(this.appConf.getLocale() != null) { // set locale if needed
-						PropertiesReader.getInstance().setLocale(this.appConf.getLocale());
-					}
 					// Start gui or start generator directly
 					this.startUp();
 				}
@@ -109,11 +115,9 @@ public class FolderGen {
 			}
 		}
 		if(this.appConf.getIsGui()) {
-			new View(this.appConf.getRootPath(), this.appConf.getConfigFile(), this.appConf.getIsDebug(), this.appConf
-					.getShowConfirmation(), this.appConf.getUsePlugins(), this.appConf.getOverwrite());
+			new View(this.appConf);
 		} else {
-			new Generator(this.appConf.getRootPath(), this.appConf.getConfigFile(), this.appConf.getIsDebug(), this.appConf
-					.getShowConfirmation(), this.appConf.getUsePlugins(), this.appConf.getOverwrite());
+			new Generator(this.appConf);
 		}
 	}
 

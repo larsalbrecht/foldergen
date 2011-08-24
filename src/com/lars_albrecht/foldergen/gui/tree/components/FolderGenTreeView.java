@@ -51,6 +51,12 @@ public class FolderGenTreeView extends JFrame {
 	private JMenuItem miExportAll = null;
 	private JMenuItem miExit = null;
 
+	/**
+	 * Constructor of FolderGenTreeView.
+	 * 
+	 * @param controller
+	 *            FolderGenTreeController
+	 */
 	public FolderGenTreeView(final FolderGenTreeController controller) {
 		super(PropertiesReader.getInstance().getProperties("application.gui.tree.title"));
 		this.controller = controller;

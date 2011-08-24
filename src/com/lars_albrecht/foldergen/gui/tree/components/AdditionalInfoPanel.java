@@ -38,6 +38,12 @@ public class AdditionalInfoPanel extends JPanel {
 	private final FolderGenTreeController controller = null;
 	private JPanel pInformation = null;
 
+	/**
+	 * Constructor of AdditionalInfoPanel.
+	 * 
+	 * @param controller
+	 *            FolderGenTreeController
+	 */
 	public AdditionalInfoPanel(final FolderGenTreeController controller) {
 		super(new GridBagLayout());
 		this.createComponents();

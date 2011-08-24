@@ -45,6 +45,7 @@ import com.lars_albrecht.foldergen.core.Generator;
 import com.lars_albrecht.foldergen.core.generator.helper.FileType;
 import com.lars_albrecht.foldergen.core.generator.helper.Struct;
 import com.lars_albrecht.foldergen.core.generator.helper.StructItem;
+import com.lars_albrecht.foldergen.core.helper.cli.FolderGenCLIConf;
 import com.lars_albrecht.foldergen.core.helper.properies.PropertiesReader;
 import com.lars_albrecht.foldergen.gui.View;
 import com.lars_albrecht.foldergen.gui.helper.filesystem.FolderGenFileFilter;
@@ -63,8 +64,6 @@ import com.lars_albrecht.foldergen.gui.tree.helper.FolderGenMutableTreeNode;
  */
 public class FolderGenTreeController implements TreeSelectionListener, ActionListener, ItemListener {
 
-	private static FolderGenTreeController instance = new FolderGenTreeController();
-
 	private JFileChooser fcChooser = null;
 
 	private InfoPanel infoPanel = null;
@@ -78,12 +77,24 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	private Generator generator = null;
 
 	private static View parentView = null;
+	private FolderGenCLIConf appConf = null;
 
 	private Struct struct = new Struct();
 
 	private final HashMap<JTextField, JTextField> additionalInfoMap = new HashMap<JTextField, JTextField>();
 
-	public FolderGenTreeController() {
+	/**
+	 * Constructor of FolderGenTreeController.
+	 * 
+	 * @param parentView
+	 *            View
+	 * @param appConf
+	 *            FolderGenCLIConf
+	 */
+	public FolderGenTreeController(final View parentView, final FolderGenCLIConf appConf) {
+		FolderGenTreeController.parentView = parentView;
+		this.appConf = appConf;
+
 		this.infoPanel = new InfoPanel(this);
 		this.tree = new Tree(this);
 		this.view = new FolderGenTreeView(this);
@@ -159,10 +170,12 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 		if(model != null) {
 			this.struct.clear();
 			this.struct = this.workTreeItem((FolderGenMutableTreeNode) model.getChild(model.getRoot(), 0), null);
-		} else {
+		} else if(this.appConf.getIsDebug()) {
 			System.out.println("Tree is empty.");
 		}
-		this.generator.printStruct(this.struct, "", true);
+		if(this.appConf.getIsDebug()) {
+			this.generator.printStruct(this.struct, "", true);
+		}
 	}
 
 	/**
@@ -335,6 +348,9 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	@Override
 	public void actionPerformed(final ActionEvent e) {
 		this.fcChooser = new JFileChooser();
+		if(this.appConf.getIsDebug()) {
+			System.out.println("ActionEvent e.source: " + e.getSource());
+		}
 		if(e.getSource() == this.infoPanel.getbSave()) {
 			// Save settings
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) this.tree.getLastSelectedPathComponent();
@@ -355,6 +371,7 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 				// clear old map
 				folderGenItem.getAdditionalData().clear();
 
+				// fill addtionalData with new basic infos
 				for(FileType type : Generator.getFiletypes()) {
 					if(type == this.infoPanel.getCbTypeValueModel().getSelectedItem()) {
 						folderGenItem.getAdditionalData().put("filetype",
@@ -374,7 +391,10 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 				// set user object to new folderGenItem
 				node.setUserObject(folderGenItem);
 
+				// reload node
 				this.tree.getDtmTreeModel().reload(node);
+
+				// set new struct
 				this.setStructFromTree();
 			}
 		} else if(e.getSource() == this.view.getMiExportAll()) {
@@ -437,11 +457,6 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 			this.fillAddtionalInfoPanel(addtionalInformations);
 		}
 
-	}
-
-	public static FolderGenTreeController getInstance(final View view) {
-		FolderGenTreeController.parentView = view;
-		return FolderGenTreeController.instance;
 	}
 
 	/**
@@ -523,6 +538,21 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	 */
 	public synchronized final void setStruct(final Struct struct) {
 		this.struct = struct;
+	}
+
+	/**
+	 * @return the appConf
+	 */
+	public synchronized final FolderGenCLIConf getAppConf() {
+		return this.appConf;
+	}
+
+	/**
+	 * @param appConf
+	 *            the appConf to set
+	 */
+	public synchronized final void setAppConf(final FolderGenCLIConf appConf) {
+		this.appConf = appConf;
 	}
 
 }

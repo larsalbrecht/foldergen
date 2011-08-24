@@ -57,7 +57,8 @@ public final class FolderGenCLIHelper {
 				"plugins", true, PropertiesReader.getInstance().getProperties("application.cli.parameters.plugins")).addOption(
 				"px", "proxy", false, PropertiesReader.getInstance().getProperties("application.cli.parameters.proxy"))
 				.addOption("o", "overwrite", true,
-						PropertiesReader.getInstance().getProperties("application.cli.parameters.overwrite"));
+						PropertiesReader.getInstance().getProperties("application.cli.parameters.overwrite")).addOption("cn",
+						"create", false, PropertiesReader.getInstance().getProperties("application.cli.parameters.createnew"));
 		;
 		fgOptions.addOptionGroup(new OptionGroup().addOption(new Option("h", "help", false, PropertiesReader.getInstance()
 				.getProperties("application.cli.parameters.help"))));
@@ -125,12 +126,6 @@ public final class FolderGenCLIHelper {
 		if(commandLine.hasOption("px") || commandLine.hasOption("proxy")) {
 			conf.setUseProxy(Boolean.TRUE);
 		}
-		if(commandLine.hasOption("h") || commandLine.hasOption("help")) {
-			FolderGenCLIHelper.printHelp(FolderGenCLIHelper.createOptions(), 80, PropertiesReader.getInstance().getProperties(
-					"application.cli.seperator"), PropertiesReader.getInstance().getProperties("application.cli.seperator"), 1,
-					2, true, System.out);
-			System.exit(-1);
-		}
 		if(commandLine.hasOption("overwrite") || commandLine.hasOption("o")) {
 			String overwriteParam = commandLine.hasOption("overwrite") ? commandLine.getOptionValue("overwrite") : commandLine
 					.getOptionValue("o");
@@ -142,6 +137,12 @@ public final class FolderGenCLIHelper {
 				conf.setOverwrite(FolderGenCLIConf.OVERWRITE_ASK);
 			}
 
+		}
+		if(commandLine.hasOption("cn") || commandLine.hasOption("create")) {
+			conf.setCreateNew(Boolean.TRUE);
+		}
+		if(commandLine.hasOption("h") || commandLine.hasOption("help")) {
+			conf.setHelp(Boolean.TRUE);
 		}
 		return conf;
 	}

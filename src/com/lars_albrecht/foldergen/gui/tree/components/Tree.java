@@ -35,6 +35,12 @@ public class Tree extends JTree {
 	private DefaultTreeModel dtmTreeModel = null;
 	private FolderGenMutableTreeNode rootNode = null;
 
+	/**
+	 * Constructor of Tree.
+	 * 
+	 * @param controller
+	 *            FolderGenTreeController
+	 */
 	public Tree(final FolderGenTreeController controller) {
 		super();
 		this.controller = controller;

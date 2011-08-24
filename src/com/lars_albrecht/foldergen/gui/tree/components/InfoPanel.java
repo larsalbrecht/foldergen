@@ -33,8 +33,7 @@ import com.lars_albrecht.foldergen.core.helper.properies.PropertiesReader;
 import com.lars_albrecht.foldergen.gui.tree.FolderGenTreeController;
 
 /**
- * Extended JPanel that represents the panel on the right side in the view. In
- * this panel you will find all settings defined to the selected item in tree.
+ * Extended JPanel that represents the panel on the right side in the view. In this panel you will find all settings defined to the selected item in tree.
  * 
  * @author lalbrecht
  * @version 1.0.0.0
@@ -50,6 +49,12 @@ public class InfoPanel extends JPanel {
 	private JTextArea taContent = null;
 	private JButton bSave = null;
 
+	/**
+	 * Constructor of InfoPanel.
+	 * 
+	 * @param controller
+	 *            FolderGenTreeController
+	 */
 	public InfoPanel(final FolderGenTreeController controller) {
 		super(new GridBagLayout());
 		this.controller = controller;

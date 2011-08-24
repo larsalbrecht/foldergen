@@ -16,8 +16,10 @@
 package com.lars_albrecht.foldergen.core;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
@@ -41,6 +43,7 @@ import com.lars_albrecht.foldergen.core.generator.worker.DefaultContentWorker;
 import com.lars_albrecht.foldergen.core.generator.worker.FileWorker;
 import com.lars_albrecht.foldergen.core.generator.worker.FolderWorker;
 import com.lars_albrecht.foldergen.core.generator.worker.ZipWorker;
+import com.lars_albrecht.foldergen.core.helper.cli.FolderGenCLIConf;
 import com.lars_albrecht.foldergen.core.helper.properies.PropertiesReader;
 import com.lars_albrecht.foldergen.gui.helper.filesystem.FolderGenItem;
 import com.lars_albrecht.foldergen.helper.Utilities;
@@ -65,12 +68,7 @@ public class Generator {
 
 	private final static ArrayList<FileType> fileTypes = new ArrayList<FileType>();
 
-	private Boolean isDebug = false;
-	private File rootPath = null;
-	private Boolean showConfirmation = false;
-	private Boolean usePlugins = false;
-	@SuppressWarnings("unused")
-	private Integer overwrite = null;
+	private FolderGenCLIConf appConf = null;
 
 	private Struct struct = null;
 	private StructItem lastItem = null;
@@ -80,45 +78,65 @@ public class Generator {
 	/**
 	 * Generator constructor.
 	 * 
-	 * @param rootPath
-	 *            File
-	 * @param configFile
-	 *            File
-	 * @param isDebug
-	 *            Boolean
-	 * @param showConfirmation
-	 *            Boolean
-	 * @param usePlugins
-	 *            Boolean
-	 * @param overwrite
-	 *            Integer
+	 * @param appConf
+	 *            FolderGenCLIConf
 	 */
-	public Generator(final File rootPath, final File configFile, final Boolean isDebug, final Boolean showConfirmation,
-			final Boolean usePlugins, final Integer overwrite) {
-		this.isDebug = isDebug;
-		this.showConfirmation = showConfirmation;
-		this.usePlugins = usePlugins;
-		this.rootPath = (rootPath != null ? rootPath : new File(configFile.getParent()));
-		this.overwrite = overwrite;
+	public Generator(final FolderGenCLIConf appConf) {
+		this.appConf = appConf;
+		this.appConf.setRootPath(this.appConf.getRootPath() != null ? this.appConf.getRootPath() : new File(this.appConf
+				.getConfigFile().getParent()));
 
-		this.lastLayer = 0;
+		if(this.appConf.getCreateNew()) {
+			if((this.appConf.getConfigFile() != null) && (this.appConf.getRootPath() != null)
+					&& !this.appConf.getConfigFile().exists() && this.appConf.getRootPath().exists()
+					&& this.appConf.getRootPath().isDirectory()) {
+				File file = this.appConf.getConfigFile();
+				try {
+					file.createNewFile();
+				} catch(IOException e1) {
+					e1.printStackTrace();
+				}
+				if(file.isFile() && file.exists()) {
+					BufferedWriter bw = null;
+					try {
+						bw = new BufferedWriter(new FileWriter(file));
+						bw.write(Generator.getStringFromStruct(Generator.getStructFromFilesystem(this.appConf.getRootPath()), "",
+								""));
+						bw.close();
+						System.out.println("\n"
+								+ PropertiesReader.getInstance().getProperties(
+										"application.gui.messagedialog.configexported.message"));
+					} catch(IOException ex) {
+						System.out.println("\n"
+								+ PropertiesReader.getInstance().getProperties(
+										"application.gui.messagedialog.configexportederror.message"));
+					}
+				}
 
-		this.initGenerator();
-
-		if(this.isDebug) {
-			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.choosedrootpath")
-					+ this.rootPath.getAbsolutePath() + "\n");
-		}
-
-		// If config file exists and is a file and parent != null
-		if(configFile.exists() && configFile.isFile() && (configFile.getParent() != null) && this.workFile(configFile)
-				&& ((this.showConfirmation && this.confirmationWorker(this.rootPath)) || !this.showConfirmation)) {
-			if(this.isDebug) {
-				this.printStruct(this.struct, "", Boolean.TRUE);
 			}
-			this.workStruct(this.struct, this.rootPath);
 		} else {
-			System.out.println(PropertiesReader.getInstance().getProperties("application.output.wrongfile"));
+
+			this.lastLayer = 0;
+			this.initGenerator();
+			if(this.appConf.getIsDebug()) {
+				System.out.println(PropertiesReader.getInstance().getProperties("application.debug.choosedrootpath")
+						+ this.appConf.getRootPath().getAbsolutePath() + "\n");
+			}
+
+			// If config file exists and is a file and parent != null
+			if(this.appConf.getConfigFile().exists()
+					&& this.appConf.getConfigFile().isFile()
+					&& (this.appConf.getConfigFile().getParent() != null)
+					&& this.workFile(this.appConf.getConfigFile())
+					&& ((this.appConf.getShowConfirmation() && this.confirmationWorker(this.appConf.getRootPath())) || !this.appConf
+							.getShowConfirmation())) {
+				if(this.appConf.getIsDebug()) {
+					this.printStruct(this.struct, "", Boolean.TRUE);
+				}
+				this.workStruct(this.struct, this.appConf.getRootPath());
+			} else {
+				System.out.println(PropertiesReader.getInstance().getProperties("application.output.wrongfile"));
+			}
 		}
 	}
 
@@ -128,35 +146,23 @@ public class Generator {
 	 * 
 	 * @param struct
 	 *            Struct
-	 * @param rootPath
-	 *            File
-	 * @param isDebug
-	 *            Boolean
-	 * @param showConfirmation
-	 *            Boolean
-	 * @param usePlugins
-	 *            Boolean
-	 * @param overwrite
-	 *            Integer
+	 * @param appConf
+	 *            FolderGenCLIConf
 	 */
-	public Generator(final Struct struct, final File rootPath, final Boolean isDebug, final Boolean showConfirmation,
-			final Boolean usePlugins, final Integer overwrite) {
+	public Generator(final Struct struct, final FolderGenCLIConf appConf) {
 		this.struct = struct;
-		this.rootPath = rootPath;
-		this.isDebug = isDebug;
-		this.showConfirmation = showConfirmation;
-		this.usePlugins = usePlugins;
-		this.overwrite = overwrite;
+		this.appConf = appConf;
 
 		this.lastLayer = 0;
 
 		this.initGenerator();
 
-		if((this.showConfirmation && this.confirmationWorker(this.rootPath)) || !this.showConfirmation) {
-			if(this.isDebug) {
+		if((this.appConf.getShowConfirmation() && this.confirmationWorker(this.appConf.getRootPath()))
+				|| !this.appConf.getShowConfirmation()) {
+			if(this.appConf.getIsDebug()) {
 				this.printStruct(this.struct, "", Boolean.TRUE);
 			}
-			this.workStruct(this.struct, this.rootPath);
+			this.workStruct(this.struct, this.appConf.getRootPath());
 		}
 	}
 
@@ -171,9 +177,9 @@ public class Generator {
 	 *            Boolean
 	 */
 	public Generator(final Boolean isDebug, final Boolean showConfirmation, final Boolean usePlugins) {
-		this.isDebug = isDebug;
-		this.showConfirmation = showConfirmation;
-		this.usePlugins = usePlugins;
+		this.appConf = new FolderGenCLIConf();
+		this.appConf.setShowConfirmation(showConfirmation);
+		this.appConf.setUsePlugins(usePlugins);
 
 		this.lastLayer = 0;
 		this.initGenerator();
@@ -197,19 +203,21 @@ public class Generator {
 		Generator.fgpWorker.add(new ZipWorker());
 
 		// Load plugins if needed
-		if(this.usePlugins) {
+		if(this.appConf.getUsePlugins()) {
 			this.loadPlugins();
 		}
 
 		// Add fileTypes
 		for(FolderGenPlugin plugin : Generator.fgpWorker) {
 			if(plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER) != null) {
-				if(this.isDebug) {
+				if(this.appConf.getIsDebug()) {
 					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filetype.added")
 							+ plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER));
-				}
-				for(Map.Entry<Integer, Object> iterable_element : plugin.getInfoMap().entrySet()) {
-					System.out.println("###### " + iterable_element.getKey() + " - " + iterable_element.getValue());
+					System.out.println("");
+					for(Map.Entry<Integer, Object> item : plugin.getInfoMap().entrySet()) {
+						System.out.println("plugin.getInfoMap() item: " + item.getKey() + " - "
+								+ item.getValue());
+					}
 				}
 
 				Generator.fileTypes.add(new FileType((String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER),
@@ -250,7 +258,7 @@ public class Generator {
 				}
 			}
 		} catch(IOException e) {
-			if(this.isDebug) {
+			if(this.appConf.getIsDebug()) {
 				System.out.println(e.getMessage());
 			}
 			return false;
@@ -273,7 +281,7 @@ public class Generator {
 					&& basicInfo.get(IFolderGenPlugin.BASICINFO_FILEMARKER).trim().equalsIgnoreCase(
 							(String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER))) {
 
-				if(this.isDebug) {
+				if(this.appConf.getIsDebug()) {
 					for(Entry<Integer, Object> e : plugin.getInfoMap().entrySet()) {
 						System.out.println(e.getKey() + " - " + e.getValue());
 					}
@@ -303,7 +311,7 @@ public class Generator {
 				this.workLine(layer, plugin.getItemTitle(basicInfo), additionalInfo);
 				this.lastLayer = layer;
 				break;
-			} else if(this.isDebug) {
+			} else if(this.appConf.getIsDebug()) {
 				System.out.println(PropertiesReader.getInstance().getProperties("application.debug.notequals"));
 			}
 		}
@@ -341,7 +349,7 @@ public class Generator {
 				// add content to (last)item
 				this.lastItem.getAdditionalData().put("content", content);
 				break;
-			} else if(this.isDebug) {
+			} else if(this.appConf.getIsDebug()) {
 				System.out.println(PropertiesReader.getInstance().getProperties("application.debug.notequals"));
 			}
 		}
@@ -410,7 +418,7 @@ public class Generator {
 				} else if(inputLine.equalsIgnoreCase("y") || inputLine.equalsIgnoreCase("j") || inputLine.equalsIgnoreCase("o")
 						|| inputLine.equalsIgnoreCase("Д")) {
 
-					if(this.isDebug) {
+					if(this.appConf.getIsDebug()) {
 						System.out.println("\n" + PropertiesReader.getInstance().getProperties("application.debug.struct.work"));
 					}
 					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.struct.work.create"));
@@ -459,7 +467,7 @@ public class Generator {
 	 */
 	private Struct workLayerZero(final String name, final HashMap<String, String> additionalInfo) {
 		StructItem tempStructItem = null;
-		if(this.isDebug) {
+		if(this.appConf.getIsDebug()) {
 			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.zero") + name);
 		}
 		tempStructItem = new StructItem(name.trim(), additionalInfo, null);
@@ -479,7 +487,7 @@ public class Generator {
 	 */
 	private StructItem workLayerDown(final String name, final HashMap<String, String> additionalInfo) {
 		StructItem tempStructItem = null;
-		if(this.isDebug) {
+		if(this.appConf.getIsDebug()) {
 			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.down") + name);
 		}
 		tempStructItem = new StructItem(name.trim(), additionalInfo, this.lastItem);
@@ -504,7 +512,7 @@ public class Generator {
 	private StructItem workLayerUp(final String name, final HashMap<String, String> additionalInfo, final Integer lastLayer,
 			final Integer layer) {
 		StructItem tempStructItem = null;
-		if(this.isDebug) {
+		if(this.appConf.getIsDebug()) {
 			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.up") + name);
 		}
 		tempStructItem = new StructItem(name.trim(), additionalInfo, null);
@@ -528,7 +536,7 @@ public class Generator {
 	 */
 	private StructItem workLayerSame(final String name, final HashMap<String, String> additionalInfo) {
 		StructItem tempStructItem = null;
-		if(this.isDebug) {
+		if(this.appConf.getIsDebug()) {
 			System.out.println(PropertiesReader.getInstance().getProperties("application.debug.equals") + name);
 		}
 		tempStructItem = new StructItem(name.trim(), additionalInfo, this.lastItem.getParentStructItem());
@@ -601,7 +609,7 @@ public class Generator {
 				}
 
 			} catch(IllegalArgumentException e) {
-				if(this.isDebug) {
+				if(this.appConf.getIsDebug()) {
 					e.printStackTrace();
 				}
 			}
@@ -633,15 +641,15 @@ public class Generator {
 					}
 				}
 			} catch(IllegalArgumentException e) {
-				if(this.isDebug) {
+				if(this.appConf.getIsDebug()) {
 					e.printStackTrace();
 				}
 			} catch(IOException e) {
-				if(this.isDebug) {
+				if(this.appConf.getIsDebug()) {
 					e.printStackTrace();
 				}
 			}
-			if(this.usePlugins && (Generator.fgpContentReplacer != null)) {
+			if(this.appConf.getUsePlugins() && (Generator.fgpContentReplacer != null)) {
 				content = this.replacePluginMarkers(content);
 			}
 		}
@@ -676,7 +684,7 @@ public class Generator {
 			pluginCollection = pluginFinder.getPluginCollection();
 
 			for(FolderGenPlugin plugin : pluginCollection) {
-				if(this.isDebug) {
+				if(this.appConf.getIsDebug()) {
 					System.out.println("Plugin: " + plugin.getInfoMapValue(IFolderGenPlugin.INFO_TITLE));
 					System.out.println("PluginType: " + plugin.getPluginType());
 				}
@@ -687,14 +695,14 @@ public class Generator {
 						Generator.fgpContentReplacer.add(plugin);
 					}
 				} else {
-					if(this.isDebug) {
+					if(this.appConf.getIsDebug()) {
 						System.out.println("No plugin type");
 					}
 				}
 			}
 
 		} catch(Exception e) {
-			if(this.isDebug) {
+			if(this.appConf.getIsDebug()) {
 				e.printStackTrace();
 			}
 		}
@@ -778,7 +786,6 @@ public class Generator {
 	 */
 	public static String getStringFromStruct(final Struct struct, final String seperator, String structStr) {
 		for(int len = struct.size(), i = 0; i < len; i++) {
-			System.out.println("struct.get(i).getName(); " + struct.get(i).getName());
 			String itemName = struct.get(i).getName();
 			if(itemName.equals("") && (struct.get(i).getAdditionalData().get("src") != null)
 					&& !struct.get(i).getAdditionalData().get("src").equals("")) {
@@ -819,7 +826,7 @@ public class Generator {
 	 *            StructItem
 	 * @return Struct
 	 */
-	public static Struct workFileItem(final File path, final StructItem lastItem) {
+	private static Struct workFileItem(final File path, final StructItem lastItem) {
 		Struct tempStruct = new Struct();
 		HashMap<String, String> tempAdditionalInfo = new HashMap<String, String>();
 		FolderGenItem tempItem = new FolderGenItem(path.getName(), tempAdditionalInfo);
@@ -843,10 +850,18 @@ public class Generator {
 	}
 
 	/**
-	 * @return the rootPath
+	 * @return the appConf
 	 */
-	public synchronized final File getRootPath() {
-		return this.rootPath;
+	public synchronized final FolderGenCLIConf getAppConf() {
+		return this.appConf;
+	}
+
+	/**
+	 * @param appConf
+	 *            the appConf to set
+	 */
+	public synchronized final void setAppConf(final FolderGenCLIConf appConf) {
+		this.appConf = appConf;
 	}
 
 	/**
