@@ -12,11 +12,13 @@
   * off (Überschreibt nichts (Standard))
   * force (Überschreibt alles)
   * ask (Fragt für jede Datei was zu tun ist)</wiki:comment>
+ * Parameter -cn / -create wurde hinzugefügt um eine neue foldergenconf mit vorhandenen Dateien und Ordnern zu erstellen _(Fertiggestellt: *100%*)_
+ * Hilfe wurde repariert. Der Sprachen-Parameter wird nun auch interpretiert wenn die Hilfe (-h | --help) aufgerufen wird _(work in progress: *100%*)_
  * Änderungen aus Version 1.5.0.1 werden integriert _(Fertiggestellt: *100%*)_
  * Marker ">" wurde hinzugefügt, um an diesem Ort eine Zip-/Jar-Datei zu extrahieren / entpacken _(Fertiggestellt: *100%*)_
  * GUI wurde überarbeitet und eine Baumansicht wurde hinzugefügt. Diese kann folgendes tun:
    * Anzeigen der Informationen einer Konfigurationsdatei _(Fertiggestellt: *100%*)_
-   * Änderungen der Informationen einer Konfigurationsdatei _(Fertiggestellt: *75%*)_
+   * Änderungen der Informationen einer Konfigurationsdatei _(Fertiggestellt: *100%*)_
    * Erstelle neue Dateien und Ordner mit der geänderten Konfigurationsdatei (ohne diese als Datei zu speichern) _(Fertiggestellt: *100%*)_
    * Exportieren der Informationen zu einer neuen Konfigurationsdatei _(Fertiggestellt: *100%*)_
  * Übersetzung wurde hinzugefügt:

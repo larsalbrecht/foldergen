@@ -27,9 +27,9 @@ import java.util.Locale;
  */
 public final class FolderGenCLIConf {
 
-	final static Integer OVERWRITE_OFF = 0;
-	final static Integer OVERWRITE_FORCE = 1;
-	final static Integer OVERWRITE_ASK = 2;
+	public final static Integer OVERWRITE_OFF = 0;
+	public final static Integer OVERWRITE_FORCE = 1;
+	public final static Integer OVERWRITE_ASK = 2;
 
 	private File rootPath = null;
 	private File configFile = null;
@@ -40,6 +40,8 @@ public final class FolderGenCLIConf {
 	private Boolean usePlugins = null;
 	private Boolean useProxy = null;
 	private Integer overwrite = null;
+	private Boolean createNew = null;
+	private Boolean help = null;
 
 	public FolderGenCLIConf() {
 		this.isGui = Boolean.FALSE;
@@ -49,6 +51,8 @@ public final class FolderGenCLIConf {
 		this.usePlugins = Boolean.FALSE;
 		this.useProxy = Boolean.FALSE;
 		this.overwrite = FolderGenCLIConf.OVERWRITE_OFF;
+		this.createNew = Boolean.FALSE;
+		this.help = Boolean.FALSE;
 	}
 
 	/**
@@ -184,6 +188,36 @@ public final class FolderGenCLIConf {
 	 */
 	public synchronized final void setOverwrite(final Integer overwrite) {
 		this.overwrite = overwrite;
+	}
+
+	/**
+	 * @return the createNew
+	 */
+	public synchronized final Boolean getCreateNew() {
+		return this.createNew;
+	}
+
+	/**
+	 * @param createNew
+	 *            the createNew to set
+	 */
+	public synchronized final void setCreateNew(final Boolean createNew) {
+		this.createNew = createNew;
+	}
+
+	/**
+	 * @return the help
+	 */
+	public synchronized final Boolean getHelp() {
+		return this.help;
+	}
+
+	/**
+	 * @param help
+	 *            the help to set
+	 */
+	public synchronized final void setHelp(final Boolean help) {
+		this.help = help;
 	}
 
 }

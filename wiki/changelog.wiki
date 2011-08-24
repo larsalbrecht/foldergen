@@ -12,6 +12,8 @@
   * off - Overwrite nothing (default)
   * force - Overwrite all
   * ask - Ask what to do for every file</wiki:comment>
+ * Added parameter -cn / -create to create a new foldergenconf with files and folders from the filesystem _(work in progress: *100%*)_
+ * Fixed help. Now the parameters interpreted languages ​​even if the help-parameter is set _(work in progress: *100%*)_
  * changes for Version 1.5.0.1 will be integrated here _(work in progress: *100%*)_
  * Added marker ">" to define a zip-file to extract _(work in progress: *100%*)_
  * Recode the GUI and add treeview to:
