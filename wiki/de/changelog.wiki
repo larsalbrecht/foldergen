@@ -12,6 +12,9 @@
   * off (Überschreibt nichts (Standard))
   * force (Überschreibt alles)
   * ask (Fragt für jede Datei was zu tun ist)</wiki:comment>
+ * Marker "~" wurde repariert. Die heruntergeladene Datei wwar nicht komplett _(Fertiggestellt: *100%*)_
+ * "Kettenarbeit" wurde hinzugefügt. Es können nun mehrere "Worker" für eine Datei benutzt werden (siehe [Plugins]) _(Fertiggestellt: *100%*)_
+ * Neue Dateien die kopiert oder heruntergeladen werden (mit dem Dateimarker "~") und .zip/.jar-Dateien sind, und keinen Titel haben, werden automatisch entpackt und gelöscht _(Fertiggestellt: *100%*)_
  * Parameter -cn / -create wurde hinzugefügt um eine neue foldergenconf mit vorhandenen Dateien und Ordnern zu erstellen _(Fertiggestellt: *100%*)_
  * Hilfe wurde repariert. Der Sprachen-Parameter wird nun auch interpretiert wenn die Hilfe (-h | --help) aufgerufen wird _(work in progress: *100%*)_
  * Änderungen aus Version 1.5.0.1 werden integriert _(Fertiggestellt: *100%*)_

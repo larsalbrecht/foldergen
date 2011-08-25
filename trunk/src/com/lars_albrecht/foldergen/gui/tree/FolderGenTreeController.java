@@ -92,9 +92,19 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	 *            FolderGenCLIConf
 	 */
 	public FolderGenTreeController(final View parentView, final FolderGenCLIConf appConf) {
+		this.initTreeController();
 		FolderGenTreeController.parentView = parentView;
 		this.appConf = appConf;
+	}
 
+	public FolderGenTreeController(final View parentView, final FolderGenCLIConf appConf, final Struct struct) {
+		this.initTreeController();
+		FolderGenTreeController.parentView = parentView;
+		this.appConf = appConf;
+		this.struct = struct;
+	}
+
+	private void initTreeController() {
 		this.infoPanel = new InfoPanel(this);
 		this.tree = new Tree(this);
 		this.view = new FolderGenTreeView(this);
@@ -128,13 +138,15 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	 * Generates the struct and add the struct to tree.
 	 */
 	public void fillTree() {
-		if(this.configFile != null) {
+		if((this.configFile != null) || (this.struct != null)) {
 			// create struct
-			this.generator.workFile(this.configFile);
+			if((this.struct == null) || (this.struct.size() == 0)) {
+				this.generator.workFile(this.configFile);
+				this.struct = this.generator.getStruct();
+			}
 			// clear before adding
 			this.tree.getRootNode().removeAllChildren();
 			this.tree.getDtmTreeModel().reload();
-			this.struct = this.generator.getStruct();
 			// add now
 			this.addStructToTree(this.struct, this.tree.getRootNode());
 		}
@@ -373,16 +385,12 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 
 				// fill addtionalData with new basic infos
 				for(FileType type : Generator.getFiletypes()) {
-					if(type == this.infoPanel.getCbTypeValueModel().getSelectedItem()) {
-						folderGenItem.getAdditionalData().put("filetype",
-								((FileType) this.infoPanel.getCbTypeValueModel().getSelectedItem()).getFilemarker());
-
-						folderGenItem.getAdditionalData().put("type",
-								((FileType) this.infoPanel.getCbTypeValueModel().getSelectedItem()).getInfomarker());
+					if(type.toString().equals(this.infoPanel.getCbTypeValueModel().getSelectedItem().toString())) {
+						folderGenItem.getAdditionalData().put("filetype", type.getFilemarker());
+						folderGenItem.getAdditionalData().put("type", type.getInfomarker());
 						break;
 					}
 				}
-
 				// fill map with new entries
 				for(Map.Entry<JTextField, JTextField> entry : this.additionalInfoMap.entrySet()) {
 					folderGenItem.getAdditionalData().put(entry.getKey().getText(), entry.getValue().getText());

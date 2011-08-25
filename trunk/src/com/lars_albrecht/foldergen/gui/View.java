@@ -323,28 +323,26 @@ public class View extends JFrame implements ActionListener, ItemListener {
 					e1.printStackTrace();
 				}
 			} else {
+				if(this.appConf.getShowConfirmation()) {
+					if(JOptionPane.showConfirmDialog(this, PropertiesReader.getInstance().getProperties(
+							"application.gui.messagedialog.confirmation.message"), PropertiesReader.getInstance().getProperties(
+							"application.gui.messagedialog.confirmation.title"), JOptionPane.YES_NO_OPTION,
+							JOptionPane.INFORMATION_MESSAGE) == 0) {
+						if(this.struct != null) {
+							new Generator(this.struct, this.appConf);
+						} else {
+							this.appConf.setShowConfirmation(FolderGen.CONFIRMATION_HIDE);
+							new Generator(this.appConf);
+						}
 
-			}
-
-			if(this.appConf.getShowConfirmation()) {
-				if(JOptionPane.showConfirmDialog(this, PropertiesReader.getInstance().getProperties(
-						"application.gui.messagedialog.confirmation.message"), PropertiesReader.getInstance().getProperties(
-						"application.gui.messagedialog.confirmation.title"), JOptionPane.YES_NO_OPTION,
-						JOptionPane.INFORMATION_MESSAGE) == 0) {
+					}
+				} else {
 					if(this.struct != null) {
 						new Generator(this.struct, this.appConf);
 					} else {
 						this.appConf.setShowConfirmation(FolderGen.CONFIRMATION_HIDE);
 						new Generator(this.appConf);
 					}
-
-				}
-			} else {
-				if(this.struct != null) {
-					new Generator(this.struct, this.appConf);
-				} else {
-					this.appConf.setShowConfirmation(FolderGen.CONFIRMATION_HIDE);
-					new Generator(this.appConf);
 				}
 			}
 		} else if(e.getSource() == this.btnShow) {
@@ -353,7 +351,7 @@ public class View extends JFrame implements ActionListener, ItemListener {
 						"application.gui.messagedialog.noconfig.message"), PropertiesReader.getInstance().getProperties(
 						"application.gui.messagedialog.noconfig.title"), JOptionPane.INFORMATION_MESSAGE);
 			} else {
-				FolderGenTreeController treeC = new FolderGenTreeController(this, this.appConf);
+				FolderGenTreeController treeC = new FolderGenTreeController(this, this.appConf, this.struct);
 				this.setEnabled(Boolean.FALSE);
 				treeC.setConfigFile(this.appConf.getConfigFile());
 				treeC.setRootPath(this.appConf.getRootPath());

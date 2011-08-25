@@ -291,3 +291,22 @@ ZipWorker constructor:
 }}}
 
 This is for the new treeview in version 1.6.0.0 of FolderGen.
+
+In version 1.6.0.0 you can use chainworking. This means that you can do more jobs than one for you Plugin. In Example:
+The default worker "CopyWorker" can download and copy files. In this version the worker is doing twice:
+{{{
+~ -> /my/zip/file.zip
+}}}
+This copies file.zip from /my/zip/ to root directory. CopyWorker looks at the filename (between ~ and ->) and "see" that there is nothing. This means that CopyWorker copy (or download) the file to the destination and unzip the file using the "ZipWorker". After that, the copied (downloaed) file will be deleted using the "DeleteWorker".
+{{{
+ArrayList<String> chain = (ArrayList<String>) workerMap.get("chain")
+chain.add(new ZipWorker());
+chain.add(new DeleteWorker());
+}}}
+
+Be carefully: If you add the same worker to chain it will ends in an endless loop:
+{{{
+ArrayList<String> chain = (ArrayList<String>) workerMap.get("chain")
+chain.add(new CopyWorker());
+}}}
+You can prevent this by modify the "workerMap" in "doWork". All changes will be send to FolderGen.

@@ -40,6 +40,7 @@ import com.lars_albrecht.foldergen.core.generator.helper.Struct;
 import com.lars_albrecht.foldergen.core.generator.helper.StructItem;
 import com.lars_albrecht.foldergen.core.generator.worker.CopyWorker;
 import com.lars_albrecht.foldergen.core.generator.worker.DefaultContentWorker;
+import com.lars_albrecht.foldergen.core.generator.worker.DeleteWorker;
 import com.lars_albrecht.foldergen.core.generator.worker.FileWorker;
 import com.lars_albrecht.foldergen.core.generator.worker.FolderWorker;
 import com.lars_albrecht.foldergen.core.generator.worker.ZipWorker;
@@ -63,7 +64,7 @@ public class Generator {
 	/**
 	 * static variables for comparisons
 	 */
-	private final static ArrayList<FolderGenPlugin> fgpWorker = new ArrayList<FolderGenPlugin>();
+	private final static HashMap<FolderGenPlugin, Boolean> fgpWorker = new HashMap<FolderGenPlugin, Boolean>();
 	private final static ArrayList<FolderGenPlugin> fgpContentReplacer = new ArrayList<FolderGenPlugin>();
 
 	private final static ArrayList<FileType> fileTypes = new ArrayList<FileType>();
@@ -196,11 +197,12 @@ public class Generator {
 	 * Loads worker and plugins (if needed) and add file types to list ("fileTypes").
 	 */
 	private void initWorker() {
-		Generator.fgpWorker.add(new FolderWorker());
-		Generator.fgpWorker.add(new FileWorker());
-		Generator.fgpWorker.add(new CopyWorker());
-		Generator.fgpWorker.add(new DefaultContentWorker());
-		Generator.fgpWorker.add(new ZipWorker());
+		Generator.fgpWorker.put(new FolderWorker(), true);
+		Generator.fgpWorker.put(new FileWorker(), true);
+		Generator.fgpWorker.put(new CopyWorker(), true);
+		Generator.fgpWorker.put(new DefaultContentWorker(), true);
+		Generator.fgpWorker.put(new ZipWorker(), true);
+		Generator.fgpWorker.put(new DeleteWorker(), false);
 
 		// Load plugins if needed
 		if(this.appConf.getUsePlugins()) {
@@ -208,15 +210,16 @@ public class Generator {
 		}
 
 		// Add fileTypes
-		for(FolderGenPlugin plugin : Generator.fgpWorker) {
-			if(plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER) != null) {
+
+		for(Map.Entry<FolderGenPlugin, Boolean> item : Generator.fgpWorker.entrySet()) {
+			FolderGenPlugin plugin = item.getKey();
+			if(item.getValue() && (plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER) != null)) {
 				if(this.appConf.getIsDebug()) {
 					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filetype.added")
 							+ plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER));
 					System.out.println("");
-					for(Map.Entry<Integer, Object> item : plugin.getInfoMap().entrySet()) {
-						System.out.println("plugin.getInfoMap() item: " + item.getKey() + " - "
-								+ item.getValue());
+					for(Map.Entry<Integer, Object> debugItem : plugin.getInfoMap().entrySet()) {
+						System.out.println("plugin.getInfoMap() debugItem: " + debugItem.getKey() + " - " + debugItem.getValue());
 					}
 				}
 
@@ -276,8 +279,10 @@ public class Generator {
 	 */
 	private void workNonContentWorker(final HashMap<Integer, String> basicInfo, final String typeStr) {
 		Integer layer = null;
-		for(FolderGenPlugin plugin : Generator.fgpWorker) {
-			if((plugin.getPluginType() != IFolderGenPlugin.PLUGINTYPE_CONFEXTENSION_CONTENT)
+		for(Map.Entry<FolderGenPlugin, Boolean> item : Generator.fgpWorker.entrySet()) {
+			FolderGenPlugin plugin = item.getKey();
+			if(item.getValue()
+					&& (plugin.getPluginType() != IFolderGenPlugin.PLUGINTYPE_CONFEXTENSION_CONTENT)
 					&& basicInfo.get(IFolderGenPlugin.BASICINFO_FILEMARKER).trim().equalsIgnoreCase(
 							(String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER))) {
 
@@ -325,8 +330,10 @@ public class Generator {
 	 * @throws IOException
 	 */
 	private void workContentWorker(final HashMap<Integer, String> basicInfo) throws IOException {
-		for(FolderGenPlugin plugin : Generator.fgpWorker) {
-			if((plugin.getPluginType() == IFolderGenPlugin.PLUGINTYPE_CONFEXTENSION_CONTENT)
+		for(Map.Entry<FolderGenPlugin, Boolean> item : Generator.fgpWorker.entrySet()) {
+			FolderGenPlugin plugin = item.getKey();
+			if(item.getValue()
+					&& (plugin.getPluginType() == IFolderGenPlugin.PLUGINTYPE_CONFEXTENSION_CONTENT)
 					&& basicInfo.get(IFolderGenPlugin.BASICINFO_FILEMARKER).trim().equalsIgnoreCase(
 							(String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_CONTENTSTARTMARKER))) {
 				String contentLine = null;
@@ -690,7 +697,7 @@ public class Generator {
 				}
 				if(plugin.getPluginType() != null) {
 					if((plugin.getPluginType() >= 200) && (plugin.getPluginType() < 300)) {
-						Generator.fgpWorker.add(plugin);
+						Generator.fgpWorker.put(plugin, true);
 					} else if((plugin.getPluginType() >= 100) && (plugin.getPluginType() < 200)) {
 						Generator.fgpContentReplacer.add(plugin);
 					}
@@ -716,13 +723,16 @@ public class Generator {
 	 * @param rootFolder
 	 *            File
 	 */
+	@SuppressWarnings("unchecked")
 	private void workStruct(final Struct struct, final File rootFolder) {
 		for(int len = struct.size(), i = 0; i < len; i++) {
 			// get additional data from structItem
 			HashMap<String, String> tempAdditionalData = struct.get(i).getAdditionalData();
 			if(tempAdditionalData.containsKey("type") && (tempAdditionalData.get("type") != null)) {
-				for(FolderGenPlugin plugin : Generator.fgpWorker) {
-					if((plugin.getInfoMap() != null)
+				for(Map.Entry<FolderGenPlugin, Boolean> item : Generator.fgpWorker.entrySet()) {
+					FolderGenPlugin plugin = item.getKey();
+					if(item.getValue()
+							&& (plugin.getInfoMap() != null)
 							&& (((String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_INFOMARKER)) != null)
 							&& ((String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_INFOMARKER))
 									.equalsIgnoreCase(tempAdditionalData.get("type"))) {
@@ -732,12 +742,44 @@ public class Generator {
 							tempAdditionalData.put("content", this
 									.replaceMarker(struct.get(i), tempAdditionalData.get("content")));
 						}
+						ArrayList<String> workerChain = new ArrayList<String>();
+						workerChain.add(plugin.getClass().getSimpleName());
 
 						HashMap<String, Object> workerMap = new HashMap<String, Object>();
 						workerMap.put("additionalData", tempAdditionalData);
 						workerMap.put("rootFolder", rootFolder);
 						workerMap.put("name", struct.get(i).getName());
-						plugin.doWork(workerMap);
+						workerMap.put("chain", workerChain);
+
+						// no for each - with for-loop you can modify the workerChain
+						for(int j = 0; j < workerChain.size(); j++) {
+							try {
+								FolderGenPlugin p = null;
+								for(Map.Entry<FolderGenPlugin, Boolean> myItem : Generator.fgpWorker.entrySet()) {
+									if(myItem.getKey().getClass().getSimpleName().equalsIgnoreCase(workerChain.get(j))) {
+										Class<FolderGenPlugin> c = (Class<FolderGenPlugin>) Class.forName(myItem.getKey()
+												.getClass().getCanonicalName());
+										p = c.newInstance();
+										break;
+									}
+								}
+
+								if(this.appConf.getIsDebug()) {
+									System.out.println("chainitem: " + p.getInfoMap().get(IFolderGenPlugin.INFO_TITLE));
+									for(Map.Entry<String, Object> debugItem : workerMap.entrySet()) {
+										System.out
+												.println("item-in-chaine: " + debugItem.getKey() + " - " + debugItem.getValue());
+									}
+								}
+
+								p.doWork(workerMap);
+							} catch(ClassNotFoundException e) {
+								e.printStackTrace();
+							} catch(java.lang.IllegalAccessException e) {
+							} catch(java.lang.InstantiationException e) {
+							}
+
+						}
 						break;
 					}
 				}
@@ -787,15 +829,17 @@ public class Generator {
 	public static String getStringFromStruct(final Struct struct, final String seperator, String structStr) {
 		for(int len = struct.size(), i = 0; i < len; i++) {
 			String itemName = struct.get(i).getName();
-			if(itemName.equals("") && (struct.get(i).getAdditionalData().get("src") != null)
+			if(itemName.equals("") && (struct.get(i).getAdditionalData().containsKey("src"))
 					&& !struct.get(i).getAdditionalData().get("src").equals("")) {
 				itemName = struct.get(i).getAdditionalData().get("src");
-			} else if((struct.get(i).getAdditionalData().get("src") != null)
+			} else if((struct.get(i).getAdditionalData().containsKey("src"))
 					&& !struct.get(i).getAdditionalData().get("src").equals("")) {
 				itemName = itemName + " -> " + struct.get(i).getAdditionalData().get("src");
 			}
+			// add struct to string
 			structStr = structStr + "\n" + seperator + struct.get(i).getAdditionalData().get("filetype") + " " + itemName;
 
+			// read substructs
 			if((struct.get(i).getSubStruct() != null) && (struct.get(i).getSubStruct().size() > 0)) {
 				structStr = Generator.getStringFromStruct(struct.get(i).getSubStruct(), seperator + "\t", structStr);
 			}

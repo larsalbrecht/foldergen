@@ -289,3 +289,22 @@ ZipWorker Konstruktor:
 }}}
 
 Dies ist für die neue Baumansicht in Version 1.6.0.0 von FolderGen.
+
+In Version 1.6.0.0 kann man "chainworking" benutzen. Das heißt man kann in einm Plugin andere Plugins aufrufen. Beispiel:
+Der Standard-Worker "CopyWorker" kann Dateien herunterladen und kopieren. Ab der Version 1.6.0.0 kann der Worker mehr machen:
+{{{
+~ -> /mein/zip/archiv.zip
+}}}
+Dies kopiert eine archiv.zip von /mein/zip/ in unser Hauptverzeichnis. CopyWorker "schaut" nach dem Dateinamen (zwischen ~ und ->) und "sieht" das dort nichts ist. Dies heißt für den CopyWorker das er die Datei kopieren (oder herunterladen) muss und die Datei in das Zielverzeichnis packt (wie bisher). Jetzt wird aber die neue Zip-Datei mit dem Zip-Worker entpackt und danach mit dem neuen "DeleteWorker" gelöscht.
+{{{
+ArrayList<String> chain = (ArrayList<String>) workerMap.get("chain")
+chain.add("ZipWorker");
+chain.add("DeleteWorker");
+}}}
+
+Achtung: Wenn man den gleichen Worker wieder zur Kette hinzufügt, dann wird es eine Endlosschleife geben: 
+{{{
+ArrayList<String> chain = (ArrayList<String>) workerMap.get("chain")
+chain.add("CopyWorker");
+}}}
+Dies kann man verhindern in dem man die "workerMap" in "doWork" verändert. Alle Änderungen werden an FolderGen zurück gegeben und dann für den nächsten Worker benutzt.
