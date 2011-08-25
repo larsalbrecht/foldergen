@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.lars_albrecht.foldergen.helper.Utilities;
@@ -39,6 +40,8 @@ import com.lars_albrecht.foldergen.plugin.interfaces.IFolderGenPlugin;
  */
 public class CopyWorker extends FolderGenPlugin {
 
+	private String name = null;
+
 	public CopyWorker() {
 		this.infoMap.put(IFolderGenPlugin.INFO_TITLE, "CopyWorker");
 		this.infoMap.put(IFolderGenPlugin.INFO_FILEMARKER, "~");
@@ -46,13 +49,20 @@ public class CopyWorker extends FolderGenPlugin {
 		this.infoMap.put(IFolderGenPlugin.INFO_ADDITIONALKEYS, "src");
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public HashMap<String, Object> doWork(final HashMap<String, Object> workerMap) {
-		@SuppressWarnings("unchecked")
 		HashMap<String, String> tempAdditionalData = (HashMap<String, String>) workerMap.get("additionalData");
+
 		File rootFolder = (File) workerMap.get("rootFolder");
 		String name = (String) workerMap.get("name");
-		this.workGetCopy(rootFolder, tempAdditionalData, name);
+		this.workGetCopy(rootFolder, tempAdditionalData, name, (ArrayList<String>) workerMap.get("chain"));
+		if(this.name != null) {
+			workerMap.put("name", (name.trim().length() > 0 ? name.trim() : this.name));
+			tempAdditionalData.put("src", rootFolder.getAbsolutePath() + File.separator
+					+ (name.trim().length() > 0 ? name.trim() : this.name));
+
+		}
 
 		return null;
 	}
@@ -67,21 +77,24 @@ public class CopyWorker extends FolderGenPlugin {
 	 * @param name
 	 *            String
 	 */
-	private void workGetCopy(final File rootFolder, final HashMap<String, String> tempAdditionalData, final String name) {
+	private void workGetCopy(final File rootFolder, final HashMap<String, String> tempAdditionalData, final String name,
+			final ArrayList<String> chain) {
+		String sourceName = null;
 		if(tempAdditionalData.get("src") != null) {
 			if(tempAdditionalData.get("src").startsWith("http://") || tempAdditionalData.get("src").startsWith("https://")) {
 				try {
-					File f = new File(rootFolder.getAbsolutePath() + File.separator + name);
-					if(!f.exists()) {
+					if((name.trim().length() == 0) || !new File(rootFolder.getAbsolutePath() + File.separator + name).exists()) {
+						// Create URL
 						URL source = new URL(tempAdditionalData.get("src"));
-
-						String content = Utilities.getFileContentFromWeb(source);
+						sourceName = source.getFile().replaceAll("^([\\W])", "");
+						sourceName = (source.getQuery() != null ?  source.getFile().substring(0, source.getFile().indexOf(source.getQuery()) - 1) : sourceName);
+						// Create file
+						File f = new File(rootFolder.getAbsolutePath() + File.separator
+								+ (name.trim().length() > 0 ? name.trim() : sourceName));
 						f.createNewFile();
-						FileOutputStream fos = new FileOutputStream(f);
-						for(int len = content.length(), j = 0; j < len; j++) {
-							fos.write((byte) content.charAt(j));
-						}
-						fos.close();
+
+						Utilities.getFileContentFromWeb(source, new FileOutputStream(f));
+
 					}
 				} catch(MalformedURLException e) {
 				} catch(ConnectException e) {
@@ -91,13 +104,20 @@ public class CopyWorker extends FolderGenPlugin {
 				try {
 					// file
 					File source = new File(tempAdditionalData.get("src"));
+					sourceName = source.getName();
 					if(source.exists() && source.isFile()) {
-						Utilities.copyFile(source, new File(rootFolder.getAbsolutePath() + File.separator + name));
+						Utilities.copyFile(source, new File(rootFolder.getAbsolutePath() + File.separator
+								+ (name.trim().length() > 0 ? name.trim() : sourceName)));
 					} else if(source.exists() && source.isDirectory()) {
 						Utilities.copyDir(source, new File(rootFolder.getAbsolutePath() + File.separator + name));
 					}
 				} catch(IOException e) {
 				}
+			}
+			if((name.trim().length() == 0) && (sourceName.endsWith(".zip") || sourceName.endsWith(".jar"))) {
+				this.name = sourceName;
+				chain.add("ZipWorker");
+				chain.add("DeleteWorker");
 			}
 		}
 
@@ -105,15 +125,18 @@ public class CopyWorker extends FolderGenPlugin {
 
 	@Override
 	public String getItemTitle(final HashMap<Integer, String> basicInfo) {
-		return basicInfo.get(IFolderGenPlugin.BASICINFO_FILETITLE).trim().substring(0,
-				basicInfo.get(IFolderGenPlugin.BASICINFO_FILETITLE).trim().indexOf("->")).trim();
+		return (basicInfo.get(IFolderGenPlugin.BASICINFO_FILETITLE).trim().indexOf("->") > -1) ? basicInfo.get(
+				IFolderGenPlugin.BASICINFO_FILETITLE).trim().substring(0,
+				basicInfo.get(IFolderGenPlugin.BASICINFO_FILETITLE).trim().indexOf("->")).trim() : "";
 	}
 
 	@Override
 	public HashMap<String, String> getAdditionlInfo(final HashMap<Integer, String> basicInfo) {
 		HashMap<String, String> tempMap = new HashMap<String, String>();
-		tempMap.put("src", basicInfo.get(IFolderGenPlugin.BASICINFO_FILETITLE).trim().substring(
-				basicInfo.get(IFolderGenPlugin.BASICINFO_FILETITLE).trim().indexOf("->") + 2).trim());
+		tempMap.put("src", (basicInfo.get(IFolderGenPlugin.BASICINFO_FILETITLE).trim().indexOf("->") > -1) ? basicInfo.get(
+				IFolderGenPlugin.BASICINFO_FILETITLE).trim().substring(
+				basicInfo.get(IFolderGenPlugin.BASICINFO_FILETITLE).trim().indexOf("->") + 2).trim() : basicInfo.get(
+				IFolderGenPlugin.BASICINFO_FILETITLE).trim());
 		return tempMap;
 	}
 
