@@ -89,7 +89,7 @@ public interface IFolderGenPlugin {
 	final static Integer BASICINFO_FILEMARKER = 2;
 
 	/**
-	 * CONFEXTENSION: You only need to return null. You became a HashMap with "additionalData" (HashMap), "rootFolder" (File) and "name" (String)<br>
+	 * CONFEXTENSION: You only need to return null. You became a HashMap with "additionalData" (HashMap), "rootFolder" (File), "name" (String) and "chain" (ArrayList<String>)<br>
 	 * CONTENTEXTENSION: you need to return a HashMap with key "content" and became a HashMap with "content".
 	 * 
 	 * @param workerMap
