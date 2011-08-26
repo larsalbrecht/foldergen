@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
 <jardesc>
     <jar path="FolderGenPluginFramework/jar/foldergenpluginframeworkjar-1.5.1.0-src.jar"/>
     <options buildIfNeeded="true" compress="true" descriptionLocation="/FolderGenPluginFramework/description-src.jardesc" exportErrors="false" exportWarnings="false" includeDirectoryEntries="true" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="true"/>
