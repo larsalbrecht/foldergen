@@ -8,6 +8,11 @@
 			- general.css
 		+ img
 	+ private
+		.htaccess
+		(((
+		Order deny,allow
+		Deny from all
+		)))
 		+ includes
 			- header.inc
 			(((
