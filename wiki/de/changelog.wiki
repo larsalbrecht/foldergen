@@ -12,26 +12,26 @@
   * off (Überschreibt nichts (Standard))
   * force (Überschreibt alles)
   * ask (Fragt für jede Datei was zu tun ist)</wiki:comment>
- * Marker "~" wurde repariert. Die heruntergeladene Datei wwar nicht komplett _(Fertiggestellt: *100%*)_
- * "Kettenarbeit" wurde hinzugefügt. Es können nun mehrere "Worker" für eine Datei benutzt werden (siehe [Plugins]) _(Fertiggestellt: *100%*)_
- * Neue Dateien die kopiert oder heruntergeladen werden (mit dem Dateimarker "~") und .zip/.jar-Dateien sind, und keinen Titel haben, werden automatisch entpackt und gelöscht _(Fertiggestellt: *100%*)_
- * Parameter -cn / -create wurde hinzugefügt um eine neue foldergenconf mit vorhandenen Dateien und Ordnern zu erstellen _(Fertiggestellt: *100%*)_
+ * Marker "~" wurde repariert. Die heruntergeladene Datei wwar nicht komplett
+ * "Kettenarbeit" wurde hinzugefügt. Es können nun mehrere "Worker" für eine Datei benutzt werden (siehe [Plugins])
+ * Neue Dateien die kopiert oder heruntergeladen werden (mit dem Dateimarker "~") und .zip/.jar-Dateien sind, und keinen Titel haben, werden automatisch entpackt und gelöscht
+ * Parameter -cn / -create wurde hinzugefügt um eine neue foldergenconf mit vorhandenen Dateien und Ordnern zu erstellen
  * Hilfe wurde repariert. Der Sprachen-Parameter wird nun auch interpretiert wenn die Hilfe (-h | --help) aufgerufen wird _(work in progress: *100%*)_
- * Änderungen aus Version 1.5.0.1 werden integriert _(Fertiggestellt: *100%*)_
- * Marker ">" wurde hinzugefügt, um an diesem Ort eine Zip-/Jar-Datei zu extrahieren / entpacken _(Fertiggestellt: *100%*)_
+ * Änderungen aus Version 1.5.0.1 werden integriert
+ * Marker ">" wurde hinzugefügt, um an diesem Ort eine Zip-/Jar-Datei zu extrahieren / entpacken
  * GUI wurde überarbeitet und eine Baumansicht wurde hinzugefügt. Diese kann folgendes tun:
-   * Anzeigen der Informationen einer Konfigurationsdatei _(Fertiggestellt: *100%*)_
-   * Änderungen der Informationen einer Konfigurationsdatei _(Fertiggestellt: *100%*)_
-   * Erstelle neue Dateien und Ordner mit der geänderten Konfigurationsdatei (ohne diese als Datei zu speichern) _(Fertiggestellt: *100%*)_
-   * Exportieren der Informationen zu einer neuen Konfigurationsdatei _(Fertiggestellt: *100%*)_
+   * Anzeigen der Informationen einer Konfigurationsdatei
+   * Änderungen der Informationen einer Konfigurationsdatei
+   * Erstelle neue Dateien und Ordner mit der geänderten Konfigurationsdatei (ohne diese als Datei zu speichern)
+   * Exportieren der Informationen zu einer neuen Konfigurationsdatei
  * Übersetzung wurde hinzugefügt:
    * Italienisch (Google Translator)
  * Kleine Änderung am Plugin Framework wurde durchgeführt (version 1.5.1.0)
    * siehe: [Plugins]
 
 == Version 1.5.0.1 - nicht veröffentlicht ==
- * Weiterer Code wurde überarbeitet _(Fertiggestellt: *100%*)_
- * Das Array "basicInfoArr" wurde aus den Plugins entfernt. Ab jetzt wird eine {{{HashMap<Integer, String>}}} benutzt. _(Fertiggestellt: *100%*)_
+ * Weiterer Code wurde überarbeitet
+ * Das Array "basicInfoArr" wurde aus den Plugins entfernt. Ab jetzt wird eine {{{HashMap<Integer, String>}}} benutzt.
 
 == Version 1.5.0.0 ==
  * Weitere BSD-Lizenzheader wurden in den Quellcodedateien ergänzt

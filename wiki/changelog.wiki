@@ -12,26 +12,26 @@
   * off - Overwrite nothing (default)
   * force - Overwrite all
   * ask - Ask what to do for every file</wiki:comment>
- * Fixed filemarker "~". Downloaded a file not completely _(work in progress: *100%*)_
- * Added chainworing to do more then one job for a file (see [Plugins]) _(work in progress: *100%*)_
- * New files that will be copied or downloaded with filemarker "~" and are .zip/.jar-Files and has no title will be deleted automatically after automatic extract _(work in progress: *100%*)_
- * Added parameter -cn / -create to create a new foldergenconf with files and folders from the filesystem _(work in progress: *100%*)_
- * Fixed help. Now the parameters interpreted languages ​​even if the help-parameter is set _(work in progress: *100%*)_
- * changes for Version 1.5.0.1 will be integrated here _(work in progress: *100%*)_
- * Added marker ">" to define a zip-file to extract _(work in progress: *100%*)_
+ * Fixed filemarker "~". Downloaded a file not completely
+ * Added chainworing to do more then one job for a file (see [Plugins])
+ * New files that will be copied or downloaded with filemarker "~" and are .zip/.jar-Files and has no title will be deleted automatically after automatic extract
+ * Added parameter -cn / -create to create a new foldergenconf with files and folders from the filesystem
+ * Fixed help. Now the parameters interpreted languages ​​even if the help-parameter is set
+ * changes for Version 1.5.0.1 will be integrated here
+ * Added marker ">" to define a zip-file to extract
  * Recode the GUI and add treeview to:
-  * view the information _(work in progress: *100%*)_
-  * change the information _(work in progress: *100%*)_
-  * create the new files and folders with the changed config _(work in progress: *100%*)_
-  * export the information to new config _(work in progress: *100%*)_
+  * view the information
+  * change the information
+  * create the new files and folders with the changed config
+  * export the information to new config
  * Added Translations
    * Italian (Google Translator)
  * Simple change of the plugin framework (version 1.5.1.0)
    * see: [Plugins]
 
 == Version 1.5.0.1 - discontinued ==
- * Refactored (in parts) _(work in progress: *100%*)_
- * Removed basicInfoArr in Plugins. Use {{{HashMap<Integer, String>}}} in future _(work in progress: *100%*)_
+ * Refactored (in parts)
+ * Removed basicInfoArr in Plugins. Use {{{HashMap<Integer, String>}}} in future
 
 == Version 1.5.0.0 ==
  * Fixed licence in file headers
