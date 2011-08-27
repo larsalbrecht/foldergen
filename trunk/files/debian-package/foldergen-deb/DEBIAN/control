@@ -4,7 +4,7 @@ Section: misc
 Priority: extra
 Architecture: all
 Depends:
-Installed-Size: 184
+Installed-Size: 218
 Maintainer: Lars Chr. Albrecht <lars.albrecht@googlemail.com>
 Homepage: http://code.google.com/p/foldergen/
 Description: FolderGen is a Java Application (Command Line and GUI) that can generate folders and files (with content) automatically.

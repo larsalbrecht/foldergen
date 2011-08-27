@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
 <jardesc>
-    <jar path="FolderGen-svn/trunk/files/jar/foldergenjar-1.6.0.0-pre12-bin.jar"/>
+    <jar path="FolderGen-svn/trunk/files/jar/foldergenjar-1.6.0.0-bin.jar"/>
     <options buildIfNeeded="true" compress="true" descriptionLocation="/FolderGen-svn/trunk/files/description-bin.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="true" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="true"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
