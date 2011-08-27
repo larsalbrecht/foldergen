@@ -7,7 +7,7 @@
  _(work in progress: *100%*)_
 </wiki:comment>
 
-== Version 1.6.0.0 - coming soon ==
+== Version 1.6.0.0 ==
  <wiki:comment>* Added parameter -o / -overwrite to select an option what is to do with existing files / folders _(work in progress: *0%*)_
   * off - Overwrite nothing (default)
   * force - Overwrite all
@@ -21,7 +21,7 @@
  * Added marker ">" to define a zip-file to extract _(work in progress: *100%*)_
  * Recode the GUI and add treeview to:
   * view the information _(work in progress: *100%*)_
-  * change the information _(work in progress: *75%*)_
+  * change the information _(work in progress: *100%*)_
   * create the new files and folders with the changed config _(work in progress: *100%*)_
   * export the information to new config _(work in progress: *100%*)_
  * Added Translations
@@ -30,7 +30,7 @@
    * see: [Plugins]
 
 == Version 1.5.0.1 - discontinued ==
- * Refactored (in parts) _(work in progress: *50%*)_
+ * Refactored (in parts) _(work in progress: *100%*)_
  * Removed basicInfoArr in Plugins. Use {{{HashMap<Integer, String>}}} in future _(work in progress: *100%*)_
 
 == Version 1.5.0.0 ==
