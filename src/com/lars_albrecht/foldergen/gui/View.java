@@ -72,6 +72,8 @@ public class View extends JFrame implements ActionListener, ItemListener {
 
 	private FolderGenCLIConf appConf = null;
 
+	private FolderGenTreeController treeC = null;
+
 	private Struct struct = null;
 
 	/**
@@ -336,10 +338,11 @@ public class View extends JFrame implements ActionListener, ItemListener {
 				JOptionPane.showMessageDialog(this, PropertiesReader.getInstance().getProperties("application.gui.messagedialog.noconfig.message"),
 						PropertiesReader.getInstance().getProperties("application.gui.messagedialog.noconfig.title"), JOptionPane.INFORMATION_MESSAGE);
 			} else {
-				FolderGenTreeController treeC = new FolderGenTreeController(this, this.appConf, this.struct);
+				treeC = new FolderGenTreeController(this, this.appConf, this.struct);
 				this.setEnabled(Boolean.FALSE);
 				treeC.setConfigFile(this.appConf.getConfigFile());
 				treeC.setRootPath(this.appConf.getRootPath());
+
 				treeC.fillTree();
 				treeC.showFrame();
 			}

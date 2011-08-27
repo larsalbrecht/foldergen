@@ -111,7 +111,6 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 		this.additionalInfoPanel = new AdditionalInfoPanel(this);
 
 		this.generator = new Generator(true, false, false);
-
 		this.addComponentsToView();
 		this.fillTypeComboBox();
 	}
@@ -127,11 +126,11 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 	 * Fills the combo box on the info panel.
 	 */
 	public void fillTypeComboBox() {
+		this.infoPanel.getCbTypeValueModel().removeAllElements();
 		this.infoPanel.getCbTypeValueModel().addElement("");
 		for (FileType type : Generator.getFiletypes()) {
 			this.infoPanel.getCbTypeValueModel().addElement(type);
 		}
-
 	}
 
 	/**
