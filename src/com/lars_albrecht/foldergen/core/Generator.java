@@ -101,7 +101,7 @@ public class Generator {
 					BufferedWriter bw = null;
 					try {
 						bw = new BufferedWriter(new FileWriter(file));
-						bw.write(Generator.getStringFromStruct(Generator.getStructFromFilesystem(this.appConf.getRootPath()), "", ""));
+						bw.write(Generator.getStringFromStruct(Generator.getStructFromFilesystem(this.appConf.getRootPath()), "", "", Boolean.TRUE));
 						bw.close();
 						System.out.println("\n" + PropertiesReader.getInstance().getProperties("application.gui.messagedialog.configexported.message"));
 					} catch (IOException ex) {
@@ -800,7 +800,7 @@ public class Generator {
 	 *            String
 	 * @return String
 	 */
-	public static String getStringFromStruct(final Struct struct, final String seperator, String structStr) {
+	public static String getStringFromStruct(final Struct struct, final String seperator, String structStr, final Boolean isFirst) {
 		for (int len = struct.size(), i = 0; i < len; i++) {
 			String itemName = struct.get(i).getName();
 			if (itemName.equals("") && (struct.get(i).getAdditionalData().containsKey("src")) && !struct.get(i).getAdditionalData().get("src").equals("")) {
@@ -812,11 +812,11 @@ public class Generator {
 				structStr = structStr + "\n" + seperator + "(((\n" + struct.get(i).getAdditionalData().get("content") + "\n)))";
 			}
 			// add struct to string
-			structStr = structStr + "\n" + seperator + struct.get(i).getAdditionalData().get("filetype") + " " + itemName;
+			structStr = structStr + (isFirst ? "" : "\n") + seperator + struct.get(i).getAdditionalData().get("filetype") + " " + itemName;
 
 			// read substructs
 			if ((struct.get(i).getSubStruct() != null) && (struct.get(i).getSubStruct().size() > 0)) {
-				structStr = Generator.getStringFromStruct(struct.get(i).getSubStruct(), seperator + "\t", structStr);
+				structStr = Generator.getStringFromStruct(struct.get(i).getSubStruct(), seperator + "\t", structStr, Boolean.FALSE);
 			}
 		}
 		return structStr;

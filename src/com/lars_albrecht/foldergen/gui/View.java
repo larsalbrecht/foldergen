@@ -296,7 +296,7 @@ public class View extends JFrame implements ActionListener, ItemListener {
 						BufferedWriter bw = null;
 						try {
 							bw = new BufferedWriter(new FileWriter(this.appConf.getConfigFile()));
-							bw.write(Generator.getStringFromStruct(Generator.getStructFromFilesystem(this.appConf.getRootPath()), "", ""));
+							bw.write(Generator.getStringFromStruct(Generator.getStructFromFilesystem(this.appConf.getRootPath()), "", "", Boolean.TRUE));
 							bw.close();
 
 							JOptionPane.showMessageDialog(this, PropertiesReader.getInstance().getProperties("application.gui.messagedialog.configcreated.message"), PropertiesReader.getInstance()
