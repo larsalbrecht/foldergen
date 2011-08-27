@@ -35,6 +35,8 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
+
 import com.lars_albrecht.foldergen.core.generator.helper.FileType;
 import com.lars_albrecht.foldergen.core.generator.helper.Struct;
 import com.lars_albrecht.foldergen.core.generator.helper.StructItem;
@@ -106,10 +108,8 @@ public class Generator {
 						System.out.println("\n" + PropertiesReader.getInstance().getProperties("application.gui.messagedialog.configexportederror.message"));
 					}
 				}
-
 			}
 		} else {
-
 			this.lastLayer = 0;
 			this.initGenerator();
 			if (this.appConf.getIsDebug()) {
@@ -125,7 +125,12 @@ public class Generator {
 				}
 				this.workStruct(this.struct, this.appConf.getRootPath());
 			} else {
-				System.out.println(PropertiesReader.getInstance().getProperties("application.output.wrongfile"));
+				if (this.appConf.getIsGui()) {
+					JOptionPane.showMessageDialog(this.appConf.getMainGUIComponent(), PropertiesReader.getInstance().getProperties("application.gui.messagedialog.missingwrongfile.message"),
+							PropertiesReader.getInstance().getProperties("application.gui.messagedialog.missingwrongfile.title"), JOptionPane.INFORMATION_MESSAGE);
+				} else {
+					System.out.println(PropertiesReader.getInstance().getProperties("application.output.wrongfile"));
+				}
 			}
 		}
 	}

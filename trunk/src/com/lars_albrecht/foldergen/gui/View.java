@@ -83,6 +83,7 @@ public class View extends JFrame implements ActionListener, ItemListener {
 	public View(final FolderGenCLIConf appConf) {
 		super(PropertiesReader.getInstance().getProperties("application.name") + " - " + PropertiesReader.getInstance().getProperties("application.version"));
 		this.appConf = appConf;
+		this.appConf.setMainGUIComponent(this);
 
 		BufferedImage image = null;
 		try {
