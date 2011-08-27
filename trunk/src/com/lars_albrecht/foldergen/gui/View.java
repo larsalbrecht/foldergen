@@ -134,12 +134,18 @@ public class View extends JFrame implements ActionListener, ItemListener {
 		this.setSystemLookAndFeel();
 		this.setLayout(new BorderLayout());
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setBounds((screenSize.width - 500) / 2, (screenSize.height - 150) / 2, 500, 150);
 		this.setResizable(Boolean.FALSE);
 
 		this.createComponents();
 		this.configureComponents();
+
+		this.pack();
+		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+		this.setBounds((screenSize.width - this.getWidth() + 10) / 2, (screenSize.height - this.getHeight() + 10) / 2, this.getWidth() + 10, this.getHeight() + 10);
+		if (this.appConf.getIsDebug()) {
+			System.out.println("this.width: " + this.getWidth());
+			System.out.println("this.height: " + this.getHeight());
+		}
 		this.setVisible(true);
 	}
 
@@ -148,26 +154,26 @@ public class View extends JFrame implements ActionListener, ItemListener {
 	 */
 	private void configureComponents() {
 		this.rpPane.setLayout(new GridBagLayout());
-		final GridBagConstraints gbc = new GridBagConstraints();
+		GridBagConstraints gbc = new GridBagConstraints();
 
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 
 		gbc.gridx = 0;
 		gbc.gridy = 0;
-		gbc.insets = new Insets(10, 0, 0, 10);
+		gbc.insets = new Insets(0, 0, 0, 10);
 		this.btnChooseFile.addActionListener(this);
 		this.rpPane.add(this.btnChooseFile, gbc);
 
 		gbc.gridx = 1;
 		gbc.gridy = 0;
-		gbc.insets = new Insets(10, 0, 0, 10);
+		gbc.insets = new Insets(0, 0, 0, 10);
 		this.btnChooseRootFolder.addActionListener(this);
 		this.rpPane.add(this.btnChooseRootFolder, gbc);
 		gbc.gridwidth = 1;
 
 		gbc.gridx = 2;
 		gbc.gridy = 0;
-		gbc.insets = new Insets(10, 0, 0, 0);
+		gbc.insets = new Insets(0, 0, 0, 0);
 		this.btnShow.addActionListener(this);
 		this.rpPane.add(this.btnShow, gbc);
 
@@ -314,7 +320,6 @@ public class View extends JFrame implements ActionListener, ItemListener {
 							this.appConf.setShowConfirmation(FolderGen.CONFIRMATION_HIDE);
 							new Generator(this.appConf);
 						}
-
 					}
 				} else {
 					if (this.struct != null) {
