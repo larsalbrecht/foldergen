@@ -66,19 +66,19 @@ public class FolderGenTreeView extends JFrame {
 	}
 
 	/**
-	 * Initilize the tree view. Set the image and create the components with "createComponents()".
+	 * Initilize the tree view. Set the image and create the components with
+	 * "createComponents()".
 	 */
 	private void initTreeView() {
 		BufferedImage image = null;
 		try {
-			image = ImageIO.read(this.getClass()
-					.getResource(PropertiesReader.getInstance().getProperties("application.iconpath")));
-		} catch(IOException e) {
+			image = ImageIO.read(this.getClass().getResource(PropertiesReader.getInstance().getProperties("application.iconpath")));
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		this.setIconImage(image);
 
-		this.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		this.setBounds((screenSize.width - 900) / 2, (screenSize.height - 350) / 2, 900, 350);
 
@@ -100,21 +100,17 @@ public class FolderGenTreeView extends JFrame {
 		this.mbMenu = new JMenuBar();
 		this.menuFile = new JMenu(PropertiesReader.getInstance().getProperties("application.gui.tree.menu.file.title"));
 		this.menuFile.setMnemonic(KeyEvent.VK_D);
-		this.menuFile.getAccessibleContext().setAccessibleDescription(
-				PropertiesReader.getInstance().getProperties("application.gui.tree.menu.file.description"));
+		this.menuFile.getAccessibleContext().setAccessibleDescription(PropertiesReader.getInstance().getProperties("application.gui.tree.menu.file.description"));
 
-		this.miExportAll = new JMenuItem(PropertiesReader.getInstance().getProperties(
-				"application.gui.tree.menu.item.export.title"));
+		this.miExportAll = new JMenuItem(PropertiesReader.getInstance().getProperties("application.gui.tree.menu.item.export.title"));
 		this.miExportAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		this.miExportAll.getAccessibleContext().setAccessibleDescription(
-				PropertiesReader.getInstance().getProperties("application.gui.tree.menu.item.export.description"));
+		this.miExportAll.getAccessibleContext().setAccessibleDescription(PropertiesReader.getInstance().getProperties("application.gui.tree.menu.item.export.description"));
 
 		this.miExportAll.addActionListener(this.controller);
 
 		this.miExit = new JMenuItem(PropertiesReader.getInstance().getProperties("application.gui.tree.menu.item.exit.title"));
 		this.miExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, ActionEvent.ALT_MASK));
-		this.miExit.getAccessibleContext().setAccessibleDescription(
-				PropertiesReader.getInstance().getProperties("application.gui.tree.menu.item.exit.description"));
+		this.miExit.getAccessibleContext().setAccessibleDescription(PropertiesReader.getInstance().getProperties("application.gui.tree.menu.item.exit.description"));
 		this.miExit.addActionListener(this.controller);
 
 		this.menuFile.add(this.miExportAll);

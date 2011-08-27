@@ -191,6 +191,9 @@ public class Generator {
 	 * ("fileTypes").
 	 */
 	private void initWorker() {
+		Generator.fgpWorker.clear();
+		Generator.fileTypes.clear();
+
 		Generator.fgpWorker.put(new FolderWorker(), true);
 		Generator.fgpWorker.put(new FileWorker(), true);
 		Generator.fgpWorker.put(new CopyWorker(), true);
@@ -204,7 +207,6 @@ public class Generator {
 		}
 
 		// Add fileTypes
-
 		for (Map.Entry<FolderGenPlugin, Boolean> item : Generator.fgpWorker.entrySet()) {
 			FolderGenPlugin plugin = item.getKey();
 			if (item.getValue() && (plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER) != null)) {
@@ -215,13 +217,11 @@ public class Generator {
 						System.out.println("plugin.getInfoMap() debugItem: " + debugItem.getKey() + " - " + debugItem.getValue());
 					}
 				}
-
 				Generator.fileTypes.add(new FileType((String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_FILEMARKER), (String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_INFOMARKER), plugin
 						.getInfoMap().containsKey(IFolderGenPlugin.INFO_ADDITIONALKEYS) ? new ArrayList<String>(Arrays.asList(((String) plugin.getInfoMapValue(IFolderGenPlugin.INFO_ADDITIONALKEYS))
 						.split(";"))) : new ArrayList<String>()));
 			}
 		}
-
 	}
 
 	/**
