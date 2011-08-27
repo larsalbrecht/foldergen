@@ -15,6 +15,8 @@
  */
 package com.lars_albrecht.foldergen;
 
+import java.io.File;
+
 import org.apache.commons.cli.ParseException;
 
 import com.lars_albrecht.foldergen.core.Generator;
@@ -24,8 +26,11 @@ import com.lars_albrecht.foldergen.core.helper.properies.PropertiesReader;
 import com.lars_albrecht.foldergen.gui.View;
 
 /**
- * If you have the .jar file on you filesystem, you need a .foldergenconf-File. This file can be written in a default text editor like vim, notepad or something like that. For more about the
- * foldergenconf, look at the wiki-site. java -jar foldergen.jar -c C:\<filename>.foldergenconf or java -jar foldergen.jar -c /home/testuser/<filename>.foldergenconf
+ * If you have the .jar file on you filesystem, you need a .foldergenconf-File.
+ * This file can be written in a default text editor like vim, notepad or
+ * something like that. For more about the foldergenconf, look at the wiki-site.
+ * java -jar foldergen.jar -c C:\<filename>.foldergenconf or java -jar
+ * foldergen.jar -c /home/testuser/<filename>.foldergenconf
  * 
  * @see "http://code.google.com/p/foldergen/"
  * @author lalbrecht
@@ -72,32 +77,31 @@ public class FolderGen {
 			this.appConf = FolderGenCLIHelper.parseArguments(args);
 
 			// No args or no config file and no gui
-			if((args.length < 1) || ((this.appConf.getConfigFile() == null) && !this.appConf.getIsGui())) {
-				FolderGenCLIHelper.printUsage(PropertiesReader.getInstance().getProperties("application.name"),
-						FolderGenCLIHelper.createOptions(), System.out);
+			if ((args.length < 1) || ((this.appConf.getConfigFile() == null) && !this.appConf.getIsGui())) {
+				FolderGenCLIHelper.printUsage(PropertiesReader.getInstance().getProperties("application.name"), FolderGenCLIHelper.createOptions(), System.out);
 			} else {
-				if(this.appConf.getLocale() != null) { // set locale if needed
+				if (this.appConf.getLocale() != null) { // set locale if needed
 					PropertiesReader.getInstance().setLocale(this.appConf.getLocale());
 				}
-				if(this.appConf.getHelp()) {
-					FolderGenCLIHelper.printHelp(FolderGenCLIHelper.createOptions(), 80, PropertiesReader.getInstance()
-							.getProperties("application.cli.seperator"), PropertiesReader.getInstance().getProperties(
-							"application.cli.seperator"), 1, 2, true, System.out);
+				if (this.appConf.getHelp()) {
+					FolderGenCLIHelper.printHelp(FolderGenCLIHelper.createOptions(), 80, PropertiesReader.getInstance().getProperties("application.cli.seperator"), PropertiesReader.getInstance()
+							.getProperties("application.cli.seperator"), 1, 2, true, System.out);
 					System.exit(-1);
 				}
 				// no gui and no config file or config file is not valid
-				if(!this.appConf.getIsGui() && (!this.appConf.getConfigFile().exists() || !this.appConf.getConfigFile().isFile())) {
-					FolderGenCLIHelper.printUsage(PropertiesReader.getInstance().getProperties("application.name"),
-							FolderGenCLIHelper.createOptions(), System.out);
+				if (!this.appConf.getIsGui() && (!this.appConf.getConfigFile().exists() || !this.appConf.getConfigFile().isFile())) {
+					FolderGenCLIHelper.printUsage(PropertiesReader.getInstance().getProperties("application.name"), FolderGenCLIHelper.createOptions(), System.out);
 				} else {
 					// Start gui or start generator directly
+					if (this.appConf.getRootPath() == null) {
+						this.appConf.setRootPath(new File(System.getProperty("user.dir")));
+					}
 					this.startUp();
 				}
 			}
-		} catch(ParseException e) {
+		} catch (ParseException e) {
 			System.err.println(PropertiesReader.getInstance().getProperties("application.exception.parse"));
-			FolderGenCLIHelper.printUsage(PropertiesReader.getInstance().getProperties("application.name"), FolderGenCLIHelper
-					.createOptions(), System.out);
+			FolderGenCLIHelper.printUsage(PropertiesReader.getInstance().getProperties("application.name"), FolderGenCLIHelper.createOptions(), System.out);
 		}
 	}
 
@@ -105,16 +109,16 @@ public class FolderGen {
 	 * Start FolderGen in gui or in cli mode
 	 */
 	private void startUp() {
-		if(this.appConf.getUseProxy()) {
+		if (this.appConf.getUseProxy()) {
 			try { // Try to get default proxy
 				System.setProperty("java.net.useSystemProxies", "true");
-			} catch(Exception e) {
-				if(this.appConf.getIsDebug()) {
+			} catch (Exception e) {
+				if (this.appConf.getIsDebug()) {
 					e.printStackTrace();
 				}
 			}
 		}
-		if(this.appConf.getIsGui()) {
+		if (this.appConf.getIsGui()) {
 			new View(this.appConf);
 		} else {
 			new Generator(this.appConf);

@@ -81,15 +81,13 @@ public class View extends JFrame implements ActionListener, ItemListener {
 	 *            FolderGenCLIConf
 	 */
 	public View(final FolderGenCLIConf appConf) {
-		super(PropertiesReader.getInstance().getProperties("application.name") + " - "
-				+ PropertiesReader.getInstance().getProperties("application.version"));
+		super(PropertiesReader.getInstance().getProperties("application.name") + " - " + PropertiesReader.getInstance().getProperties("application.version"));
 		this.appConf = appConf;
 
 		BufferedImage image = null;
 		try {
-			image = ImageIO.read(this.getClass()
-					.getResource(PropertiesReader.getInstance().getProperties("application.iconpath")));
-		} catch(IOException e) {
+			image = ImageIO.read(this.getClass().getResource(PropertiesReader.getInstance().getProperties("application.iconpath")));
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		this.setIconImage(image);
@@ -102,29 +100,28 @@ public class View extends JFrame implements ActionListener, ItemListener {
 	 */
 	private void setSystemLookAndFeel() {
 		try {
-			if(this.appConf.getIsDebug()) {
-				System.out.println(PropertiesReader.getInstance().getProperties("application.debug.looknfeel")
-						+ UIManager.getSystemLookAndFeelClassName());
+			if (this.appConf.getIsDebug()) {
+				System.out.println(PropertiesReader.getInstance().getProperties("application.debug.looknfeel") + UIManager.getSystemLookAndFeelClassName());
 			}
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch(UnsupportedLookAndFeelException e) {
-			if(this.appConf.getIsDebug()) {
+		} catch (UnsupportedLookAndFeelException e) {
+			if (this.appConf.getIsDebug()) {
 				e.printStackTrace();
 			}
-		} catch(ClassNotFoundException e) {
-			if(this.appConf.getIsDebug()) {
+		} catch (ClassNotFoundException e) {
+			if (this.appConf.getIsDebug()) {
 				e.printStackTrace();
 			}
-		} catch(InstantiationException e) {
-			if(this.appConf.getIsDebug()) {
+		} catch (InstantiationException e) {
+			if (this.appConf.getIsDebug()) {
 				e.printStackTrace();
 			}
-		} catch(IllegalAccessException e) {
-			if(this.appConf.getIsDebug()) {
+		} catch (IllegalAccessException e) {
+			if (this.appConf.getIsDebug()) {
 				e.printStackTrace();
 			}
-		} catch(Exception e) {
-			if(this.appConf.getIsDebug()) {
+		} catch (Exception e) {
+			if (this.appConf.getIsDebug()) {
 				e.printStackTrace();
 			}
 		}
@@ -138,7 +135,7 @@ public class View extends JFrame implements ActionListener, ItemListener {
 		this.setLayout(new BorderLayout());
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		final Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-		this.setBounds((screenSize.width - 400) / 2, (screenSize.height - 130) / 2, 400, 130);
+		this.setBounds((screenSize.width - 500) / 2, (screenSize.height - 150) / 2, 500, 150);
 		this.setResizable(Boolean.FALSE);
 
 		this.createComponents();
@@ -210,8 +207,7 @@ public class View extends JFrame implements ActionListener, ItemListener {
 	private void createComponents() {
 		this.rpPane = new JPanel();
 		this.btnChooseFile = new JButton(PropertiesReader.getInstance().getProperties("application.gui.filechooser.opener"));
-		this.btnChooseRootFolder = new JButton(PropertiesReader.getInstance().getProperties(
-				"application.gui.rootfolderchooser.opener"));
+		this.btnChooseRootFolder = new JButton(PropertiesReader.getInstance().getProperties("application.gui.rootfolderchooser.opener"));
 		this.btnStart = new JButton(PropertiesReader.getInstance().getProperties("application.gui.button.start"));
 		this.btnShow = new JButton(PropertiesReader.getInstance().getProperties("application.gui.button.show"));
 
@@ -228,107 +224,91 @@ public class View extends JFrame implements ActionListener, ItemListener {
 	 */
 	@Override
 	public void actionPerformed(final ActionEvent e) {
-		if(e.getSource().equals(this.btnChooseFile)) {
+		if (e.getSource().equals(this.btnChooseFile)) {
 			this.fcChooser = new JFileChooser();
-			this.fcChooser.setCurrentDirectory((this.appConf.getRootPath() != null ? this.appConf.getRootPath() : (this.appConf
-					.getConfigFile() != null ? new File(this.appConf.getConfigFile().getParent()) : new File(System
-					.getProperty("user.dir")))));
+			this.fcChooser.setCurrentDirectory((this.appConf.getRootPath() != null ? this.appConf.getRootPath() : (this.appConf.getConfigFile() != null ? new File(this.appConf.getConfigFile()
+					.getParent()) : new File(System.getProperty("user.dir")))));
 			this.fcChooser.setFileFilter(new FolderGenFileFilter());
 			this.fcChooser.setDialogTitle(PropertiesReader.getInstance().getProperties("application.gui.filechooser.title"));
-			if(this.cbCreate.isSelected()) {
+			if (this.cbCreate.isSelected()) {
 				Integer returnVal = this.fcChooser.showSaveDialog(this);
-				if(returnVal == JFileChooser.APPROVE_OPTION) {
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = this.fcChooser.getSelectedFile();
 					this.appConf.setConfigFile(file);
+					this.struct = null;
 				}
 			} else {
-				if(this.appConf.getIsDebug()) {
-					System.out
-							.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.opener.click"));
+				if (this.appConf.getIsDebug()) {
+					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.opener.click"));
 				}
 
 				Integer returnVal = this.fcChooser.showOpenDialog(this);
-				if(returnVal == JFileChooser.APPROVE_OPTION) {
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					File file = this.fcChooser.getSelectedFile();
-					if(this.appConf.getIsDebug()) {
-						System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.approved")
-								+ file.getName());
+					if (this.appConf.getIsDebug()) {
+						System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.approved") + file.getName());
 					}
-					if(file.isFile() && file.exists()) {
+					if (file.isFile() && file.exists()) {
 						this.appConf.setConfigFile(file);
 					}
 				} else {
-					if(this.appConf.getIsDebug()) {
-						System.out
-								.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.canceled"));
+					if (this.appConf.getIsDebug()) {
+						System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.canceled"));
 					}
 				}
 			}
-		} else if(e.getSource() == this.btnChooseRootFolder) {
-			if(this.appConf.getIsDebug()) {
+		} else if (e.getSource() == this.btnChooseRootFolder) {
+			if (this.appConf.getIsDebug()) {
 				System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.opener.click"));
 			}
 			this.fcChooser = new JFileChooser();
-			this.fcChooser.setCurrentDirectory((this.appConf.getRootPath() != null ? this.appConf.getRootPath() : (this.appConf
-					.getConfigFile() != null ? new File(this.appConf.getConfigFile().getParent()) : new File(System
-					.getProperty("user.dir")))));
+			this.fcChooser.setCurrentDirectory((this.appConf.getRootPath() != null ? this.appConf.getRootPath() : (this.appConf.getConfigFile() != null ? new File(this.appConf.getConfigFile()
+					.getParent()) : new File(System.getProperty("user.dir")))));
 			this.fcChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-			this.fcChooser
-					.setDialogTitle(PropertiesReader.getInstance().getProperties("application.gui.rootfolderchooser.title"));
+			this.fcChooser.setDialogTitle(PropertiesReader.getInstance().getProperties("application.gui.rootfolderchooser.title"));
 			this.fcChooser.setAcceptAllFileFilterUsed(false);
 			Integer returnVal = this.fcChooser.showOpenDialog(this);
 
-			if(returnVal == JFileChooser.APPROVE_OPTION) {
-				File file = this.fcChooser.getSelectedFile() != null ? this.fcChooser.getSelectedFile() : this.fcChooser
-						.getCurrentDirectory();
-				if(this.appConf.getIsDebug()) {
-					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.approved")
-							+ file.getName());
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				File file = this.fcChooser.getSelectedFile() != null ? this.fcChooser.getSelectedFile() : this.fcChooser.getCurrentDirectory();
+				if (this.appConf.getIsDebug()) {
+					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.approved") + file.getName());
 				}
-				if(file.isDirectory() && file.exists()) {
+				if (file.isDirectory() && file.exists()) {
 					this.appConf.setRootPath(file);
 				}
 			} else {
-				if(this.appConf.getIsDebug()) {
+				if (this.appConf.getIsDebug()) {
 					System.out.println(PropertiesReader.getInstance().getProperties("application.debug.filechooser.canceled"));
 				}
 			}
-		} else if(e.getSource() == this.btnStart) {
-			if(this.cbCreate.isSelected()) {
+		} else if (e.getSource() == this.btnStart) {
+			if (this.cbCreate.isSelected()) {
 				try {
-					if(this.appConf.getConfigFile().exists()
-							|| (this.appConf.getConfigFile().createNewFile() && this.appConf.getConfigFile().exists() && this.appConf
-									.getConfigFile().isFile())) {
+					if (this.appConf.getConfigFile().exists() || (this.appConf.getConfigFile().createNewFile() && this.appConf.getConfigFile().exists() && this.appConf.getConfigFile().isFile())) {
 						BufferedWriter bw = null;
 						try {
 							bw = new BufferedWriter(new FileWriter(this.appConf.getConfigFile()));
-							bw.write(Generator.getStringFromStruct(Generator.getStructFromFilesystem(this.appConf.getRootPath()),
-									"", ""));
+							bw.write(Generator.getStringFromStruct(Generator.getStructFromFilesystem(this.appConf.getRootPath()), "", ""));
 							bw.close();
 
-							JOptionPane.showMessageDialog(this, PropertiesReader.getInstance().getProperties(
-									"application.gui.messagedialog.configcreated.message"), PropertiesReader.getInstance()
-									.getProperties("application.gui.messagedialog.configcreated.title"),
-									JOptionPane.INFORMATION_MESSAGE);
-						} catch(IOException ex) {
-							JOptionPane.showMessageDialog(this, PropertiesReader.getInstance().getProperties(
-									"application.gui.messagedialog.configcreatederror.message"), PropertiesReader.getInstance()
-									.getProperties("application.gui.messagedialog.configcreatederror.title"),
-									JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(this, PropertiesReader.getInstance().getProperties("application.gui.messagedialog.configcreated.message"), PropertiesReader.getInstance()
+									.getProperties("application.gui.messagedialog.configcreated.title"), JOptionPane.INFORMATION_MESSAGE);
+						} catch (IOException ex) {
+							JOptionPane.showMessageDialog(this, PropertiesReader.getInstance().getProperties("application.gui.messagedialog.configcreatederror.message"), PropertiesReader
+									.getInstance().getProperties("application.gui.messagedialog.configcreatederror.title"), JOptionPane.ERROR_MESSAGE);
 						}
 					}
-				} catch(HeadlessException e1) {
+				} catch (HeadlessException e1) {
 					e1.printStackTrace();
-				} catch(IOException e1) {
+				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
 			} else {
-				if(this.appConf.getShowConfirmation()) {
-					if(JOptionPane.showConfirmDialog(this, PropertiesReader.getInstance().getProperties(
-							"application.gui.messagedialog.confirmation.message"), PropertiesReader.getInstance().getProperties(
-							"application.gui.messagedialog.confirmation.title"), JOptionPane.YES_NO_OPTION,
-							JOptionPane.INFORMATION_MESSAGE) == 0) {
-						if(this.struct != null) {
+				if (this.appConf.getShowConfirmation()) {
+					if (JOptionPane.showConfirmDialog(this, PropertiesReader.getInstance().getProperties("application.gui.messagedialog.confirmation.message"), PropertiesReader.getInstance()
+							.getProperties("application.gui.messagedialog.confirmation.title"), JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE) == 0) {
+						if (this.struct != null) {
 							new Generator(this.struct, this.appConf);
 						} else {
 							this.appConf.setShowConfirmation(FolderGen.CONFIRMATION_HIDE);
@@ -337,7 +317,7 @@ public class View extends JFrame implements ActionListener, ItemListener {
 
 					}
 				} else {
-					if(this.struct != null) {
+					if (this.struct != null) {
 						new Generator(this.struct, this.appConf);
 					} else {
 						this.appConf.setShowConfirmation(FolderGen.CONFIRMATION_HIDE);
@@ -345,11 +325,10 @@ public class View extends JFrame implements ActionListener, ItemListener {
 					}
 				}
 			}
-		} else if(e.getSource() == this.btnShow) {
-			if((this.appConf.getConfigFile() == null) || !this.appConf.getConfigFile().exists()) {
-				JOptionPane.showMessageDialog(this, PropertiesReader.getInstance().getProperties(
-						"application.gui.messagedialog.noconfig.message"), PropertiesReader.getInstance().getProperties(
-						"application.gui.messagedialog.noconfig.title"), JOptionPane.INFORMATION_MESSAGE);
+		} else if (e.getSource() == this.btnShow) {
+			if ((this.appConf.getConfigFile() == null) || !this.appConf.getConfigFile().exists()) {
+				JOptionPane.showMessageDialog(this, PropertiesReader.getInstance().getProperties("application.gui.messagedialog.noconfig.message"),
+						PropertiesReader.getInstance().getProperties("application.gui.messagedialog.noconfig.title"), JOptionPane.INFORMATION_MESSAGE);
 			} else {
 				FolderGenTreeController treeC = new FolderGenTreeController(this, this.appConf, this.struct);
 				this.setEnabled(Boolean.FALSE);
@@ -371,9 +350,9 @@ public class View extends JFrame implements ActionListener, ItemListener {
 	 */
 	@Override
 	public void itemStateChanged(final ItemEvent ie) {
-		if(ie.getSource() == this.cbConfirmation) {
+		if (ie.getSource() == this.cbConfirmation) {
 			this.appConf.setShowConfirmation(this.cbConfirmation.getSelectedObjects() != null ? Boolean.TRUE : Boolean.FALSE);
-		} else if(ie.getSource() == this.cbPlugins) {
+		} else if (ie.getSource() == this.cbPlugins) {
 			this.appConf.setUsePlugins(this.cbPlugins.getSelectedObjects() != null ? Boolean.TRUE : Boolean.FALSE);
 		}
 	}

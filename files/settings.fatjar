@@ -1,10 +1,10 @@
 #Fat Jar Configuration File
-#Fri Aug 26 16:08:10 CEST 2011
+#Sat Aug 27 14:08:01 CEST 2011
 onejar.license.required=false
 manifest.classpath=
 manifest.removesigners=true
 onejar.checkbox=true
-jarname=foldergenjar-1.6.0.0-pre12-bin-fat.jar
+jarname=foldergenjar-1.6.0.0-pre13-bin-fat.jar
 manifest.mergeall=true
 manifest.mainclass=com.lars_albrecht.foldergen.FolderGen
 manifest.file=<createnew>
