@@ -117,7 +117,8 @@ public class Generator {
 			}
 
 			// If config file exists and is a file and parent != null
-			if (this.appConf.getConfigFile().exists() && this.appConf.getConfigFile().isFile() && (this.appConf.getConfigFile().getParent() != null) && this.workFile(this.appConf.getConfigFile())
+			if (this.appConf.getConfigFile() != null && this.appConf.getConfigFile().exists() && this.appConf.getConfigFile().isFile() && (this.appConf.getConfigFile().getParent() != null)
+					&& this.workFile(this.appConf.getConfigFile())
 					&& ((this.appConf.getShowConfirmation() && this.confirmationWorker(this.appConf.getRootPath())) || !this.appConf.getShowConfirmation())) {
 				if (this.appConf.getIsDebug()) {
 					this.printStruct(this.struct, "", Boolean.TRUE);
