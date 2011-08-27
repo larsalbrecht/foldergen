@@ -15,6 +15,7 @@
  */
 package com.lars_albrecht.foldergen.core.helper.cli;
 
+import java.awt.Component;
 import java.io.File;
 import java.util.Locale;
 
@@ -42,6 +43,7 @@ public final class FolderGenCLIConf {
 	private Integer overwrite = null;
 	private Boolean createNew = null;
 	private Boolean help = null;
+	private Component mainGUIComponent = null;
 
 	public FolderGenCLIConf() {
 		this.isGui = Boolean.FALSE;
@@ -53,6 +55,7 @@ public final class FolderGenCLIConf {
 		this.overwrite = FolderGenCLIConf.OVERWRITE_OFF;
 		this.createNew = Boolean.FALSE;
 		this.help = Boolean.FALSE;
+		this.mainGUIComponent = null;
 	}
 
 	/**
@@ -218,6 +221,21 @@ public final class FolderGenCLIConf {
 	 */
 	public synchronized final void setHelp(final Boolean help) {
 		this.help = help;
+	}
+
+	/**
+	 * @return the mainGUIComponent
+	 */
+	public Component getMainGUIComponent() {
+		return this.mainGUIComponent;
+	}
+
+	/**
+	 * @param mainGUIComponent
+	 *            the mainGUIComponent to set
+	 */
+	public void setMainGUIComponent(Component mainGUIComponent) {
+		this.mainGUIComponent = mainGUIComponent;
 	}
 
 }
