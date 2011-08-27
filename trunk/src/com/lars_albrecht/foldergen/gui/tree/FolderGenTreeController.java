@@ -421,7 +421,7 @@ public class FolderGenTreeController implements TreeSelectionListener, ActionLis
 					BufferedWriter bw = null;
 					try {
 						bw = new BufferedWriter(new FileWriter(file));
-						bw.write(Generator.getStringFromStruct(this.struct, "", ""));
+						bw.write(Generator.getStringFromStruct(this.struct, "", "", Boolean.TRUE));
 						bw.close();
 						this.configFile = file;
 						JOptionPane.showMessageDialog(this.view, PropertiesReader.getInstance().getProperties("application.gui.messagedialog.configexported.message"), PropertiesReader.getInstance()
