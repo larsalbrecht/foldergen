@@ -7,6 +7,9 @@
  _(work in progress: *100%*)_
 </wiki:comment>
 
+== Version 1.6.1.0 - coming soon ==
+ * Added parameter -pxu | -proxyurl to specify a specific proxy _(work in progress: *50%*)_
+
 == Version 1.6.0.0 ==
  <wiki:comment>* Added parameter -o / -overwrite to select an option what is to do with existing files / folders _(work in progress: *0%*)_
   * off - Overwrite nothing (default)
